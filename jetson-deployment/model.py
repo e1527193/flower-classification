@@ -116,11 +116,50 @@ def get_cutout(img, xmin, xmax, ymin, ymax):
     return cropped_image
 
 
+def export_to_onnx(yolo_path: str, resnet_path: str):
+    """Export the models to onnx.
+
+    :param yolo_path: path to yolo weights
+    :param resnet_path: path to resnet weights
+    :returns: None
+
+    """
+    (first, second) = load_models(yolo_path, resnet_path)
+    first.eval()
+    second.eval()
+
+    first_x = torch.randn((1, 3, 640, 640), requires_grad=True)
+    second_x = torch.randn((1, 3, 224, 224), requires_grad=True)
+
+    torch.onnx.export(first,
+                      first_x,
+                      'yolo.onnx',
+                      export_params=True,
+                      do_constant_folding=True,
+                      input_names=['input'],
+                      output_names=['output'])
+
+    torch.onnx.export(second,
+                      second_x,
+                      'resnet.onnx',
+                      export_params=True,
+                      do_constant_folding=True,
+                      input_names=['input'],
+                      output_names=['output'])
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=str, help='image file or webcam')
+    parser.add_argument('--onnx',
+                        action='store_true',
+                        dest='onnx',
+                        help='export models to onnx')
     opt = parser.parse_args()
 
     if opt.source:
         detect(opt.source, 'runs/train/yolov7-custom7/weights/best.pt',
                'resnet.pt')
+    if opt.onnx:
+        export_to_onnx('runs/train/yolov7-custom7/weights/best.pt',
+                       'resnet.pt')
