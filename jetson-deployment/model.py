@@ -158,8 +158,6 @@ if __name__ == '__main__':
     opt = parser.parse_args()
 
     if opt.source:
-        detect(opt.source, 'runs/train/yolov7-custom7/weights/best.pt',
-               'resnet.pt')
+        detect(opt.source, 'yolo.pt', 'resnet.pt')
     if opt.onnx:
-        export_to_onnx('runs/train/yolov7-custom7/weights/best.pt',
-                       'resnet.pt')
+        export_to_onnx('yolo.pt', 'resnet.pt')
