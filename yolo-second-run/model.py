@@ -47,10 +47,7 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
         # Classify ROI in RGB
         predictions[idx] = classify(second_stage, cropped_image[..., ::-1])
 
-        # cv2.imshow('cropped ' + str(idx), cropped_image)
-        # cv2.waitKey(0)
-
-        # Draw bounding box and class on original image
+        # Draw bounding box and number on original image
         original = cv2.rectangle(original, (xmin, ymin), (xmax, ymax),
                                  (0, 255, 0), 2)
         original = cv2.putText(original, str(idx), (xmin + 5, ymin + 25),
@@ -59,9 +56,6 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
         original = cv2.putText(original, str(idx), (xmin + 5, ymin + 25),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255),
                                2, cv2.LINE_AA)
-
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
 
     cv2.imshow('original with bounding box', original)
     cv2.waitKey(0)
