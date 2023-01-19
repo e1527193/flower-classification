@@ -57,9 +57,6 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
                                cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255),
                                2, cv2.LINE_AA)
 
-    cv2.imshow('original with bounding box', original)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
     return predictions
 
 
