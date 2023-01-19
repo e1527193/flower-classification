@@ -33,10 +33,12 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
     img = cv2.imread(img_path)
     original = img.copy()
     (first_stage, second_stage) = load_models(yolo_path, resnet_path)
+
+    # Get bounding boxes from object detection model
     box_coords = get_boxes(first_stage, img)
     box_coords.sort_values(by=['xmin'], ignore_index=True, inplace=True)
-    predictions = {}
 
+    predictions = {}
     for idx, row in box_coords.iterrows():
         xmin, xmax = int(row['xmin']), int(row['xmax'])
         ymin, ymax = int(row['ymin']), int(row['ymax'])
