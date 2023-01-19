@@ -44,6 +44,7 @@ flycheck_*.el
 
 __pycache__/
 *.pt
+*.onnx
 data/
 plantsdata/
 .ipynb_checkpoints/
