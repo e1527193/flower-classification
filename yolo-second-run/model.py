@@ -27,7 +27,8 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
     :param str img_path: path to image
     :param yolo_path: path to yolo weights
     :param resnet_path: path to resnet weights
-    :returns: dict of bounding boxes and their predictions
+    :returns: tuple of recent image and dict of bounding boxes and
+    their predictions
 
     """
     img = cv2.imread(img_path)
@@ -59,7 +60,7 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
                                cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255),
                                2, cv2.LINE_AA)
 
-    return predictions
+    return (original, predictions)
 
 
 def get_boxes(model, img):
