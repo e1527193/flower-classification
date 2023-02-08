@@ -48,3 +48,6 @@ __pycache__/
 data/
 plantsdata/
 .ipynb_checkpoints/
+
+images/
+dataset*/
