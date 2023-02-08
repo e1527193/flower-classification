@@ -2,6 +2,7 @@ import argparse
 import cv2
 import torch
 from torchvision import transforms
+import tkinter
 
 
 def load_models(yolo_path: str, resnet_path: str):
@@ -39,6 +40,7 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
     box_coords = get_boxes(first_stage, img)
 
     box_coords.sort_values(by=['xmin'], ignore_index=True, inplace=True)
+    print(box_coords)
 
     predictions = {}
     for idx, row in box_coords.iterrows():
@@ -61,6 +63,9 @@ def detect(img_path: str, yolo_path: str, resnet_path: str):
                                cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255),
                                2, cv2.LINE_AA)
 
+    cv2.imshow('original', original)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     return (original, predictions)
 
 
@@ -161,3 +166,5 @@ if __name__ == '__main__':
         detect(opt.source, 'yolo.pt', 'resnet.pt')
     if opt.onnx:
         export_to_onnx('yolo.pt', 'resnet.pt')
+
+    
