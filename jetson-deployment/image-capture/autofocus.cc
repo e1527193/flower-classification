@@ -22,54 +22,6 @@ string focus_pipeline(int capture_width, int capture_height, int framerate,
          "appsink";
 }
 
-int focus(int val) {
-  int value = (val << 4) & 0x3ff0;
-  int data1 = (value >> 8) & 0x3f;
-  int data2 = value & 0xf0;
-
-  string data1_s = to_string(data1);
-  string data2_s = to_string(data2);
-
-  string command = ("i2cset -y 6 0x0c " + data1_s + " " + data2_s);
-
-  cout << command << endl;
-
-  const char *final = command.c_str();
-
-  int ch;
-  FILE *proc = popen(final, "r");
-  if (proc == NULL) {
-    puts("Unable to open process");
-    return (1);
-  }
-  while ((ch = fgetc(proc)) != EOF) {
-    putchar(ch);
-  }
-  pclose(proc);
-  cout << "Focusing done!" << endl;
-  return 0;
-}
-
-Scalar sobel(Mat img) {
-  Mat img_gray;
-  Mat img_sobel;
-
-  cvtColor(img, img_gray, COLOR_RGB2GRAY);
-  Sobel(img_gray, img_sobel, CV_16U, 1, 1);
-
-  return mean(img_sobel)[0];
-}
-
-Scalar laplacian(Mat img) {
-  Mat img_gray;
-  Mat img_laplacian;
-
-  cvtColor(img, img_gray, COLOR_RGB2GRAY);
-  Laplacian(img_gray, img_laplacian, CV_16U, 1, 1);
-
-  return mean(img_laplacian)[0];
-}
-
 int main() {
   int capture_width = 3264;
   int capture_height = 2464;
@@ -101,76 +53,6 @@ int main() {
     fprintf(stderr, "Exception converting image to JPG format: %s\n",
             ex.what());
   }
-
-  // while (true) {
-  //   if (!cap.read(img)) {
-  //     cout << "Capture read error" << endl;
-  //     break;
-  //   }
-
-  //   // imshow("CSI Camera", img);
-
-  //   if (dec_count < 6 && focal_distance < 1000) {
-  //     // Adjust focus by 10
-  //     focus(focal_distance);
-  //     // Calculate image clarity
-  //     auto val = laplacian(img);
-  //     // Find max clarity
-  //     if (val[0] > max_value) {
-  //       max_index = focal_distance;
-  //       max_value = val[0];
-  //     }
-
-  //     // If clarity starts to decrease
-  //     if (val[0] < last_value) {
-  //       dec_count += 1;
-  //     } else {
-  //       dec_count = 0;
-  //     }
-
-  //     // Img clarity is reduced by 6 consecutive frames
-  //     if (dec_count < 6) {
-  //       last_value = val[0];
-  //       // Increase focal distance
-  //       focal_distance += 10;
-  //     }
-  //   } else if (!focus_finished) {
-  //     // Adjust focus to best
-  //     focus(max_index);
-  //     focus_finished = true;
-  //   }
-
-  //   vector<int> compression_params;
-  //   compression_params.push_back(IMWRITE_JPEG_QUALITY);
-  //   if (focus_finished) {
-  //     bool result = false;
-  //     try {
-  //       result = imwrite("current.jpg", img, compression_params);
-  //     } catch (const Exception &ex) {
-  //       fprintf(stderr, "Exception converting image to JPG format: %s\n",
-  //               ex.what());
-  //     }
-  //     if (result) {
-  //       printf("Saved JPG file.\n");
-  //     } else {
-  //       printf("ERROR: Can't save JPG file.\n");
-  //     }
-  //     break;
-  //   }
-
-  // // Stop on ESC
-  // if (keycode == 27) {
-  //   break;
-  // }
-  // else if (keycode == 13) {
-  //   max_index = 10;
-  //   max_value = 0;
-  //   last_value = 0;
-  //   dec_count = 0;
-  //   focal_distance = 10;
-  //   focus_finished = false;
-  // }
-  // }
 
   cap.release();
   return 0;
