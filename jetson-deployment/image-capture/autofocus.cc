@@ -5,22 +5,6 @@
 using namespace std;
 using namespace cv;
 
-string img_pipeline(int capture_width, int capture_height, int framerate,
-                    int flip_method) {
-  return "nvarguscamerasrc num-buffers=1 ! "
-         "video/x-raw(memory:NVMM),width=(int)" +
-         to_string(capture_width) + ",height=(int)" +
-         to_string(capture_height) + ",framerate=(fraction)" +
-         to_string(framerate) +
-         "/1 ! "
-         "nvvidconv flip-method=" +
-         to_string(flip_method) +
-         " ! "
-         "jpegenc quality=95 ! "
-         "videoconvert ! "
-         "appsink";
-}
-
 string focus_pipeline(int capture_width, int capture_height, int framerate,
                       int flip_method) {
   return "nvarguscamerasrc ! "
