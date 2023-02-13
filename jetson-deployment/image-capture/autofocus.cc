@@ -48,7 +48,7 @@ int main() {
   cap.read(img);
 
   try {
-    imwrite("test.jpg", img);
+    imwrite("current.jpg", img);
   } catch (const Exception &ex) {
     fprintf(stderr, "Exception converting image to JPG format: %s\n",
             ex.what());
