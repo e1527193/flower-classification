@@ -5,7 +5,7 @@
 using namespace std;
 using namespace cv;
 
-string focus_pipeline(int capture_width, int capture_height, int framerate,
+string video_pipeline(int capture_width, int capture_height, int framerate,
                       int flip_method) {
   return "nvarguscamerasrc ! "
          "video/x-raw(memory:NVMM),width=(int)" +
