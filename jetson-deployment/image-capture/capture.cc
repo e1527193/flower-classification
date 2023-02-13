@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <opencv2/imgcodecs.hpp>
 #include <opencv2/opencv.hpp>
 
 using namespace std;
@@ -16,9 +15,9 @@ string video_pipeline(int capture_width, int capture_height, int framerate,
          "nvvidconv flip-method=" +
          to_string(flip_method) +
          " ! "
-         "video/x-raw,format=(string)BGRx ! "
+	 "video/x-raw,format=(string)BGRx ! "
          "videoconvert ! "
-         "video/x-raw,format=(string)BGR,width=(int)3264,height=(int)2464 ! "
+	 "video/x-raw,format=(string)BGR,width=(int)3264,height=(int)2464 ! "
          "appsink";
 }
 
@@ -29,7 +28,7 @@ int main() {
   int flip_method = 2;
 
   string pipeline =
-      focus_pipeline(capture_width, capture_height, framerate, flip_method);
+      video_pipeline(capture_width, capture_height, framerate, flip_method);
   cout << "Using pipeline: \n\t" << pipeline << endl;
 
   VideoCapture cap(pipeline, CAP_GSTREAMER);
