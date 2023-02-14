@@ -25,7 +25,7 @@ with fo.ProgressBar() as pb:
     for sample in pb(predictions_view):
         image = Image.open(sample.filepath)
         w, h = image.size
-        pred = detect(sample.filepath, 'yolo.onnx', 'resnet.onnx')
+        pred = detect(sample.filepath, '../weights/yolo.onnx', '../weights/resnet.onnx')
 
         detections = []
         for _, row in pred.iterrows():
