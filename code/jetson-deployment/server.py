@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from multiprocessing import Manager
 
-from model import detect
+from code.evaluation.detection import detect
 
 app = Flask(__name__)
 scheduler = BackgroundScheduler(daemon=True)

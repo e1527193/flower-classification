@@ -8,8 +8,8 @@ import albumentations as A
 from torchvision import transforms, ops
 from albumentations.pytorch import ToTensorV2
 
-from utils.conversions import scale_bboxes
-from utils.manipulations import get_cutout
+from code.utils.conversions import scale_bboxes
+from code.utils.manipulations import get_cutout
 
 def detect(img_path: str, yolo_path: str, resnet_path: str):
     """Load an image, detect individual plants and label them as

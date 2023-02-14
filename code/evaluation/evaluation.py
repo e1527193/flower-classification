@@ -1,6 +1,6 @@
 import fiftyone as fo
 from PIL import Image
-from evaluate import detect
+from code.evaluation.detection import detect
 
 name = "dataset-small"
 dataset_dir = "/home/zenon/Documents/master-thesis/evaluation/dataset-small"

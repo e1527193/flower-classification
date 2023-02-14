@@ -2,7 +2,6 @@ import argparse
 import cv2
 import torch
 from torchvision import transforms
-import tkinter
 
 
 def load_models(yolo_path: str, resnet_path: str):

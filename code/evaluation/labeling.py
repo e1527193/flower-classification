@@ -4,8 +4,8 @@ import cv2
 import json
 import os
 
-from utils.conversions import convert_to_yolo
-from detection import detect
+from code.utils.conversions import convert_to_yolo
+from code.evaluation.detection import detect
 
 template = [{
     "data": {
