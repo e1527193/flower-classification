@@ -1,5 +1,5 @@
-import cv2
 import torch
+import cv2
 import onnxruntime
 import numpy as np
 import pandas as pd
