@@ -1,3 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(name='master-thesis', version='1.0', packages=find_packages())
+setup(name='master',
+      version='0.1.0',
+      author='Tobias Eidelpes',
+      author_email='e1527193@student.tuwien.ac.at',
+      packages=['code'],
+      description='An awesome package that does something')
