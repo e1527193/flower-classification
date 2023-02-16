@@ -5,6 +5,7 @@ def draw_boxes(image, bboxes):
     img = image.copy()
     for idx, bbox in enumerate(bboxes):
         xmin, ymin, xmax, ymax = bbox
+        xmin, ymin, xmax, ymax = int(xmin), int(ymin), int(xmax), int(ymax)
         # Draw bounding box and number on original image
         img = cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
         img = cv2.putText(img, str(idx), (xmin + 5, ymin + 25),
