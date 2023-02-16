@@ -3,9 +3,22 @@ apscheduler==3.10.0
 albumentations==1.3.0
 pandas==1.1.5
 onnxruntime==1.8.0
+opencv-python==4.7.0
+torch==1.8.1
+torchvision==0.9.1
+numpy==1.18.0
+scipy==1.1.0
+scikit-learn==0.21.3
+PIL==8.0.4
+argparse==1.1
+json==2.0.9
+matplotlib==3.3.4
 
 # For labeling/conversion
 # label-studio==1.7.0
 
 # For interactive evaluation
 # fiftyone
+
+# Visualize gradients
+# pytorch-gradcam
