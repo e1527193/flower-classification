@@ -65,6 +65,10 @@
 % For bachelor and master:
 \setcurriculum{Software Engineering \& Internet Computing}{Software Engineering \& Internet Computing} % Sets the English and German name of the curriculum.
 
+\newacronym{xai}{XAI}{Explainable Artificial Intelligence}
+\newacronym{lime}{LIME}{Local Interpretable Model Agnostic Explanation}
+\newacronym{grad-cam}{Grad-CAM}{Gradient-weighted Class Activation Mapping}
+
 \begin{document}
 
 \frontmatter % Switches to roman numbering.
@@ -105,7 +109,103 @@
 
 \chapter{Evaluation}
 
+The following sections contain a detailed evaluation of the model in
+various scenarios. First, we present metrics from the training phases
+of the constituent models. Second, we employ methods from the field of
+\gls{xai} such as \gls{lime} and \gls{grad-cam} to get a better
+understanding of the models' abstractions. Finally, we turn to the
+models' aggregate performance on the test set and discuss whether the
+initial goals set by the problem description have been met or not.
 
+\section{Object Detection}
+\label{sec:eval-yolo}
+
+The object detection model was trained for 300 epochs and the weights
+from the best-performing epoch were saved. The model's fitness for
+each epoch is calculated as the weighted average of \textsf{mAP}@0.5
+and \textsf{mAP}@0.5:0.95:
+
+\begin{equation}
+  \label{eq:fitness}
+  f_{epoch} = 0.1 \cdot \mathsf{mAP}@0.5 + 0.9 \cdot \mathsf{mAP}@0.5\mathrm{:}0.95
+\end{equation}
+
+Figure~\ref{fig:fitness} shows the model's fitness over the training
+period of 300 epochs. The gray vertical line indicates the maximum
+fitness of 0.61 at epoch 133. The weights of that epoch were frozen to
+be the final model parameters. Since the fitness metric assigns the
+\textsf{mAP} at the higher range the overwhelming weight, the
+\textsf{mAP}@0.5 starts to decrease after epoch 30, but the
+\textsf{mAP}@0.5:0.95 picks up the slack until the maximum fitness at
+epoch 133. This is an indication that the model achieves good
+performance early on and continues to gain higher confidence values
+until performance deteriorates due to overfitting.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/model_fitness.pdf}
+  \caption[Model fitness per epoch.]{Model fitness for each epoch
+    calculated as in equation~\ref{eq:fitness}.}
+  \label{fig:fitness}
+\end{figure}
+
+Overall precision and recall per epoch are shown in
+figure~\ref{fig:prec-rec}. The values indicate that neither precision
+nor recall change materially during training. In fact, precision
+starts to decrease from the beginning, while recall experiences a
+barely noticeable increase. Taken together with the box and object
+loss from figure~\ref{fig:box-obj-loss}, we speculate that the
+pre-trained model already generalizes well to plant detection. Any
+further training solely impacts the confidence of detection, but does
+not lead to higher detection rates. This conclusion is supported by
+the increasing \textsf{mAP}@0.5:0.95.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/precision_recall.pdf}
+  \caption{Overall precision and recall during training for each epoch.}
+  \label{fig:prec-rec}
+\end{figure}
+
+Further culprits for the flat precision and recall values may be found
+in bad ground truth data. The labels from the Open Images
+Dataset~\cite{kuznetsova2020} are sometimes not fine-grained
+enough. Images which contain multiple individual—often
+overlapping—plants are labeled with one large bounding box instead of
+multiple smaller ones. The model recognizes the individual plants and
+returns tighter bounding boxes even if that is not what is specified
+in the ground truth. Therefore, it is prudent to limit the training
+phase to relatively few epochs in order to not penalize the more
+accurate detections of the model. The smaller bounding boxes make more
+sense considering the fact that the cutout is passed to the classifier
+in a later stage. Smaller bounding boxes help the classifier to only
+focus on one plant at a time and to not get distracted by multiple
+plants in potentially different stages of wilting.
+
+The box loss
+decreases slightly during training which indicates that the bounding
+boxes become tighter around objects of interest. With increasing
+training time, however, the object loss increases, indicating that
+less and less plants are present in the predicted bounding boxes. It
+is likely that overfitting is a cause for the increasing object loss
+from epoch 40 onward. Since the best weights as measured by fitness
+are found at epoch 133 and the object loss accelerates from that
+point, epoch 133 is probably the right cutoff before overfitting
+occurs.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/val_box_obj_loss.pdf}
+  \caption[Box and object loss.]{Box and object
+    loss{\protect\footnotemark} measured against the validation set.}
+  \label{fig:box-obj-loss}
+\end{figure}
+
+\footnotetext{The class loss is omitted because there is only one
+  class in the dataset and the loss is therefore always 0.}
+
+\begin{center}
+\end{center}
 
 \backmatter
 
