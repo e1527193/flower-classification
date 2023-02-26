@@ -88,7 +88,6 @@ MANIFEST
 *.log
 *.lot
 *.out
-*.pdf
 *.toc
 *.gls
 *.hd
