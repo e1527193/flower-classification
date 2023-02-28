@@ -28,7 +28,8 @@
 \newcommand{\thesistitle}{Flower State Classification for Watering System} % The title of the thesis. The English version should be used, if it exists.
 
 % Set PDF document properties
-\hypersetup{
+\hypersetup
+{
     pdfpagelayout   = TwoPageRight,           % How the document is shown in PDF viewers (optional).
     linkbordercolor = {Melon},                % The color of the borders of boxes around crosslinks (optional).
     pdfauthor       = {\authorname},          % The author's name in the document properties (optional).
@@ -68,6 +69,10 @@
 \newacronym{xai}{XAI}{Explainable Artificial Intelligence}
 \newacronym{lime}{LIME}{Local Interpretable Model Agnostic Explanation}
 \newacronym{grad-cam}{Grad-CAM}{Gradient-weighted Class Activation Mapping}
+\newacronym{oid}{OID}{Open Images Dataset}
+\newacronym{ap}{AP}{Average Precision}
+\newacronym{iou}{IOU}{Intersection over Union}
+\newacronym{map}{mAP}{mean average precision}
 
 \begin{document}
 
@@ -118,12 +123,30 @@ models' aggregate performance on the test set and discuss whether the
 initial goals set by the problem description have been met or not.
 
 \section{Object Detection}
-\label{sec:eval-yolo}
+\label{sec:yolo-eval}
 
-The object detection model was trained for 300 epochs and the weights
-from the best-performing epoch were saved. The model's fitness for
-each epoch is calculated as the weighted average of \textsf{mAP}@0.5
-and \textsf{mAP}@0.5:0.95:
+The object detection model was pre-trained on the COCO~\cite{lin2015}
+dataset and fine-tuned with data from the \gls{oid}
+\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
+dataset contains considerably more classes and samples than would be
+feasibly trainable on a small cluster of GPUs, only images from the
+two classes \emph{Plant} and \emph{Houseplant} have been
+downloaded. The samples from the Houseplant class are merged into the
+Plant class because the distinction between the two is not necessary
+for our model. Furthermore, the \gls{oid} contains not only bounding
+box annotations for object detection tasks, but also instance
+segmentations, classification labels and more. These are not needed
+for our purposes and are omitted as well. In total, the dataset
+consists of 91479 images with a roughly 85/5/10 split for training,
+validation and testing, respectively.
+
+\subsection{Training Phase}
+\label{sec:yolo-training-phase}
+
+The object detection model was trained for 300 epochs on 79204 images
+with 284130 ground truth labels. The weights from the best-performing
+epoch were saved. The model's fitness for each epoch is calculated as
+the weighted average of \textsf{mAP}@0.5 and \textsf{mAP}@0.5:0.95:
 
 \begin{equation}
   \label{eq:fitness}
@@ -145,7 +168,8 @@ until performance deteriorates due to overfitting.
   \centering
   \includegraphics{graphics/model_fitness.pdf}
   \caption[Model fitness per epoch.]{Model fitness for each epoch
-    calculated as in equation~\ref{eq:fitness}.}
+    calculated as in equation~\ref{eq:fitness}. The vertical gray line
+    at 133 marks the epoch with the highest fitness.}
   \label{fig:fitness}
 \end{figure}
 
@@ -155,22 +179,25 @@ nor recall change materially during training. In fact, precision
 starts to decrease from the beginning, while recall experiences a
 barely noticeable increase. Taken together with the box and object
 loss from figure~\ref{fig:box-obj-loss}, we speculate that the
-pre-trained model already generalizes well to plant detection. Any
-further training solely impacts the confidence of detection, but does
-not lead to higher detection rates. This conclusion is supported by
-the increasing \textsf{mAP}@0.5:0.95.
+pre-trained model already generalizes well to plant detection because
+one of the categories in the COCO~\cite{lin2015} dataset is
+\emph{potted plant}. Any further training solely impacts the
+confidence of detection, but does not lead to higher detection
+rates. This conclusion is supported by the increasing
+\textsf{mAP}@0.5:0.95 until epoch 133.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/precision_recall.pdf}
-  \caption{Overall precision and recall during training for each epoch.}
+  \caption{Overall precision and recall during training for each
+    epoch. The vertical gray line at 133 marks the epoch with the
+    highest fitness.}
   \label{fig:prec-rec}
 \end{figure}
 
 Further culprits for the flat precision and recall values may be found
-in bad ground truth data. The labels from the Open Images
-Dataset~\cite{kuznetsova2020} are sometimes not fine-grained
-enough. Images which contain multiple individual—often
+in bad ground truth data. The labels from the \gls{oid} are sometimes not
+fine-grained enough. Images which contain multiple individual—often
 overlapping—plants are labeled with one large bounding box instead of
 multiple smaller ones. The model recognizes the individual plants and
 returns tighter bounding boxes even if that is not what is specified
@@ -182,30 +209,78 @@ in a later stage. Smaller bounding boxes help the classifier to only
 focus on one plant at a time and to not get distracted by multiple
 plants in potentially different stages of wilting.
 
-The box loss
-decreases slightly during training which indicates that the bounding
-boxes become tighter around objects of interest. With increasing
-training time, however, the object loss increases, indicating that
-less and less plants are present in the predicted bounding boxes. It
-is likely that overfitting is a cause for the increasing object loss
-from epoch 40 onward. Since the best weights as measured by fitness
-are found at epoch 133 and the object loss accelerates from that
-point, epoch 133 is probably the right cutoff before overfitting
-occurs.
+The box loss decreases slightly during training which indicates that
+the bounding boxes become tighter around objects of interest. With
+increasing training time, however, the object loss increases,
+indicating that less and less plants are present in the predicted
+bounding boxes. It is likely that overfitting is a cause for the
+increasing object loss from epoch 40 onward. Since the best weights as
+measured by fitness are found at epoch 133 and the object loss
+accelerates from that point, epoch 133 is probably the correct cutoff
+before overfitting occurs.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/val_box_obj_loss.pdf}
-  \caption[Box and object loss.]{Box and object
-    loss{\protect\footnotemark} measured against the validation set.}
+  \caption[Box and object loss.]{Box and object loss measured against
+    the validation set of 3091 images and 4092 ground truth
+    labels. The class loss is omitted because there is only one class
+    in the dataset and the loss is therefore always zero.}
   \label{fig:box-obj-loss}
 \end{figure}
 
-\footnotetext{The class loss is omitted because there is only one
-  class in the dataset and the loss is therefore always 0.}
+\subsection{Test Phase}
+\label{ssec:test-phase}
 
-\begin{center}
-\end{center}
+Of the 91479 images around 10\% were used for the test phase. These
+images contain a total of 12238 ground truth
+labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
+harmonic mean of both (F1-score). The results indicate that the model
+errs on the side of sensitivity because recall is higher than
+precision. Although some detections are not labeled as plants in the
+dataset, if there is a labeled plant in the ground truth data, the
+chance is high that it will be detected. This behavior is in line with
+how the model's detections are handled in practice. The detections are
+drawn on the original image and the user is able to check the bounding
+boxes visually. If there are wrong detections, the user can ignore
+them and focus on the relevant ones instead. A higher recall will thus
+serve the user's needs better than a high precision.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  F1-score &  Support \\
+    \midrule
+    Plant        &   0.547571 &  0.737866 &  0.628633 &  12238.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and F1-score for the object detection model.}
+  \label{tab:yolo-metrics}
+\end{table}
+
+Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
+thresholds of 0.5 and 0.95. Predicted bounding boxes with an \gls{iou}
+of less than 0.5 are not taken into account for the precision and
+recall values of table~\ref{tab:yolo-metrics}. COCO's \cite{lin2015}
+main evaluation metric is the \gls{ap} averaged across the \gls{iou}
+thresholds from 0.5 to 0.95 in 0.05 steps. This value is then averaged
+across all classes and called \gls{map}. The object detection model
+achieves a state-of-the-art \gls{map} of 0.5727 for the \emph{Plant}
+class.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{graphics/APpt5-pt95.pdf}
+  \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
+    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
+    specific threshold is defined as the area under the
+    precision-recall curve of that threshold. The \gls{map} across
+    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
+    \textsf{mAP}@0.5:0.95 is 0.5727.}
+  \label{fig:yolo-ap}
+\end{figure}
+
 
 \backmatter
 
