@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import fiftyone as fo
 
 
 def set_size(width, fraction=1, subplots=(1, 1)):
@@ -37,3 +38,21 @@ def set_size(width, fraction=1, subplots=(1, 1)):
     fig_dim = (fig_width_in, fig_height_in)
 
     return fig_dim
+
+
+def export_dataset(dataset, export_dir, classes=["Healthy", "Stressed"]):
+    label_field = "ground_truth"
+
+    # The splits to export
+    splits = ["val"]
+
+    # Export the splits
+    for split in splits:
+        split_view = dataset.match_tags(split)
+        split_view.export(
+            export_dir=export_dir,
+            dataset_type=fo.types.YOLOv5Dataset,
+            label_field=label_field,
+            split=split,
+            classes=classes,
+        )
