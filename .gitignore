@@ -91,3 +91,8 @@ MANIFEST
 *.toc
 *.gls
 *.hd
+*.acr
+*.alg
+*.bcf
+*.glg
+*.run.xml
