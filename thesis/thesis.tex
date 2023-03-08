@@ -20,8 +20,11 @@
 \usepackage[usenames,dvipsnames,table]{xcolor} % Allows the definition and use of colors. This package has to be included before tikz.
 \usepackage{nag}       % Issues warnings when best practices in writing LaTeX documents are violated.
 \usepackage{todonotes} % Provides tooltip-like todo notes.
+\usepackage[backend=biber,style=trad-alpha,isbn=false,eprint=false,maxcitenames=3]{biblatex}
 \usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
 \usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
+
+\addbibresource{references.bib}
 
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Tobias Eidelpes} % The author name without titles.
@@ -67,12 +70,14 @@
 \setcurriculum{Software Engineering \& Internet Computing}{Software Engineering \& Internet Computing} % Sets the English and German name of the curriculum.
 
 \newacronym{xai}{XAI}{Explainable Artificial Intelligence}
-\newacronym{lime}{LIME}{Local Interpretable Model Agnostic Explanation}
 \newacronym{grad-cam}{Grad-CAM}{Gradient-weighted Class Activation Mapping}
+\newacronym{cam}{CAM}{Class Activation Mapping}
 \newacronym{oid}{OID}{Open Images Dataset}
 \newacronym{ap}{AP}{Average Precision}
 \newacronym{iou}{IOU}{Intersection over Union}
 \newacronym{map}{mAP}{mean average precision}
+\newacronym{resnet}{ResNet}{Residual Neural Network}
+\newacronym{cnn}{CNN}{Convolutional Neural Network}
 
 \begin{document}
 
@@ -117,10 +122,10 @@
 The following sections contain a detailed evaluation of the model in
 various scenarios. First, we present metrics from the training phases
 of the constituent models. Second, we employ methods from the field of
-\gls{xai} such as \gls{lime} and \gls{grad-cam} to get a better
-understanding of the models' abstractions. Finally, we turn to the
-models' aggregate performance on the test set and discuss whether the
-initial goals set by the problem description have been met or not.
+\gls{xai} such as \gls{grad-cam} to get a better understanding of the
+models' abstractions. Finally, we turn to the models' aggregate
+performance on the test set and discuss whether the initial goals set
+by the problem description have been met or not.
 
 \section{Object Detection}
 \label{sec:yolo-eval}
@@ -141,7 +146,7 @@ consists of 91479 images with a roughly 85/5/10 split for training,
 validation and testing, respectively.
 
 \subsection{Training Phase}
-\label{sec:yolo-training-phase}
+\label{ssec:yolo-training-phase}
 
 The object detection model was trained for 300 epochs on 79204 images
 with 284130 ground truth labels. The weights from the best-performing
@@ -167,9 +172,10 @@ until performance deteriorates due to overfitting.
 \begin{figure}
   \centering
   \includegraphics{graphics/model_fitness.pdf}
-  \caption[Model fitness per epoch.]{Model fitness for each epoch
-    calculated as in equation~\ref{eq:fitness}. The vertical gray line
-    at 133 marks the epoch with the highest fitness.}
+  \caption[Object detection fitness per epoch.]{Object detection model
+    fitness for each epoch calculated as in
+    equation~\ref{eq:fitness}. The vertical gray line at 133 marks the
+    epoch with the highest fitness.}
   \label{fig:fitness}
 \end{figure}
 
@@ -189,7 +195,8 @@ rates. This conclusion is supported by the increasing
 \begin{figure}
   \centering
   \includegraphics{graphics/precision_recall.pdf}
-  \caption{Overall precision and recall during training for each
+  \caption[Object detection precision and recall during
+  training.]{Overall precision and recall during training for each
     epoch. The vertical gray line at 133 marks the epoch with the
     highest fitness.}
   \label{fig:prec-rec}
@@ -222,15 +229,15 @@ before overfitting occurs.
 \begin{figure}
   \centering
   \includegraphics{graphics/val_box_obj_loss.pdf}
-  \caption[Box and object loss.]{Box and object loss measured against
-    the validation set of 3091 images and 4092 ground truth
-    labels. The class loss is omitted because there is only one class
-    in the dataset and the loss is therefore always zero.}
+  \caption[Object detection box and object loss.]{Box and object loss
+    measured against the validation set of 3091 images and 4092 ground
+    truth labels. The class loss is omitted because there is only one
+    class in the dataset and the loss is therefore always zero.}
   \label{fig:box-obj-loss}
 \end{figure}
 
 \subsection{Test Phase}
-\label{ssec:test-phase}
+\label{ssec:yolo-test-phase}
 
 Of the 91479 images around 10\% were used for the test phase. These
 images contain a total of 12238 ground truth
@@ -262,14 +269,19 @@ serve the user's needs better than a high precision.
 Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
 thresholds of 0.5 and 0.95. Predicted bounding boxes with an \gls{iou}
 of less than 0.5 are not taken into account for the precision and
-recall values of table~\ref{tab:yolo-metrics}. COCO's \cite{lin2015}
-main evaluation metric is the \gls{ap} averaged across the \gls{iou}
-thresholds from 0.5 to 0.95 in 0.05 steps. This value is then averaged
-across all classes and called \gls{map}. The object detection model
-achieves a state-of-the-art \gls{map} of 0.5727 for the \emph{Plant}
-class.
+recall values of table~\ref{tab:yolo-metrics}. The lower the detection
+threshold, the more plants are detected. Conversely, a higher
+detection threshold leaves potential plants undetected. The
+precision-recall curves confirm this behavior because the area under
+the curve for the threshold of 0.5 is higher than for the threshold of
+0.95 ($0.66$ versus $0.41$). These values are combined in COCO's
+\cite{lin2015} main evaluation metric which is the \gls{ap} averaged
+across the \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps. This
+value is then averaged across all classes and called \gls{map}. The
+object detection model achieves a state-of-the-art \gls{map} of 0.5727
+for the \emph{Plant} class.
 
-\begin{figure}[h]
+\begin{figure}
   \centering
   \includegraphics{graphics/APpt5-pt95.pdf}
   \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
@@ -281,6 +293,211 @@ class.
   \label{fig:yolo-ap}
 \end{figure}
 
+\section{Classification}
+\label{sec:resnet-eval}
+
+The classifier receives cutouts from the object detection model and
+determines whether the image shows a stressed plant or not. To achieve
+this goal, we trained a \gls{resnet} \cite{he2016} on a dataset of 452
+images of healthy and 452 stressed plants. We chose the \gls{resnet}
+architecture due to its popularity and ease of implementation as well
+as its consistently high performance on various classification
+tasks. While its classification speed in comparison with networks
+optimized for mobile and edge devices (e.g. MobileNet) is
+significantly lower, the deeper structure and the additional
+parameters are necessary for the fairly complex task at
+hand. Furthermore, the generous time budget for object detection
+\emph{and} classification allows for more accurate results at the
+expense of speed. The architecture allows for multiple different
+structures, depending on the amount of layers. The smallest one has 18
+and the largest 152 layers with 34, 50 and 101 in-between. The larger
+networks have better accuracy in general, but come with trade-offs
+regarding training and inference time as well as required space. The
+50 layer architecture (\gls{resnet}50) is adequate for our use case.
+
+\subsection{Training Phase}
+\label{ssec:resnet-training-phase}
+
+The dataset was split 85/15 into training and validation sets. The
+images in the training set were augmented with a random crop to arrive
+at the expected image dimensions of 224 pixels. Additionally, the
+training images were modified with a random horizontal flip to
+increase the variation in the set and to train a rotation invariant
+classifier. All images, regardless of their membership in the training
+or validation set, were normalized with the mean and standard
+deviation of the ImageNet~\cite{deng2009} dataset, which the original
+\gls{resnet} model was pre-trained with. Training was done for 50
+epochs and the best-performing model as measured by validation
+accuracy was selected as the final version.
+
+Figure~\ref{fig:classifier-training-metrics} shows accuracy and loss
+on the training and validation sets. There is a clear upwards trend
+until epoch 20 when validation accuracy and loss stabilize at around
+0.84 and 0.3, respectively. The quick convergence and resistance to
+overfitting can be attributed to the model already having robust
+feature extraction capabilities.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/classifier-metrics.pdf}
+  \caption[Classifier accuracy and loss during training.]{Accuracy and
+    loss during training of the classifier. The model converges
+    quickly, but additional epochs do not cause validation loss to
+    increase, which would indicate overfitting. The maximum validation
+    accuracy of 0.9118 is achieved at epoch 27.}
+  \label{fig:classifier-training-metrics}
+\end{figure}
+
+\subsection{Class Activation Maps}
+\label{ssec:resnet-cam}
+
+Neural networks are notorious for their black-box behavior, where it
+is possible to observe the inputs and the corresponding outputs, but
+the stage in-between stays hidden from view. Models are continuously
+developed and deployed to aid in human decision-making and sometimes
+supplant it. It is, therefore, crucial to obtain some amount of
+interpretability of what the model does \emph{inside} to be able to
+explain why a decision was made in a certain way. The research field
+of \gls{xai} gained significance during the last few years because of
+the development of new methods to peek inside these black boxes.
+
+One such method, \gls{cam}~\cite{zhou2015}, is a popular tool to
+produce visual explanations for decisions made by
+\glspl{cnn}. Convolutional layers essentially function as object
+detectors as long as no fully-connected layers perform the
+classification. This ability to localize regions of interest which
+play a significant role in the type of class the model predicts, can
+be retained until the last layer and used to generate activation maps
+for the predictions.
+
+A more recent approach to generating a \gls{cam} via gradients is
+proposed by~\textcite{selvaraju2020}. Their \gls{grad-cam} approach
+works by computing the gradient of the feature maps of the last
+convolutional layer with respect to the specified class. The last
+layer is chosen because the authors find that ``[…]  Grad-CAM maps
+become progressively worse as we move to earlier convolutional layers
+as they have smaller receptive fields and only focus on less semantic
+local features.''~\cite[p.5]{selvaraju2020}
+
+Turning to our classifier, figure~\ref{fig:resnet-cam} shows the
+\glspl{cam} for \emph{healthy} and \emph{stressed}. While the regions
+of interest for the \emph{healthy} class lie on the healthy plant, the
+\emph{stressed} plant is barely considered and mostly rendered as
+background information (blue). Conversely, when asked to explain the
+inputs to the \emph{stressed} classification, the regions of interest
+predominantly stay on the thirsty as opposed to the healthy plant. In
+fact, the large hanging leaves play a significant role in determining
+the class the image belongs to. This is an additional data point
+confirming that the model focuses on the \emph{right} parts of the
+image during classification.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/classifier-cam.pdf}
+  \caption[Classifier \glspl{cam}.]{The top left image shows the
+    original image of the same plant in a stressed (left) and healthy
+    (right) state. In the top right image, the \gls{cam} for the class
+    \emph{healthy} is laid over the original image. The classifier
+    draws its conclusion mainly from the healthy plant, which is
+    indicated by the red hot spots around the tips of the plant. The
+    bottom right image shows the \gls{cam} for the \emph{stressed}
+    class. The classifier focuses on the hanging leaves of the thirsty
+    plant. The image was classified as \emph{stressed} with a
+    confidence of 70\%.}
+  \label{fig:resnet-cam}
+\end{figure}
+
+
+\section{Aggregate Model}
+\label{sec:aggregate-model}
+
+In this section we turn to the evaluation of the aggregate model. We
+have confirmed the performance of the constituent models: the object
+detection and the classification model. It remains to evaluate the
+complete pipeline from gathering detections of potential plants in an
+image and forwarding them to the classifier to obtaining the results
+as either healthy or stressed with their associated confidence scores.
+
+The test set contains 640 images which were obtained from a google
+search using the terms \emph{thirsty plant}, \emph{wilted plant} and
+\emph{stressed plant}. Images which clearly show one or multiple
+plants with some amount of visible stress were added to the
+dataset. Care was taken to include plants with various degrees of
+stress and in various locations and lighting conditions. The search
+not only provided images of stressed plants, but also of healthy
+plants due to articles, which describe how to care for plants, having
+a banner image of healthy plants. The dataset is biased towards potted
+plants which are commonly put on display in western
+households. Furthermore, many plants, such as succulents, are sought
+after for home environments because of their ease of maintenance. Due
+to their inclusion in the dataset and how they exhibit water stress,
+the test set nevertheless contains a wide variety of scenarios.
+
+After collecting the images, the aggregate model was run on them to
+obtain initial bounding boxes and classifications for ground truth
+labeling. Letting the model do the work beforehand and then correcting
+the labels allowed to include more images in the test set because they
+could be labeled more easily. Additionally, going over the detections
+and classifications provided a comprehensive view on how the models
+work and what their weaknesses and strengths are. After the labels
+have been corrected, the ground truth of the test set contains 662
+bounding boxes of healthy plants and 488 of stressed plants.
+
+\begin{table}
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &  Recall &  F1-score &  Support \\
+    \midrule
+    Healthy      &      0.824 &   0.745 &     0.783 &    662.0 \\
+    Stressed     &      0.707 &   0.783 &     0.743 &    488.0 \\
+    micro avg    &      0.769 &   0.761 &     0.765 &   1150.0 \\
+    macro avg    &      0.766 &   0.764 &     0.763 &   1150.0 \\
+    weighted avg &      0.775 &   0.761 &     0.766 &   1150.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and F1-score for the aggregate model.}
+  \label{tab:model-metrics}
+\end{table}
+
+Table~\ref{tab:model-metrics} shows precision, recall and the F1-score
+for both classes \emph{Healthy} and \emph{Stressed}. Both precision
+and recall are balanced and the F1-score is high. Unfortunately, these
+values do not take the accuracy of bounding boxes into account and
+thus have only limited expressive power.
+
+Figure~\ref{fig:aggregate-ap} shows the precision and recall curves
+for both classes at different \gls{iou} thresholds. The left plot
+shows the \gls{ap} for each class at the threshold of 0.5 and the
+right one at 0.95. The \gls{map} is 0.6226 and calculated across all
+classes as the median of the \gls{iou} thresholds from 0.5 to 0.95 in
+0.05 steps. The difference between \gls{map}@0.5 and \gls{map}@0.95 is
+fairly small which indicates that the bounding boxes encapsulate the
+objects of interest well. The cliffs at around 0.77 (left) and 0.7
+(right) happen at a detection threshold of 0.5. The classifier's last
+layer is a softmax layer which necessarily transforms the input into a
+probability of showing either a healthy or stressed plant. If the
+probability of an image showing a healthy plant is below 0.5, it is no
+longer classified as healthy but as stressed. The threshold for
+discriminating the two classes lies at the 0.5 value and is therefore
+the cutoff for either class.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APmodel.pdf}
+  \caption[Aggregate model AP@0.5 and AP@0.95.]{Precision-recall
+    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
+    specific threshold is defined as the area under the
+    precision-recall curve of that threshold. The \gls{map} across
+    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
+    \textsf{mAP}@0.5:0.95 is 0.6226.}
+  \label{fig:aggregate-ap}
+\end{figure}
+
+Overall, we believe that the aggregate model shows sufficient
+predictive performance to be deployed in the field. The detections are
+accurate, especially for potted plants, and the classification into
+healthy and stressed is robust.
 
 \backmatter
 
@@ -291,7 +508,7 @@ class.
 \cleardoublepage % Start list of tables on the next empty right hand page.
 \listoftables % Starred version, i.e., \listoftables*, removes the toc entry.
 
-% Use an optional list of alogrithms.
+% Use an optional list of algorithms.
 \listofalgorithms
 \addcontentsline{toc}{chapter}{List of Algorithms}
 
@@ -302,8 +519,8 @@ class.
 \printglossaries
 
 % Add a bibliography.
-\bibliographystyle{alpha}
-\bibliography{references}
+%\bibliographystyle{alpha}
+\printbibliography
 
 \end{document}
 %%% Local Variables:
