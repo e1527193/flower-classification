@@ -78,6 +78,7 @@
 \newacronym{map}{mAP}{mean average precision}
 \newacronym{resnet}{ResNet}{Residual Neural Network}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{sgd}{SGD}{Stochastic Gradient Descent}
 
 \begin{document}
 
@@ -346,6 +347,78 @@ feature extraction capabilities.
     increase, which would indicate overfitting. The maximum validation
     accuracy of 0.9118 is achieved at epoch 27.}
   \label{fig:classifier-training-metrics}
+\end{figure}
+
+\subsection{Hyper-parameter Optimization}
+\label{ssec:resnet-hyp-opt}
+
+In order to improve the aforementioned accuracy values, we perform
+hyper-parameter optimization across a wide range of
+parameters. Table~\ref{tab:resnet-hyps} lists the hyper-parameters and
+their possible values. Since the number of all combinations of values
+is 11520 and each combination is trained for 10 epochs with a training
+time of approximately six minutes per combination, exhausting the
+search space would take 48 days. Due to time limitations, we have
+chosen to not search exhaustively but to pick random combinations
+instead. Random search works surprisingly well---especially compared to
+grid search---in a number of domains, one of which is hyper-parameter
+optimization~\cite{bergstra2012}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lr}
+    \toprule
+    Parameter &  Values \\
+    \midrule
+    optimizer &	adam, sgd \\
+    batch size & 4, 8, 16, 32, 64 \\
+    learning rate & 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.1 \\
+    step size & 2, 3, 5, 7 \\
+    gamma & 0.1, 0.5 \\
+    beta one & 0.9, 0.99 \\
+    beta two & 0.5, 0.9, 0.99, 0.999 \\
+    eps & 0.00000001, 0.1, 1 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Hyper-parameters and their possible values during
+    optimization.}
+  \label{tab:resnet-hyps}
+\end{table}
+
+The random search was run for 138 iterations which equates to a 75\%
+probability that the best solution lies within 1\% of the theoretical
+maximum~\eqref{eq:opt-prob}. Figure~\ref{fig:resnet-hyp-results} shows
+three of the eight parameters and their impact on a high
+F1-score. \gls{sgd} has less variation in its results than
+Adam~\cite{kingma2017} and manages to provide eight out of the ten
+best results. The number of epochs to train for was chosen based on
+the observation that almost all configurations converge well before
+reaching the tenth epoch. The assumption that a training run with ten
+epochs provides a good proxy for final performance is supported by the
+quick convergence of validation accuracy and loss in
+figure~\ref{fig:classifier-training-metrics}.
+
+\begin{equation}\label{eq:opt-prob}
+  1 - (1 - 0.01)^{138} \approx 0.75
+\end{equation}
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/classifier-hyp-metrics.pdf}
+  \caption[Classifier hyper-parameter optimization results.]{This
+    figure shows three of the eight hyper-parameters and their
+    performance measured by the F1-score during 138
+    trials. Differently colored markers show the batch size with
+    darker colors representing a larger batch size. The type of marker
+    (circle or cross) shows which optimizer was used. The x-axis shows
+    the learning rate on a logarithmic scale. In general, a learning
+    rate between 0.003 and 0.01 results in more robust and better
+    F1-scores. Larger batch sizes more often lead to better
+    performance as well. As for the type of optimizer, \gls{sgd}
+    produced the best iteration with an F1-score of 0.9783. Adam tends
+    to require more customization of its parameters than \gls{sgd} to
+    achieve good results.}
+  \label{fig:resnet-hyp-results}
 \end{figure}
 
 \subsection{Class Activation Maps}
