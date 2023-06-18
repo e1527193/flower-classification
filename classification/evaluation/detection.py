@@ -95,9 +95,10 @@ def classify(resnet_path, img):
     batch = img.unsqueeze(0)
 
     # Do inference
-    providers = [('CUDAExecutionProvider', {
-        "cudnn_conv_algo_search": "DEFAULT"
-    }), 'CPUExecutionProvider']
+    #providers = [('CUDAExecutionProvider',{
+    #    "cudnn_conv_algo_search": "DEFAULT"
+    #}), 'CPUExecutionProvider']
+    providers = ['CPUExecutionProvider']
     session = onnxruntime.InferenceSession(resnet_path, providers=providers)
 
     outname = [i.name for i in session.get_outputs()]
@@ -184,9 +185,10 @@ def get_boxes(yolo_path, image):
     img['image'] = img['image'].unsqueeze(0)
 
     # Do inference
-    providers = [('CUDAExecutionProvider', {
-        "cudnn_conv_algo_search": "DEFAULT"
-    }), 'CPUExecutionProvider']
+    #providers = [('CUDAExecutionProvider',{
+    #    "cudnn_conv_algo_search": "DEFAULT"
+    #}), 'CPUExecutionProvider']
+    providers = ['CPUExecutionProvider']
     session = onnxruntime.InferenceSession(yolo_path, providers=providers)
 
     outname = [i.name for i in session.get_outputs()]
@@ -204,6 +206,7 @@ def get_boxes(yolo_path, image):
 
     # Apply NMS to results
     preds_nms = apply_nms([outs])[0]
+    #preds_nms = outs
 
     # Convert boxes from resized img to original img
     xyxy_boxes = preds_nms[:, [1, 2, 3, 4]]  # xmin, ymin, xmax, ymax

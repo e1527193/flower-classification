@@ -79,6 +79,8 @@
 \newacronym{resnet}{ResNet}{Residual Neural Network}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
 \newacronym{sgd}{SGD}{Stochastic Gradient Descent}
+\newacronym{roc}{ROC}{Receiver Operating Characteristic}
+\newacronym{auc}{AUC}{Area Under the Curve}
 
 \begin{document}
 
@@ -294,6 +296,135 @@ for the \emph{Plant} class.
   \label{fig:yolo-ap}
 \end{figure}
 
+\subsection{Hyper-parameter Optimization}
+\label{ssec:yolo-hyp-opt}
+
+To further improve the object detection performance, we perform
+hyper-parameter optimization using a genetic algorithm. Evolution of
+the hyper-parameters starts from the initial 30 default values
+provided by the authors of YOLO. Of those 30 values, 26 are allowed to
+mutate. During each generation, there is an 80\% chance that a
+mutation occurs with a variance of 0.04. To determine which generation
+should be the parent of the new mutation, all previous generations are
+ordered by fitness in decreasing order. At most five top generations
+are selected and one of them is chosen at random. Better generations
+have a higher chance of being selected as the selection is weighted by
+fitness. The parameters of that chosen generation are then mutated
+with the aforementioned probability and variance. Each generation is
+trained for three epochs and the fitness of the best epoch is
+recorded.
+
+In total, we ran 87 iterations of which the 34\textsuperscript{th}
+generation provides the best fitness of 0.6076. Due to time
+constraints, it was not possible to train each generation for more
+epochs or to run more iterations in total. We assume that the
+performance of the first few epochs is a reasonable proxy for model
+performance overall. The optimized version of the object detection
+model is then trained for 70 epochs using the parameters of the
+34\textsuperscript{th} generation.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/model_fitness_final.pdf}
+  \caption[Optimized object detection fitness per epoch.]{Object
+    detection model fitness for each epoch calculated as in
+    equation~\ref{eq:fitness}. The vertical gray line at 27 marks the
+    epoch with the highest fitness of 0.6172.}
+  \label{fig:hyp-opt-fitness}
+\end{figure}
+
+Figure~\ref{fig:hyp-opt-fitness} shows the model's fitness during
+training for each epoch. After the highest fitness of 0.6172 at epoch
+27, the performance quickly declines and shows that further training
+would likely not yield improved results. The model converges to its
+highest fitness much earlier than the non-optimized version discussed
+in section~\ref{ssec:yolo-training-phase}, which indicates that the
+adjusted parameters provide a better starting point in general.
+Furthermore, the maximum fitness is 0.74\% higher than in the
+non-optimized version.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/precision_recall_final.pdf}
+  \caption[Hyper-parameter optimized object detection precision and
+  recall during training.]{Overall precision and recall during
+    training for each epoch of the optimized model. The vertical gray
+    line at 27 marks the epoch with the highest fitness.}
+  \label{fig:hyp-opt-prec-rec}
+\end{figure}
+
+Figure~\ref{fig:hyp-opt-prec-rec} shows precision and recall for the
+optimized model during training. Similarly to the non-optimized model
+from figure~\ref{fig:prec-rec}, both metrics do not change materially
+during training. Precision is slightly higher than in the
+non-optimized version and recall hovers at the same levels.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/val_box_obj_loss_final.pdf}
+  \caption[Hyper-parameter optimized object detection box and object
+  loss.]{Box and object loss measured against the validation set of
+    3091 images and 4092 ground truth labels. The class loss is
+    omitted because there is only one class in the dataset and the
+    loss is therefore always zero.}
+  \label{fig:hyp-opt-box-obj-loss}
+\end{figure}
+
+The box and object loss during training is pictured in
+figure~\ref{fig:hyp-opt-box-obj-loss}. Both losses start from a lower
+level which suggests that the initial optimized parameters allow the
+model to converge quicker. The object loss exhibits a similar slope to
+the non-optimized model in figure~\ref{fig:box-obj-loss}. The vertical
+gray line again marks epoch 27 with the highest fitness. The box loss
+reaches its lower limit at that point and the object loss starts to
+increase again after epoch 27.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  F1-score &  Support \\
+    \midrule
+    Plant        &   0.633358 &  0.702811 &  0.666279 &  12238.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and F1-score for the optimized object
+    detection model.}
+  \label{tab:yolo-metrics-hyp}
+\end{table}
+
+Turning to the evaluation of the optimized model on the test dataset,
+table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
+F1-score for the optimized model. Comparing these metrics with the
+non-optimized version from table~\ref{tab:yolo-metrics}, precision is
+significantly higher by more than 8.5\%. Recall, however, is 3.5\%
+lower. The F1-score is higher by more than 3.7\% which indicates that
+the optimized model is better overall despite the lower recall. We
+feel that the lower recall value is a suitable trade off for the
+substantially higher precision considering that the non-optimized
+model's precision is quite low at 0.55.
+
+The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
+optimized model show that the model draws looser bounding boxes than
+the optimized model. The \gls{ap} for both \gls{iou} thresholds of 0.5
+and 0.95 is lower indicating worse performance. It is likely that more
+iterations during evolution would help increase the \gls{ap} values as
+well. Even though the precision and recall values from
+table~\ref{tab:yolo-metrics-hyp} are better, the \textsf{mAP}@0.5:0.95
+is lower by 1.8\%.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APpt5-pt95-final.pdf}
+  \caption[Hyper-parameter optimized object detection AP@0.5 and
+  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
+    and 0.95. The \gls{ap} of a specific threshold is defined as the
+    area under the precision-recall curve of that threshold. The
+    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
+    steps \textsf{mAP}@0.5:0.95 is 0.5546.}
+  \label{fig:yolo-ap-hyp}
+\end{figure}
+
 \section{Classification}
 \label{sec:resnet-eval}
 
@@ -421,6 +552,89 @@ figure~\ref{fig:classifier-training-metrics}.
   \label{fig:resnet-hyp-results}
 \end{figure}
 
+Table~\ref{tab:resnet-final-hyps} lists the final hyper-parameters
+which were chosen to train the improved model. In order to confirm
+that the model does not suffer from overfitting or is a product of
+chance due to a coincidentally advantageous train/test split, we
+perform stratified $10$-fold cross validation on the dataset. Each
+fold contains 90\% training and 10\% test data and was trained for 25
+epochs. Figure~\ref{fig:classifier-hyp-roc} shows the performance of
+the epoch with the highest F1-score of each fold as measured against
+the test split. The mean \gls{roc} curve provides a robust metric for
+a classifier's performance because it averages out the variability of
+the evaluation. Each fold manages to achieve at least an \gls{auc} of
+0.94, while the best fold reaches 0.98. The mean \gls{roc} has an
+\gls{auc} of 0.96 with a standard deviation of 0.02. These results
+indicate that the model is accurately predicting the correct class and
+is robust against variations in the training set.
+
+\begin{table}
+  \centering
+  \begin{tabular}{cccc}
+    \toprule
+    Optimizer &  Batch Size & Learning Rate & Step Size \\
+    \midrule
+    \gls{sgd} & 64 & 0.01 & 5\\
+    \bottomrule
+  \end{tabular}
+  \caption[Hyper-parameters for the optimized classifier.]{Chosen
+    hyper-parameters for the final, improved model. The difference to
+    the parameters listed in Table~\ref{tab:resnet-hyps} comes as a
+    result of choosing \gls{sgd} over Adam. The missing four
+    parameters are only required for Adam and not \gls{sgd}.}
+  \label{tab:resnet-final-hyps}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/classifier-hyp-folds-roc.pdf}
+  \caption[Mean \gls{roc} and variability of hyper-parameter-optimized
+  model.]{This plot shows the \gls{roc} curve for the epoch with the
+    highest F1-score of each fold as well as the \gls{auc}. To get a
+    less variable performance metric of the classifier, the mean
+    \gls{roc} curve is shown as a thick line and the variability is
+    shown in gray. The overall mean \gls{auc} is 0.96 with a standard
+    deviation of 0.02. The best-performing fold reaches an \gls{auc}
+    of 0.99 and the worst an \gls{auc} of 0.94. The black dashed line
+    indicates the performance of a classifier which picks classes at
+    random ($\mathrm{\gls{auc}} = 0.5$). The shapes of the \gls{roc}
+    curves show that the classifier performs well and is robust
+    against variations in the training set.}
+  \label{fig:classifier-hyp-roc}
+\end{figure}
+
+The classifier shows good performance so far, but care has to be taken
+to not overfit the model to the training set. Comparing the F1-score
+during training with the F1-score during testing gives insight into
+when the model tries to increase its performance during training at
+the expense of generalizability. Figure~\ref{fig:classifier-hyp-folds}
+shows the F1-scores of each epoch and fold. The classifier converges
+quickly to 1 for the training set at which point it experiences a
+slight drop in generalizability. Training the model for at most five
+epochs is sufficient because there are generally no improvements
+afterwards. The best-performing epoch for each fold is between the
+second and fourth epoch which is just before the model achieves an
+F1-score of 1 on the training set.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.9\textwidth]{graphics/classifier-hyp-folds-f1.pdf}
+  \caption[F1-score of stratified $10$-fold cross validation.]{These
+    plots show the F1-score during training as well as testing for
+    each of the folds. The classifier converges to 1 by the third
+    epoch during the training phase, which might indicate
+    overfitting. However, the performance during testing increases
+    until epoch three in most cases and then stabilizes at
+    approximately 2-3\% lower than the best epoch. We believe that the
+    third, or in some cases fourth, epoch is detrimental to
+    performance and results in overfitting, because the model achieves
+    an F1-score of 1 for the training set, but that gain does not
+    transfer to the test set. Early stopping during training
+    alleviates this problem.}
+  \label{fig:classifier-hyp-folds}
+\end{figure}
+
+
 \subsection{Class Activation Maps}
 \label{ssec:resnet-cam}
 
@@ -438,7 +652,7 @@ One such method, \gls{cam}~\cite{zhou2015}, is a popular tool to
 produce visual explanations for decisions made by
 \glspl{cnn}. Convolutional layers essentially function as object
 detectors as long as no fully-connected layers perform the
-classification. This ability to localize regions of interest which
+classification. This ability to localize regions of interest, which
 play a significant role in the type of class the model predicts, can
 be retained until the last layer and used to generate activation maps
 for the predictions.
@@ -567,10 +781,95 @@ the cutoff for either class.
   \label{fig:aggregate-ap}
 \end{figure}
 
-Overall, we believe that the aggregate model shows sufficient
-predictive performance to be deployed in the field. The detections are
-accurate, especially for potted plants, and the classification into
-healthy and stressed is robust.
+\subsection{Hyper-parameter Optimization}
+\label{ssec:model-hyp-opt}
+
+So far the metrics shown in table~\ref{tab:model-metrics} are obtained
+with the non-optimized versions of both the object detection and
+classification model. Hyper-parameter optimization of the classifier
+led to significant model improvements, while the object detector has
+improved precision but lower recall and slightly lower \gls{map}
+values. To evaluate the final aggregate model which consists of the
+individual optimized models, we run the same test as in
+section~\ref{sec:aggregate-model}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  precision &  recall &  f1-score &  support \\
+    \midrule
+    Healthy      &      0.664 &   0.640 &     0.652 &    662.0 \\
+    Stressed     &      0.680 &   0.539 &     0.601 &    488.0 \\
+    micro avg    &      0.670 &   0.597 &     0.631 &   1150.0 \\
+    macro avg    &      0.672 &   0.590 &     0.626 &   1150.0 \\
+    weighted avg &      0.670 &   0.597 &     0.630 &   1150.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and F1-score for the optimized aggregate
+    model.}
+  \label{tab:model-metrics-hyp}
+\end{table}
+
+Table~\ref{tab:model-metrics-hyp} shows precision, recall and F1-score
+for the optimized model on the same test dataset of 640 images. All of
+the metrics are significantly worse than for the non-optimized
+model. Considering that the optimized classifier performs better than
+the non-optimized version this is a surprising result. There are
+multiple possible explanations for this behavior:
+
+\begin{enumerate}
+\item The optimized classifier has worse generalizability than the
+  non-optimized version.
+\item The small difference in the \gls{map} values for the object
+  detection model result in significantly higher error rates
+  overall. This might be the case because a large number of plants is
+  not detected in the first place and/or those which are detected are
+  more often not classified correctly by the classifier. As mentioned
+  in section~\ref{ssec:yolo-hyp-opt}, running the evolution of the
+  hyper-parameters for more generations could better the performance
+  overall.
+\item The test dataset is tailored to the non-optimized version and
+  does not provide an accurate measure of real-world performance. The
+  test dataset was labeled by running the individual models on the
+  images and taking the predicted bounding boxes and labels as a
+  starting point for the labeling process. If the labels were not
+  rigorously corrected, the dataset will allow the non-optimized model
+  to achieve high scores because the labels are already in line with
+  what it predicts. Conversely, the optimized model might get closer
+  to the actual ground truth, but that truth is not what is specified
+  by the labels to begin with. If that is the case, the evaluation of
+  the non-optimized model is too favorably and should be corrected
+  down.
+\end{enumerate}
+
+Of these three possibilities, the second and third points are the most
+likely culprits. The first scenario is unlikely because the optimized
+classifier has been evaluated in a cross validation setting and the
+results do not lend themselves easily to such an
+interpretation. Dealing with the second scenario could allow the
+object detection model to perform better on its own, but would
+probably not explain the big difference in performance. Scenario three
+is the most likely one because the process of creating the test
+dataset can lead to favorable labels for the non-optimized model.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APmodel-final.pdf}
+  \caption[Optimized aggregate model AP@0.5 and
+  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
+    and 0.95. The \gls{ap} of a specific threshold is defined as the
+    area under the precision-recall curve of that threshold. The
+    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
+    steps \textsf{mAP}@0.5:0.95 is 0.4426.}
+  \label{fig:aggregate-ap-hyp}
+\end{figure}
+
+Figure~\ref{fig:aggregate-ap-hyp} confirms the suspicions raised by
+the lower metrics from table~\ref{tab:model-metrics-hyp}. More
+iterations for the evolution of the object detection model would
+likely have a significant effect on \gls{iou} and the confidence
+values associated with the bounding boxes.
 
 \backmatter
 
