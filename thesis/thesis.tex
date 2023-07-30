@@ -23,6 +23,8 @@
 \usepackage[backend=biber,style=trad-alpha,isbn=false,eprint=false,maxcitenames=3]{biblatex}
 \usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
 \usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
+\usepackage{siunitx}
+\usepackage{float}
 
 \addbibresource{references.bib}
 
@@ -122,32 +124,353 @@
 \chapter{Introduction}
 \label{chap:introduction}
 
+Machine learning has seen an unprecedented rise in various research
+fields during the last few years. Large-scale distributed computing
+and advances in hardware manufacturing have allowed machine learning
+models to become more sophisticated and complex. Multi-billion
+parameter deep learning models show best-in-class performance in
+Natural Language Processing (NLP)~\cite{brown2020}, fast object
+detection~\cite{bochkovskiy2020} and various classification
+tasks~\cite{zhong2022,ariss2022}. Agriculture is one of the areas
+which profits substantially from the automation possible with machine
+learning.
+
+Large-scale as well as small local farmers are able to survey their
+fields and gardens with drones or stationary cameras to determine soil
+and plant condition as well as when to water or
+fertilize~\cite{ramos-giraldo2020}. Machine learning models play an
+important role in that process because they allow automated
+decision-making in real time.
+
 \section{Motivation and Problem Statement}
 \label{sec:motivation}
+
+The challenges to implement an automated system are numerous. First,
+gathering data in the field requires a network of sensors which are
+linked to a central server for processing. Since communication between
+sensors is difficult without proper infrastructure, there is a high
+demand for processing the data on the sensor
+itself~\cite{mcenroe2022}. Second, differences in local soil, plant
+and weather conditions require models to be optimized for these
+diverse inputs. Centrally trained models often lose the nuances
+present in the data because they have to provide actionable
+information for a larger area~\cite{awad2019}. Third, specialized
+methods such as hyper- or multispectral imaging in the field provide
+fine-grained information about the object of interest but come with
+substantial upfront costs.
+
+To address all of the aforementioned problems, there is a need for an
+installation which is deployable in the field, gathers data using
+readily available hardware and performs computation on the device
+without a connection to a central server. The device should be able to
+visually determine whether the plants in its field of view need water
+or not and output its recommendation.
+
+The aim of this work is to develop a prototype which can be deployed
+in the field to survey plants and recommend watering or not. To this
+end, a machine learning model will be trained to first identify the
+plants in the field of view and then to determine if the plants need
+water or not. The model should be suitable for edge devices equipped
+with a TPU or GPU but with otherwise limited processing
+capabilities. Examples of such systems include Google's Coral
+development board and the Nvidia Jetson series of single-board
+computers (SBCs). The model should make use of state-of-the-art
+algorithms from either classical machine learning or deep
+learning. The literature review will yield an appropriate machine
+learning method. Furthermore, the adaption of existing models
+(transfer learning) for object detection to the domain of plant
+recognition may provide higher performance than would otherwise be
+achievable within the time constraints.
+
+The model will be deployed to the single-board computer and evaluated
+in the field. The evaluation will seek to answer the following
+questions:
+
+\begin{enumerate}
+\item \emph{How well does the model work in theory and how well in
+    practice?}
+
+  We will measure the performance of our model with
+  common metrics such as accuracy, F-score, receiver operating
+  characteristics (ROC) curve, and area under curve (AUC). These
+  measurements will allow comparisons between our model and existing
+  models. We expect the plant detection part of the model to achieve
+  high scores on the test dataset. However, the classification of
+  plants into stressed and non-stressed will likely prove to be more
+  difficult. The model is limited to physiological markers of water
+  stress and thus will have difficulties with plants which do not
+  overtly display such features.
+
+  Even though models may work well in theory, some do not easily
+  transfer to practical applications. It is, therefore, important to
+  examine if the model is suited for productive use in the field. The
+  evaluation will contain a discussion about the model's
+  transferability because theoretical performance does not
+  automatically guarantee real-world performance due to different
+  environmental conditions.
+\item \emph{What are possible reasons for it to work/not work?}
+
+  Even if a model scores high on performance metrics, there might be a
+  mismatch between how researchers think it achieves its goal and how
+  it actually achieves its goal. The results have to be plausible and
+  explainable with its inputs. Otherwise, there can be no confidence
+  in the model's outputs. Conversely, if the model does not work,
+  there must be a reason. We estimate that the curation of the dataset
+  for the training and test phases will play a significant
+  role. Explanations for model out- or underperformance are likely to
+  be found in the structure and composition of the model's inputs.
+\item \emph{What are possible improvements to the system in the
+    future?}
+
+  The previous two questions will yield the data for possible
+  improvements to the model and/or our approach. With the decision to
+  include a plant detection step at the start, we hope to create
+  consistent conditions for the stress classification. A downside to
+  this approach is that errors during detection can be propagated
+  through the system and result in adverse effects to overall
+  performance. Although we estimate this problem to be negligible,
+  additional feedback regarding our approach in this way might offer
+  insight into potential improvements. If the model does not work as
+  well as expected, which changes to the approach will yield a better
+  result? Similarly to the previous question, the answer will likely
+  lie in the dataset. A heavy focus on dataset construction and
+  curation will ensure satisfactory model performance.
+\end{enumerate}
+
+\section{Methodological Approach}
+\label{sec:methods}
+
+The methodological approach consists of the following steps and is
+also shown in Figure~\ref{fig:setup}:
+
+\begin{description}
+\item[Literature Review] The literature review informs the type of
+  machine learning methods which are later applied during the
+  implementation of the prototype.
+\item[Object Detection] Flowers present in the image will be detected
+  using object detection methods. These methods will draw bounding
+  boxes around the objects of interest. The output is fed into the
+  next stage.
+\item[State Classification] The bounded images will be fed to a
+  classifier which will determine whether the plant needs water or
+  not.
+\item[Deployment to SBC] The software prototype will be deployed to
+  the single-board computer in the field.
+\item[Evaluation] The prototype will be evaluated in the field to
+  determine its feasibility and performance. During evaluation the
+  author seeks to provide a basis for answering the research
+  questions.
+\end{description}
+
+\begin{figure}{H}
+  \centering
+  \includegraphics[width=0.8\textwidth]{graphics/setup.pdf}
+  \caption{Setup in the field for water stress classification.}
+  \label{fig:setup}
+\end{figure}
 
 \section{Thesis Structure}
 \label{sec:structure}
 
+The first part of the thesis contains the theoretical basis of the
+models which we use for the prototype. 
+
 \chapter{Theoretical Background}
 \label{chap:background}
 
-\section{Object Detection}
-\label{sec:background-detection}
+Describe the contents of this chapter.
 
-\section{Classification}
-\label{sec:background-classification}
+\begin{itemize}
+\item Related Work. (3 pages)
+\item Description of inner workings of YOLOv7 as the object detection
+  model. (4 pages)
+\item Description of inner workings of ResNet as the classification
+  model. (2 pages)
+\end{itemize}
+
+Estimated 9 pages for this chapter.
 
 \section{Related Work}
 \label{sec:related-work}
 
+The literature on machine learning in agriculture is broadly divided
+into four main areas:~livestock management, soil management, water
+management, and crop management~\cite{benos2021}. Of those four, water
+management only makes up about 10\% of all surveyed papers during the
+years 2018--2020. This highlights the potential for research in this
+area to have a high real-world impact.
+
+\textcite{su2020} used traditional feature extraction and
+pre-processing techniques to train various machine learning models for
+classifying water stress for a wheat field. They took top-down images
+of the field using an unmanned aerial vehicle (UAV), segmented wheat
+pixels from background pixels and constructed features based on
+spectral intensities and color indices. The features are fed into a
+support vector machine (SVM) with a Gaussian kernel and optimized
+using Bayesian optimization. Their results of 92.8\% accuracy show
+that classical machine learning approaches can offer high
+classification scores if meaningful features are chosen. One
+disadvantage is that feature extraction is often a tedious task
+involving trial and error. Advantages are the small dataset and the
+short training time ($\qty{3}{\second}$) required to obtain a good
+result.
+
+Similarly, \textcite{lopez-garcia2022} investigated the potential for
+UAVs to determine water stress for vineyards using RGB and
+multispectral imaging. The measurements of the UAV were taken at
+$\qty{80}{\meter}$ with a common off-the-shelf APS-C sensor. At the
+same time, stem water measurements were taken with a pressure chamber
+to be able to evaluate the performance of an artificial neural network
+(ANN) against the ground truth. The RGB images were used to calculate
+the green canopy cover (GCC) which was also fed to the model as
+input. The model achieves a high determination coefficient $R^{2}$ of
+$0.98$ for the 2018 season on RGB data with a relative error of
+$RE = \qty{10.84}{\percent}$. However, their results do not transfer
+well to the other seasons under survey (2019 and 2020).
+
+\textcite{zhuang2017} showed that water stress in maize can be
+detected early on and, therefore, still provide actionable information
+before the plants succumb to drought. They installed a camera which
+took $640\times480$ pixel RGB images every two hours. A simple linear
+classifier (SVM) segmented the image into foreground and background
+using the green color channel. The authors constructed a
+fourteen-dimensional feature space consisting of color and texture
+features. A gradient boosted decision tree (GBDT) model classified the
+images into water stressed and non-stressed and achieved an accuracy
+of $\qty{90.39}{\percent}$. Remarkably, the classification was not
+significantly impacted by illumination changes throughout the day.
+
+\textcite{an2019} used the ResNet50 model as a basis for transfer
+learning and achieved high classification scores (ca. 95\%) on
+maize. Their model was fed with $640\times480$ pixel images of maize
+from three different viewpoints and across three different growth
+phases. The images were converted to grayscale which turned out to
+slightly lower classification accuracy. Their results also highlight
+the superiority of deep convolutional neural networks (DCNNs) compared
+to manual feature extraction and gradient boosted decision trees
+(GBDTs).
+
+\textcite{chandel2021} investigated deep learning models in depth by
+comparing three well-known CNNs. The models under scrutiny were
+AlexNet, GoogLeNet, and Inception V3. Each model was trained with a
+dataset containing images of maize, okra, and soybean at different
+stages of growth and under stress and no stress. The researchers did
+not include an object detection step before image classification and
+compiled a fairly small dataset of 1200 images. Of the three models,
+GoogLeNet beat the other two with a sizable lead at a classification
+accuracy of >94\% for all three types of crop. The authors attribute
+its success to its inherently deeper structure and application of
+multiple convolutional layers at different stages. Unfortunately, all
+of the images were taken at the same $\ang{45}\pm\ang{5}$ angle and it
+stands to reason that the models would perform significantly worse on
+images taken under different conditions.
+
+\textcite{ramos-giraldo2020} detected water stress in soybean and corn
+crops with a pretrained model based on DenseNet-121. Low-cost cameras
+deployed in the field provided the training data over a 70-day
+period. They achieved a classification accuracy for the degree of
+wilting of 88\%.
+
+In a later study, the same authors~\cite{ramos-giraldo2020a} deployed
+their machine learning model in the field to test it for production
+use. They installed multiple Raspberry Pis with attached Raspberry Pi
+Cameras which took images in $\qty{30}{\minute}$ intervals. The
+authors had difficulties with cameras not working and power supply
+issues. Furthermore, running the model on the resource-constrained
+RPis proved difficult and they had to port their TensorFlow model to a
+TensorFlow Lite model. This conversion lowered their classification
+scores slightly since it was sometimes off by one water stress
+level. Nevertheless, their architecture allowed for reasonably high
+classification scores on corn and soybean with a low-cost setup.
+
+\textcite{azimi2020} demonstrate the efficacy of deep learning models
+versus classical machine learning models on chickpea plants. The
+authors created their own dataset in a laboratory setting for stressed
+and non-stressed plants. They acquired 8000 images at eight different
+angles in total. For the classical machine learning models, they
+extracted feature vectors using scale-invariant feature transform
+(SIFT) and histogram of oriented gradients (HOG). The features are fed
+into three classical machine learning models: support vector machine
+(SVM), k-nearest neighbors (KNN), and a decision tree (DT) using the
+classification and regression (CART) algorithm. On the deep learning
+side, they used their own CNN architecture and the pre-trained
+ResNet-18 model. The accuracy scores for the classical models was in
+the range of $\qty{60}{\percent}$ to $\qty{73}{\percent}$ with the SVM
+outperforming the two others. The CNN achieved higher scores at
+$\qty{72}{\percent}$ to $\qty{78}{\percent}$ and ResNet-18 achieved
+the highest scores at $\qty{82}{\percent}$ to
+$\qty{86}{\percent}$. The results clearly show the superiority of deep
+learning over classical machine learning. A downside of their approach
+lies in the collection of the images. The background in all images was
+uniformly white and the plants were prominently placed in the
+center. It should, therefore, not be assumed that the same
+classification scores can be achieved on plants in the field with
+messy and noisy backgrounds as well as illumination changes and so
+forth.
+
+A significant problem in the detection of water stress is posed by the
+evolution of indicators across time. Since physiological features such
+as leaf wilting progress as time passes, the additional time domain
+has to be taken into account. To make use of these spatiotemporal
+patterns, \textcite{azimi2021} propose the application of a CNN-long
+short-term memory (CNN-LSTM) architecture. The model was trained on
+chickpea plants and achieves a robust classification accuracy of
+>97\%.
+
+All of the previously mentioned studies solely focus on either one
+specific type of plant or on a small number of them. Furthermore, the
+researchers construct their datasets in homogeneous environments which
+often do not mimic real-world conditions. Finally, there exist no
+studies on common household or garden plants. This fact may be
+attributed to the propensity for funding to come from the agricultural
+sector. It is thus desirable to explore how plants other than crops
+show water stress and if there is additional information to be gained
+from them.
+
+\section{Object Detection}
+\label{sec:background-detection}
+
+Describe the inner workings of the YOLOv7 model structure. Reference
+the original paper~\cite{wang2022} and possibly papers of previous
+versions of the same model (YOLOv5~\cite{jocher2022},
+YOLOv4~\cite{bochkovskiy2020}).
+
+Estimated 4 pages for this section.
+
+\section{Classification}
+\label{sec:background-classification}
+
+Describe the inner workings of the ResNet model structure. Reference
+the original paper~\cite{he2016}.
+
+Estimated 2 pages for this section.
+
 \chapter{Prototype Development}
 \label{chap:development}
+
+Describe the architecture of the prototype regarding the overall
+design, how the object detection model was trained and tuned, and do
+the same for the classifier. Also describe the shape and contents of
+the training sets.
 
 \section{Object Detection}
 \label{sec:development-detection}
 
+Describe how the object detection model was trained, what the training
+set looks like and which complications arose during training as well
+as fine-tuning.
+
 \section{Classification}
 \label{sec:Classification}
+
+Describe how the classification model was trained, what the training
+set looks like and which complications arose during training as well
+as fine-tuning.
+
+\section{Deployment}
+
+Describe the Jetson Nano, how the model is deployed to the device and
+how it reports its results.
 
 \chapter{Results}
 \label{chap:results}
