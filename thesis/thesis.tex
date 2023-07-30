@@ -47,6 +47,8 @@
 \nonzeroparskip             % Create space between paragraphs (optional).
 \setlength{\parindent}{0pt} % Remove paragraph identation (optional).
 
+\setcounter{tocdepth}{3}
+
 \makeindex      % Use an optional index.
 \makeglossaries % Use an optional glossary.
 %\glstocfalse   % Remove the glossaries from the table of contents.
@@ -117,18 +119,45 @@
 % Switch to arabic numbering and start the enumeration of chapters in the table of content.
 \mainmatter
 
-% \chapter{Introduction}
-% \todo{Enter your text here.}
+\chapter{Introduction}
+\label{chap:introduction}
 
-\chapter{Evaluation}
+\section{Motivation and Problem Statement}
+\label{sec:motivation}
+
+\section{Thesis Structure}
+\label{sec:structure}
+
+\chapter{Theoretical Background}
+\label{chap:background}
+
+\section{Object Detection}
+\label{sec:background-detection}
+
+\section{Classification}
+\label{sec:background-classification}
+
+\section{Related Work}
+\label{sec:related-work}
+
+\chapter{Prototype Development}
+\label{chap:development}
+
+\section{Object Detection}
+\label{sec:development-detection}
+
+\section{Classification}
+\label{sec:Classification}
+
+\chapter{Results}
+\label{chap:results}
 
 The following sections contain a detailed evaluation of the model in
 various scenarios. First, we present metrics from the training phases
 of the constituent models. Second, we employ methods from the field of
 \gls{xai} such as \gls{grad-cam} to get a better understanding of the
 models' abstractions. Finally, we turn to the models' aggregate
-performance on the test set and discuss whether the initial goals set
-by the problem description have been met or not.
+performance on the test set.
 
 \section{Object Detection}
 \label{sec:yolo-eval}
@@ -149,7 +178,7 @@ consists of 91479 images with a roughly 85/5/10 split for training,
 validation and testing, respectively.
 
 \subsection{Training Phase}
-\label{ssec:yolo-training-phase}
+\label{ssec:yolo-training}
 
 The object detection model was trained for 300 epochs on 79204 images
 with 284130 ground truth labels. The weights from the best-performing
@@ -240,7 +269,7 @@ before overfitting occurs.
 \end{figure}
 
 \subsection{Test Phase}
-\label{ssec:yolo-test-phase}
+\label{ssec:yolo-test}
 
 Of the 91479 images around 10\% were used for the test phase. These
 images contain a total of 12238 ground truth
@@ -337,11 +366,10 @@ Figure~\ref{fig:hyp-opt-fitness} shows the model's fitness during
 training for each epoch. After the highest fitness of 0.6172 at epoch
 27, the performance quickly declines and shows that further training
 would likely not yield improved results. The model converges to its
-highest fitness much earlier than the non-optimized version discussed
-in section~\ref{ssec:yolo-training-phase}, which indicates that the
-adjusted parameters provide a better starting point in general.
-Furthermore, the maximum fitness is 0.74\% higher than in the
-non-optimized version.
+highest fitness much earlier than the non-optimized version, which
+indicates that the adjusted parameters provide a better starting point
+in general. Furthermore, the maximum fitness is 0.74\% higher than in
+the non-optimized version.
 
 \begin{figure}
   \centering
@@ -426,7 +454,7 @@ is lower by 1.8\%.
 \end{figure}
 
 \section{Classification}
-\label{sec:resnet-eval}
+\label{sec:classifier-eval}
 
 The classifier receives cutouts from the object detection model and
 determines whether the image shows a stressed plant or not. To achieve
@@ -448,7 +476,7 @@ regarding training and inference time as well as required space. The
 50 layer architecture (\gls{resnet}50) is adequate for our use case.
 
 \subsection{Training Phase}
-\label{ssec:resnet-training-phase}
+\label{ssec:classifier-training}
 
 The dataset was split 85/15 into training and validation sets. The
 images in the training set were augmented with a random crop to arrive
@@ -481,15 +509,15 @@ feature extraction capabilities.
 \end{figure}
 
 \subsection{Hyper-parameter Optimization}
-\label{ssec:resnet-hyp-opt}
+\label{ssec:classifier-hyp-opt}
 
 In order to improve the aforementioned accuracy values, we perform
 hyper-parameter optimization across a wide range of
-parameters. Table~\ref{tab:resnet-hyps} lists the hyper-parameters and
-their possible values. Since the number of all combinations of values
-is 11520 and each combination is trained for 10 epochs with a training
-time of approximately six minutes per combination, exhausting the
-search space would take 48 days. Due to time limitations, we have
+parameters. Table~\ref{tab:classifier-hyps} lists the hyper-parameters
+and their possible values. Since the number of all combinations of
+values is 11520 and each combination is trained for 10 epochs with a
+training time of approximately six minutes per combination, exhausting
+the search space would take 48 days. Due to time limitations, we have
 chosen to not search exhaustively but to pick random combinations
 instead. Random search works surprisingly well---especially compared to
 grid search---in a number of domains, one of which is hyper-parameter
@@ -513,13 +541,13 @@ optimization~\cite{bergstra2012}.
   \end{tabular}
   \caption{Hyper-parameters and their possible values during
     optimization.}
-  \label{tab:resnet-hyps}
+  \label{tab:classifier-hyps}
 \end{table}
 
 The random search was run for 138 iterations which equates to a 75\%
 probability that the best solution lies within 1\% of the theoretical
-maximum~\eqref{eq:opt-prob}. Figure~\ref{fig:resnet-hyp-results} shows
-three of the eight parameters and their impact on a high
+maximum~\eqref{eq:opt-prob}. Figure~\ref{fig:classifier-hyp-results}
+shows three of the eight parameters and their impact on a high
 F1-score. \gls{sgd} has less variation in its results than
 Adam~\cite{kingma2017} and manages to provide eight out of the ten
 best results. The number of epochs to train for was chosen based on
@@ -549,10 +577,10 @@ figure~\ref{fig:classifier-training-metrics}.
     produced the best iteration with an F1-score of 0.9783. Adam tends
     to require more customization of its parameters than \gls{sgd} to
     achieve good results.}
-  \label{fig:resnet-hyp-results}
+  \label{fig:classifier-hyp-results}
 \end{figure}
 
-Table~\ref{tab:resnet-final-hyps} lists the final hyper-parameters
+Table~\ref{tab:classifier-final-hyps} lists the final hyper-parameters
 which were chosen to train the improved model. In order to confirm
 that the model does not suffer from overfitting or is a product of
 chance due to a coincidentally advantageous train/test split, we
@@ -579,10 +607,10 @@ is robust against variations in the training set.
   \end{tabular}
   \caption[Hyper-parameters for the optimized classifier.]{Chosen
     hyper-parameters for the final, improved model. The difference to
-    the parameters listed in Table~\ref{tab:resnet-hyps} comes as a
-    result of choosing \gls{sgd} over Adam. The missing four
+    the parameters listed in Table~\ref{tab:classifier-hyps} comes as
+    a result of choosing \gls{sgd} over Adam. The missing four
     parameters are only required for Adam and not \gls{sgd}.}
-  \label{tab:resnet-final-hyps}
+  \label{tab:classifier-final-hyps}
 \end{table}
 
 \begin{figure}
@@ -636,7 +664,7 @@ F1-score of 1 on the training set.
 
 
 \subsection{Class Activation Maps}
-\label{ssec:resnet-cam}
+\label{ssec:classifier-cam}
 
 Neural networks are notorious for their black-box behavior, where it
 is possible to observe the inputs and the corresponding outputs, but
@@ -666,7 +694,7 @@ become progressively worse as we move to earlier convolutional layers
 as they have smaller receptive fields and only focus on less semantic
 local features.''~\cite[p.5]{selvaraju2020}
 
-Turning to our classifier, figure~\ref{fig:resnet-cam} shows the
+Turning to our classifier, figure~\ref{fig:classifier-cam} shows the
 \glspl{cam} for \emph{healthy} and \emph{stressed}. While the regions
 of interest for the \emph{healthy} class lie on the healthy plant, the
 \emph{stressed} plant is barely considered and mostly rendered as
@@ -675,8 +703,8 @@ inputs to the \emph{stressed} classification, the regions of interest
 predominantly stay on the thirsty as opposed to the healthy plant. In
 fact, the large hanging leaves play a significant role in determining
 the class the image belongs to. This is an additional data point
-confirming that the model focuses on the \emph{right} parts of the
-image during classification.
+confirming that the model focuses on the semantically meaningful parts
+of the image during classification.
 
 \begin{figure}
   \centering
@@ -691,7 +719,7 @@ image during classification.
     class. The classifier focuses on the hanging leaves of the thirsty
     plant. The image was classified as \emph{stressed} with a
     confidence of 70\%.}
-  \label{fig:resnet-cam}
+  \label{fig:classifier-cam}
 \end{figure}
 
 
@@ -727,20 +755,23 @@ the labels allowed to include more images in the test set because they
 could be labeled more easily. Additionally, going over the detections
 and classifications provided a comprehensive view on how the models
 work and what their weaknesses and strengths are. After the labels
-have been corrected, the ground truth of the test set contains 662
-bounding boxes of healthy plants and 488 of stressed plants.
+have been corrected, the ground truth of the test set contains 766
+bounding boxes of healthy plants and 494 of stressed plants.
+
+\subsection{Non-optimized Model}
+\label{ssec:model-non-optimized}
 
 \begin{table}
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  Precision &  Recall &  F1-score &  Support \\
+    {} &  precision &  recall &  f1-score &  support \\
     \midrule
-    Healthy      &      0.824 &   0.745 &     0.783 &    662.0 \\
-    Stressed     &      0.707 &   0.783 &     0.743 &    488.0 \\
-    micro avg    &      0.769 &   0.761 &     0.765 &   1150.0 \\
-    macro avg    &      0.766 &   0.764 &     0.763 &   1150.0 \\
-    weighted avg &      0.775 &   0.761 &     0.766 &   1150.0 \\
+    Healthy      &      0.665 &   0.554 &     0.604 &    766 \\
+    Stressed     &      0.639 &   0.502 &     0.562 &    494 \\
+    micro avg    &      0.655 &   0.533 &     0.588 &   1260 \\
+    macro avg    &      0.652 &   0.528 &     0.583 &   1260 \\
+    weighted avg &      0.655 &   0.533 &     0.588 &   1260 \\
     \bottomrule
   \end{tabular}
   \caption{Precision, recall and F1-score for the aggregate model.}
@@ -748,41 +779,39 @@ bounding boxes of healthy plants and 488 of stressed plants.
 \end{table}
 
 Table~\ref{tab:model-metrics} shows precision, recall and the F1-score
-for both classes \emph{Healthy} and \emph{Stressed}. Both precision
-and recall are balanced and the F1-score is high. Unfortunately, these
-values do not take the accuracy of bounding boxes into account and
-thus have only limited expressive power.
+for both classes \emph{Healthy} and \emph{Stressed}. Precision is
+higher than recall for both classes and the F1-score is at
+0.59. Unfortunately, these values do not take the accuracy of bounding
+boxes into account and thus have only limited expressive power.
 
 Figure~\ref{fig:aggregate-ap} shows the precision and recall curves
 for both classes at different \gls{iou} thresholds. The left plot
 shows the \gls{ap} for each class at the threshold of 0.5 and the
-right one at 0.95. The \gls{map} is 0.6226 and calculated across all
+right one at 0.95. The \gls{map} is 0.3581 and calculated across all
 classes as the median of the \gls{iou} thresholds from 0.5 to 0.95 in
-0.05 steps. The difference between \gls{map}@0.5 and \gls{map}@0.95 is
-fairly small which indicates that the bounding boxes encapsulate the
-objects of interest well. The cliffs at around 0.77 (left) and 0.7
-(right) happen at a detection threshold of 0.5. The classifier's last
-layer is a softmax layer which necessarily transforms the input into a
-probability of showing either a healthy or stressed plant. If the
-probability of an image showing a healthy plant is below 0.5, it is no
-longer classified as healthy but as stressed. The threshold for
-discriminating the two classes lies at the 0.5 value and is therefore
-the cutoff for either class.
+0.05 steps. The cliffs at around 0.6 (left) and 0.3 (right) happen at
+a detection threshold of 0.5. The classifier's last layer is a softmax
+layer which necessarily transforms the input into a probability of
+showing either a healthy or stressed plant. If the probability of an
+image showing a healthy plant is below 0.5, it is no longer classified
+as healthy but as stressed. The threshold for discriminating the two
+classes lies at the 0.5 value and is therefore the cutoff for either
+class.
 
 \begin{figure}
   \centering
-  \includegraphics{graphics/APmodel.pdf}
+  \includegraphics{graphics/APmodel-model-optimized-relabeled.pdf}
   \caption[Aggregate model AP@0.5 and AP@0.95.]{Precision-recall
     curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
     specific threshold is defined as the area under the
     precision-recall curve of that threshold. The \gls{map} across
     \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
-    \textsf{mAP}@0.5:0.95 is 0.6226.}
+    \textsf{mAP}@0.5:0.95 is 0.3581.}
   \label{fig:aggregate-ap}
 \end{figure}
 
-\subsection{Hyper-parameter Optimization}
-\label{ssec:model-hyp-opt}
+\subsection{Optimized Model}
+\label{ssec:model-optimized}
 
 So far the metrics shown in table~\ref{tab:model-metrics} are obtained
 with the non-optimized versions of both the object detection and
@@ -790,7 +819,7 @@ classification model. Hyper-parameter optimization of the classifier
 led to significant model improvements, while the object detector has
 improved precision but lower recall and slightly lower \gls{map}
 values. To evaluate the final aggregate model which consists of the
-individual optimized models, we run the same test as in
+individual optimized models, we run the same test described in
 section~\ref{sec:aggregate-model}.
 
 \begin{table}
@@ -799,11 +828,11 @@ section~\ref{sec:aggregate-model}.
     \toprule
     {} &  precision &  recall &  f1-score &  support \\
     \midrule
-    Healthy      &      0.664 &   0.640 &     0.652 &    662.0 \\
-    Stressed     &      0.680 &   0.539 &     0.601 &    488.0 \\
-    micro avg    &      0.670 &   0.597 &     0.631 &   1150.0 \\
-    macro avg    &      0.672 &   0.590 &     0.626 &   1150.0 \\
-    weighted avg &      0.670 &   0.597 &     0.630 &   1150.0 \\
+    Healthy      &      0.711 &   0.555 &     0.623 &    766 \\
+    Stressed     &      0.570 &   0.623 &     0.596 &    494 \\
+    micro avg    &      0.644 &   0.582 &     0.611 &   1260 \\
+    macro avg    &      0.641 &   0.589 &     0.609 &   1260 \\
+    weighted avg &      0.656 &   0.582 &     0.612 &   1260 \\
     \bottomrule
   \end{tabular}
   \caption{Precision, recall and F1-score for the optimized aggregate
@@ -813,63 +842,38 @@ section~\ref{sec:aggregate-model}.
 
 Table~\ref{tab:model-metrics-hyp} shows precision, recall and F1-score
 for the optimized model on the same test dataset of 640 images. All of
-the metrics are significantly worse than for the non-optimized
-model. Considering that the optimized classifier performs better than
-the non-optimized version this is a surprising result. There are
-multiple possible explanations for this behavior:
-
-\begin{enumerate}
-\item The optimized classifier has worse generalizability than the
-  non-optimized version.
-\item The small difference in the \gls{map} values for the object
-  detection model result in significantly higher error rates
-  overall. This might be the case because a large number of plants is
-  not detected in the first place and/or those which are detected are
-  more often not classified correctly by the classifier. As mentioned
-  in section~\ref{ssec:yolo-hyp-opt}, running the evolution of the
-  hyper-parameters for more generations could better the performance
-  overall.
-\item The test dataset is tailored to the non-optimized version and
-  does not provide an accurate measure of real-world performance. The
-  test dataset was labeled by running the individual models on the
-  images and taking the predicted bounding boxes and labels as a
-  starting point for the labeling process. If the labels were not
-  rigorously corrected, the dataset will allow the non-optimized model
-  to achieve high scores because the labels are already in line with
-  what it predicts. Conversely, the optimized model might get closer
-  to the actual ground truth, but that truth is not what is specified
-  by the labels to begin with. If that is the case, the evaluation of
-  the non-optimized model is too favorably and should be corrected
-  down.
-\end{enumerate}
-
-Of these three possibilities, the second and third points are the most
-likely culprits. The first scenario is unlikely because the optimized
-classifier has been evaluated in a cross validation setting and the
-results do not lend themselves easily to such an
-interpretation. Dealing with the second scenario could allow the
-object detection model to perform better on its own, but would
-probably not explain the big difference in performance. Scenario three
-is the most likely one because the process of creating the test
-dataset can lead to favorable labels for the non-optimized model.
+the metrics are better for the optimized model. In particular,
+precision for the healthy class could be improved significantly while
+recall remains at the same level. This results in a better F1-score
+for the healthy class. Precision for the stressed class is lower with
+the optimized model, but recall is significantly higher (0.502
+vs. 0.623). The higher recall results in a 3\% gain for the F1-score
+in the stressed class. Overall, precision is the same but recall has
+improved significantly, which also results in a noticeable improvement
+for the average F1-score across both classes.
 
 \begin{figure}
   \centering
-  \includegraphics{graphics/APmodel-final.pdf}
+  \includegraphics{graphics/APModel-model-original-relabeled.pdf}
   \caption[Optimized aggregate model AP@0.5 and
   AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
     and 0.95. The \gls{ap} of a specific threshold is defined as the
     area under the precision-recall curve of that threshold. The
     \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
-    steps \textsf{mAP}@0.5:0.95 is 0.4426.}
+    steps \textsf{mAP}@0.5:0.95 is 0.3838.}
   \label{fig:aggregate-ap-hyp}
 \end{figure}
 
-Figure~\ref{fig:aggregate-ap-hyp} confirms the suspicions raised by
-the lower metrics from table~\ref{tab:model-metrics-hyp}. More
-iterations for the evolution of the object detection model would
-likely have a significant effect on \gls{iou} and the confidence
-values associated with the bounding boxes.
+Figure~\ref{fig:aggregate-ap-hyp} confirms the performance increase of
+the optimized model established in
+table~\ref{tab:model-metrics-hyp}. The \textsf{mAP}@0.5 is higher for
+both classes, indicating that the model better detects plants in
+general. The \textsf{mAP}@0.95 is slightly lower for the healthy
+class, which means that the confidence for the healthy class is
+slightly lower compared to the non-optimized model. The result is that
+more plants are correctly detected and classified overall, but the
+confidence scores tend to be lower with the optimized model. The
+\textsf{mAP}@0.5:0.95 could be improved by about 0.025.
 
 \backmatter
 
@@ -898,4 +902,7 @@ values associated with the bounding boxes.
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: "thesis"
 %%% End:
