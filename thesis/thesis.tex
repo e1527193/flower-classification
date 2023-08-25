@@ -294,14 +294,62 @@ improvements.
 Describe the contents of this chapter.
 
 \begin{itemize}
-\item Related Work. (3 pages)
-\item Description of inner workings of YOLOv7 as the object detection
-  model. (4 pages)
-\item Description of inner workings of ResNet as the classification
-  model. (2 pages)
+\item Introduction to Object Detection, short ``history'' of methods,
+  region-based vs. single-shot, YOLOv7 structure and successive
+  improvements of previous versions. (10 pages)
+\item Introduction to Image Classification, short ``history'' of
+  methods, CNNs, problems with deeper network structures (vanishing
+  gradients, computational cost), methods to alleviate these problems
+  (alternative activation functions, normalization, residual
+  connections, different kernel sizes). (10 pages)
+\item Related Work. Add more approaches and cross-reference the used
+  networks with the theoretical sections on object detection and image
+  classification. (6 pages)
 \end{itemize}
 
-Estimated 9 pages for this chapter.
+Estimated 26 pages for this chapter.
+
+\section{Object Detection}
+\label{sec:background-detection}
+
+Give a definition of object detection and contrast it with instance
+segmentation/other detection tasks. Briefly mention how object
+detection was done before deep neural networks (feature-based methods
+(HOG, SIFT) and sliding window methods (Viola-Jones)). Go over the
+different approaches to object detection, namely region-based methods
+(Mask R-CNN and Faster R-CNN) and single-shot detection. Illustrate
+the approach region-based methods take and discuss problems arising
+from said approach (e.g. Dual-Priorities, multiple image passes and
+slow selective search algorithms for region proposals). Contrast the
+previous region-based methods with newer single-shot detectors such as
+YOLO and SSDnet. Describe the inner workings of the YOLOv7 model
+structure and contrast it with previous versions. What has changed and
+how did these improvements manifest themselves? Reference the original
+paper~\cite{wang2022} and papers of previous versions of the same
+model (YOLOv5~\cite{jocher2022}, YOLOv4~\cite{bochkovskiy2020}).
+
+Estimated 10 pages for this section.
+
+\section{Classification}
+\label{sec:background-classification}
+
+Give a definition of image classification and briefly mention the way
+in which classification was done before the advent of CNNs. Introduce
+CNNs, their overall design, and why a kernel-based approach allows
+two-dimensional data such as images to be efficiently processed. Give
+an introduction to SOTA classifiers before ResNet (AlexNet, VGGnet
+Inception/GoogLeNet), the prevailing opinion of \emph{going deeper}
+(stacking more layers) and the limit of said approach
+(\emph{Degradation Problem}) due to \emph{Vanishing
+Gradients}. Explain ways to deal with the vanishing gradients problem
+by using different activation functions other than Sigmoid (ReLU and
+leaky ReLU) as well as normalization techniques and residual
+connections. Introduce the approach of the \emph{ResNet} networks
+which implement residual connections to allow deeper layers. Describe
+the inner workings of the ResNet model structure. Reference the
+original paper~\cite{he2016}.
+
+Estimated 10 pages for this section.
 
 \section{Related Work}
 \label{sec:related-work}
@@ -439,24 +487,6 @@ attributed to the propensity for funding to come from the agricultural
 sector. It is thus desirable to explore how plants other than crops
 show water stress and if there is additional information to be gained
 from them.
-
-\section{Object Detection}
-\label{sec:background-detection}
-
-Describe the inner workings of the YOLOv7 model structure. Reference
-the original paper~\cite{wang2022} and possibly papers of previous
-versions of the same model (YOLOv5~\cite{jocher2022},
-YOLOv4~\cite{bochkovskiy2020}).
-
-Estimated 4 pages for this section.
-
-\section{Classification}
-\label{sec:background-classification}
-
-Describe the inner workings of the ResNet model structure. Reference
-the original paper~\cite{he2016}.
-
-Estimated 2 pages for this section.
 
 \chapter{Prototype Development}
 \label{chap:development}
