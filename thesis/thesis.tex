@@ -140,34 +140,38 @@ fields and gardens with drones or stationary cameras to determine soil
 and plant condition as well as when to water or
 fertilize~\cite{ramos-giraldo2020}. Machine learning models play an
 important role in that process because they allow automated
-decision-making in real time.
+decision-making in real time. While machine learning has been used in
+large-scale agriculture, it is also a valuable tool for household
+plants and gardens. By using machine learning to monitor and analyze
+plant conditions, homeowners can optimize their plant care and ensure
+their plants are healthy and thriving.
 
 \section{Motivation and Problem Statement}
 \label{sec:motivation}
 
-The challenges to implement an automated system are numerous. First,
-gathering data in the field requires a network of sensors which are
-linked to a central server for processing. Since communication between
-sensors is difficult without proper infrastructure, there is a high
-demand for processing the data on the sensor
-itself~\cite{mcenroe2022}. Second, differences in local soil, plant
-and weather conditions require models to be optimized for these
+The challenges to implement an automated system for plant surveying
+are numerous. First, gathering data in the field requires a network of
+sensors which are linked to a central server for processing. Since
+communication between sensors is difficult without proper
+infrastructure, there is a high demand for processing the data on the
+sensor itself~\cite{mcenroe2022}. Second, differences in local soil,
+plant and weather conditions require models to be optimized for these
 diverse inputs. Centrally trained models often lose the nuances
 present in the data because they have to provide actionable
 information for a larger area~\cite{awad2019}. Third, specialized
 methods such as hyper- or multispectral imaging in the field provide
 fine-grained information about the object of interest but come with
-substantial upfront costs.
+substantial upfront costs and are of limited interest for gardeners.
 
 To address all of the aforementioned problems, there is a need for an
-installation which is deployable in the field, gathers data using
+installation which is deployable by homeowners, gathers data using
 readily available hardware and performs computation on the device
 without a connection to a central server. The device should be able to
 visually determine whether the plants in its field of view need water
 or not and output its recommendation.
 
 The aim of this work is to develop a prototype which can be deployed
-in the field to survey plants and recommend watering or not. To this
+by gardeners to survey plants and recommend watering or not. To this
 end, a machine learning model will be trained to first identify the
 plants in the field of view and then to determine if the plants need
 water or not. The model should be suitable for edge devices equipped
@@ -183,23 +187,22 @@ recognition may provide higher performance than would otherwise be
 achievable within the time constraints.
 
 The model will be deployed to the single-board computer and evaluated
-in the field. The evaluation will seek to answer the following
-questions:
+using established and well-known metrics from the field of machine
+learning. The evaluation will seek to answer the following questions:
 
 \begin{enumerate}
 \item \emph{How well does the model work in theory and how well in
     practice?}
 
-  We will measure the performance of our model with
-  common metrics such as accuracy, F-score, receiver operating
-  characteristics (ROC) curve, and area under curve (AUC). These
-  measurements will allow comparisons between our model and existing
-  models. We expect the plant detection part of the model to achieve
-  high scores on the test dataset. However, the classification of
-  plants into stressed and non-stressed will likely prove to be more
-  difficult. The model is limited to physiological markers of water
-  stress and thus will have difficulties with plants which do not
-  overtly display such features.
+  We will measure the performance of our model with common metrics
+  such as accuracy, F-score, \gls{roc} curve, \gls{auc}, \gls{iou} and
+  various \gls{map} measures. These measurements will allow
+  comparisons between our model and existing models. We expect the
+  plant detection part of the model to achieve high scores on the test
+  dataset. However, the classification of plants into stressed and
+  non-stressed will likely prove to be more difficult. The model is
+  limited to physiological markers of water stress and thus will have
+  difficulties with plants which do not overtly display such features.
 
   Even though models may work well in theory, some do not easily
   transfer to practical applications. It is, therefore, important to
@@ -255,11 +258,10 @@ also shown in Figure~\ref{fig:setup}:
   classifier which will determine whether the plant needs water or
   not.
 \item[Deployment to SBC] The software prototype will be deployed to
-  the single-board computer in the field.
-\item[Evaluation] The prototype will be evaluated in the field to
-  determine its feasibility and performance. During evaluation the
-  author seeks to provide a basis for answering the research
-  questions.
+  the single-board computer.
+\item[Evaluation] The prototype will be evaluated to determine its
+  feasibility and performance. During evaluation the author seeks to
+  provide a basis for answering the research questions.
 \end{description}
 
 \begin{figure}{H}
