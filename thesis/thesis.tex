@@ -243,8 +243,7 @@ learning. The evaluation will seek to answer the following questions:
 \section{Methodological Approach}
 \label{sec:methods}
 
-The methodological approach consists of the following steps and is
-also shown in Figure~\ref{fig:setup}:
+The methodological approach consists of the following steps:
 
 \begin{description}
 \item[Literature Review] The literature review informs the type of
@@ -264,29 +263,26 @@ also shown in Figure~\ref{fig:setup}:
   provide a basis for answering the research questions.
 \end{description}
 
-\begin{figure}{H}
-  \centering
-  \includegraphics[width=0.8\textwidth]{graphics/setup.pdf}
-  \caption{Setup in the field for water stress classification.}
-  \label{fig:setup}
-\end{figure}
+Additionally, go into detail about how the literature was selected to
+be relevant for the decisions underlying the choice of
+models/algorithms. Mention how literature in general was found (search
+terms, platforms, etc.).
 
 \section{Thesis Structure}
 \label{sec:structure}
 
 The first part of the thesis (chapter~\ref{chap:background}) contains
 the theoretical basis of the models which we use for the
-prototype. Chapter~\ref{chap:development} goes into detail about the
-design of the prototype, the construction of the training/test sets
-and how the prototype reports its results via its REST
-API. Chapter~\ref{chap:results} shows the results of the testing
-phases as well as the performance of the aggregate model. In
-chapter~\ref{chap:discussion} the results are compared with
-expectations and it is discussed whether they are explainable in the
-context of the task at hand as well as benchmark results from other
-datasets (COCO). Chapter~\ref{chap:conclusion} concludes the thesis
-with an outlook on further research questions and possible
-improvements.
+prototype. Chapter~\ref{chap:design} goes into detail about the design
+of the prototype, the construction of the training/test sets and how
+the prototype reports its results via its REST
+API. Chapter~\ref{chap:evaluation} shows the results of the testing
+phases as well as the performance of the aggregate model. Futhermore,
+the results are compared with the expectations and it is discussed
+whether they are explainable in the context of the task at hand as
+well as benchmark results from other datasets
+(COCO). Chapter~\ref{chap:conclusion} concludes the thesis with an
+outlook on further research questions and possible improvements.
 
 \chapter{Theoretical Background}
 \label{chap:background}
@@ -296,18 +292,26 @@ Describe the contents of this chapter.
 \begin{itemize}
 \item Introduction to Object Detection, short ``history'' of methods,
   region-based vs. single-shot, YOLOv7 structure and successive
-  improvements of previous versions. (10 pages)
+  improvements of previous versions. (8 pages)
 \item Introduction to Image Classification, short ``history'' of
   methods, CNNs, problems with deeper network structures (vanishing
   gradients, computational cost), methods to alleviate these problems
   (alternative activation functions, normalization, residual
   connections, different kernel sizes). (10 pages)
+\item Introduction into transfer learning, why do it and how can one
+  do it? Compare fine-tuning just the last layers vs. fine-tuning all
+  of them. What are the advantages/disadvantages of transfer learning?
+  (2 pages)
+\item Introduction to hyperparameter optimization. Which methods exist
+  and what are their advantages/disadvantages? Discuss the ones used
+  in this thesis in detail (random search and evolutionary
+  optimization). (3 pages)
 \item Related Work. Add more approaches and cross-reference the used
   networks with the theoretical sections on object detection and image
   classification. (6 pages)
 \end{itemize}
 
-Estimated 26 pages for this chapter.
+Estimated 25 pages for this chapter.
 
 \section{Object Detection}
 \label{sec:background-detection}
@@ -322,13 +326,9 @@ the approach region-based methods take and discuss problems arising
 from said approach (e.g. Dual-Priorities, multiple image passes and
 slow selective search algorithms for region proposals). Contrast the
 previous region-based methods with newer single-shot detectors such as
-YOLO and SSDnet. Describe the inner workings of the YOLOv7 model
-structure and contrast it with previous versions. What has changed and
-how did these improvements manifest themselves? Reference the original
-paper~\cite{wang2022} and papers of previous versions of the same
-model (YOLOv5~\cite{jocher2022}, YOLOv4~\cite{bochkovskiy2020}).
+YOLO and SSDnet. 
 
-Estimated 10 pages for this section.
+Estimated 8 pages for this section.
 
 \section{Classification}
 \label{sec:background-classification}
@@ -344,12 +344,31 @@ Inception/GoogLeNet), the prevailing opinion of \emph{going deeper}
 Gradients}. Explain ways to deal with the vanishing gradients problem
 by using different activation functions other than Sigmoid (ReLU and
 leaky ReLU) as well as normalization techniques and residual
-connections. Introduce the approach of the \emph{ResNet} networks
-which implement residual connections to allow deeper layers. Describe
-the inner workings of the ResNet model structure. Reference the
-original paper~\cite{he2016}.
+connections. 
 
-Estimated 10 pages for this section.
+Estimated 8 pages for this section.
+
+\section{Transfer Learning}
+\label{sec:background-transfer-learning}
+
+Give a definition of transfer learning and explain how it is
+done. Compare fine-tuning just the last layers vs. propagating changes
+through the whole network. What are advantages to transfer learning?
+Are there any disadvantages?
+
+Estimated 2 pages for this section.
+
+\section{Hyperparameter Optimization}
+\label{sec:background-hypopt}
+
+Give a definition of hyperparameter optimization, why it is done and
+which improvements can be expected. Mention the possible approaches
+(grid search, random search, bayesian optimization, gradient-based
+optimization, evolutionary optimization) and discuss the used ones
+(random search (classifier) and evolutionary optimization (object
+detector) in detail.
+
+Estimated 3 pages for this section.
 
 \section{Related Work}
 \label{sec:related-work}
@@ -488,79 +507,129 @@ sector. It is thus desirable to explore how plants other than crops
 show water stress and if there is additional information to be gained
 from them.
 
-\chapter{Prototype Development}
-\label{chap:development}
+\chapter{Prototype Design}
+\label{chap:design}
 
-Describe the architecture of the prototype regarding the overall
-design, how the object detection model was trained and tuned, and do
-the same for the classifier. Also describe the shape and contents of
-the training sets.
+\begin{enumerate}
+\item Expand on the requirements of the prototype from what is stated
+  in the motivation and problem statement. (Two-stage approach, small
+  device, camera attached, outputs via REST API)
+\item Describe the architecture of the prototype (two-stage approach
+  and how it is implemented with an object detector and
+  classifier). How the individual stages are connected (object
+  detector generates cutouts which are passed to classifier). Periodic
+  image capture and inference on the Jetson Nano.
+\item Closely examine the used models (YOLOv7 and ResNet) regarding
+  their structure as well as unique features. Additionally, list the
+  augmentations which were done during training of the object
+  detector. Finally, elaborate on the process of hyperparameter
+  optimization (train/val structure, metrics, genetic evolution and
+  random search).
+\end{enumerate}
 
-Estimated 7 pages for this chapter.
+Estimated 10 pages for this chapter.
+
+\section{Requirements}
+\label{sec:requirements}
+
+Briefly mention the requirements for the prototype:
+
+\begin{enumerate}
+\item Detect household potted plants and outdoor plants.
+\item Classify plants into stressed and healthy.
+\item Camera attached to device.
+\item Deploy models to device and perform inference on it.
+\end{enumerate}
+
+Estimated 1 page for this section.
 
 \section{Design}
 \label{sec:design}
 
 Reference methods section (~\ref{sec:methods}) to explain two-stage
-structure of the approach.
+structure of the approach. Reference the description of the processing
+loop on the prototype in Figure~\ref{fig:setup}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{graphics/setup.pdf}
+  \caption{Methodological approach for the prototype. The prototype
+    will run in a loop which starts at the top left corner. First, the
+    camera attached to the prototype takes images of plants. These
+    images are passed to the models running on the prototype. The
+    first model generates bounding boxes for all detected plants. The
+    bounding boxes are used to cut out the individual plants and pass
+    them to the state classifier in sequence. The classifier outputs a
+    probability score indicating the amount of stress the plant is
+    experiencing. After a set amount of time, the camera takes a
+    picture again and the process continues indefinitely.}
+  \label{fig:setup}
+\end{figure}
 
 Estimated 1 page for this section.
+
+\section{Selected Methods}
+\label{sec:selected-methods}
+
+Estimated 7 pages for this section.
+
+\subsection{You Only Look Once}
+\label{sec:methods-detection}
+
+Describe the inner workings of the YOLOv7 model structure and contrast
+it with previous versions as well as other object detectors. What has
+changed and how did these improvements manifest themselves? Reference
+the original paper~\cite{wang2022} and papers of previous versions of
+the same model (YOLOv5~\cite{jocher2022},
+YOLOv4~\cite{bochkovskiy2020}).
+
+Estimated 2 pages for this section.
+
+\subsection{ResNet}
+\label{sec:methods-classification}
+
+Introduce the approach of the \emph{ResNet} networks which implement
+residual connections to allow deeper layers. Describe the inner
+workings of the ResNet model structure. Reference the original
+paper~\cite{he2016}.
+
+Estimated 2 pages for this section.
+
+\subsection{Data Augmentation}
+\label{sec:methods-augmentation}
+
+Go over the data augmentation methods which are used during training
+for the object detector:
+\begin{itemize}
+\item HSV-hue
+\item HSV-saturation
+\item HSV-value
+\item translation
+\item scaling
+\item inversion (left-right)
+\item mosaic
+\end{itemize}
+
+Estimated 1 page for this section.
+
+\subsection{Hyperparameter Optimization}
+\label{sec:methods-hypopt}
+
+Go into detail about the process used to optimize the detection and
+classification models, what the training set looks like and how a
+best-performing model was selected on the basis of the metrics.
+
+Estimated 2 pages for this section.
+
+\chapter{Prototype Implementation}
+\label{chap:implementation}
 
 \section{Object Detection}
 \label{sec:development-detection}
 
-Describe how the object detection model was trained, what the training
-set looks like and which complications arose during training as well
-as fine-tuning.
-
-Estimated 2 pages for this section.
-
-\section{Classification}
-\label{sec:Classification}
-
-Describe how the classification model was trained, what the training
-set looks like and which complications arose during training as well
-as fine-tuning.
-
-Estimated 2 pages for this section.
-
-\section{Deployment}
-
-Describe the Jetson Nano, how the model is deployed to the device and
-how it reports its results.
-
-Estimated 2 pages for this section.
-
-\chapter{Results}
-\label{chap:results}
-
-The following sections contain a detailed evaluation of the model in
-various scenarios. First, we present metrics from the training phases
-of the constituent models. Second, we employ methods from the field of
-\gls{xai} such as \gls{grad-cam} to get a better understanding of the
-models' abstractions. Finally, we turn to the models' aggregate
-performance on the test set.
-
-\section{Object Detection}
-\label{sec:yolo-eval}
-
-The object detection model was pre-trained on the COCO~\cite{lin2015}
-dataset and fine-tuned with data from the \gls{oid}
-\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
-dataset contains considerably more classes and samples than would be
-feasibly trainable on a small cluster of GPUs, only images from the
-two classes \emph{Plant} and \emph{Houseplant} have been
-downloaded. The samples from the Houseplant class are merged into the
-Plant class because the distinction between the two is not necessary
-for our model. Furthermore, the \gls{oid} contains not only bounding
-box annotations for object detection tasks, but also instance
-segmentations, classification labels and more. These are not needed
-for our purposes and are omitted as well. In total, the dataset
-consists of 91479 images with a roughly 85/5/10 split for training,
-validation and testing, respectively.
-
-\subsection{Training Phase}
-\label{ssec:yolo-training}
+Describe how the object detection model was trained and what the
+training set looks like. Include a section on hyperparameter
+optimization and go into detail about how the detector was optimized.
 
 The object detection model was trained for 300 epochs on 79204 images
 with 284130 ground truth labels. The weights from the best-performing
@@ -650,8 +719,106 @@ before overfitting occurs.
   \label{fig:box-obj-loss}
 \end{figure}
 
-\subsection{Test Phase}
-\label{ssec:yolo-test}
+Estimated 2 pages for this section.
+
+\section{Classification}
+\label{sec:development-classification}
+
+Describe how the classification model was trained and what the
+training set looks like. Include a subsection hyperparameter
+optimization and go into detail about how the classifier was
+optimized.
+
+The dataset was split 85/15 into training and validation sets. The
+images in the training set were augmented with a random crop to arrive
+at the expected image dimensions of 224 pixels. Additionally, the
+training images were modified with a random horizontal flip to
+increase the variation in the set and to train a rotation invariant
+classifier. All images, regardless of their membership in the training
+or validation set, were normalized with the mean and standard
+deviation of the ImageNet~\cite{deng2009} dataset, which the original
+\gls{resnet} model was pre-trained with. Training was done for 50
+epochs and the best-performing model as measured by validation
+accuracy was selected as the final version.
+
+Figure~\ref{fig:classifier-training-metrics} shows accuracy and loss
+on the training and validation sets. There is a clear upwards trend
+until epoch 20 when validation accuracy and loss stabilize at around
+0.84 and 0.3, respectively. The quick convergence and resistance to
+overfitting can be attributed to the model already having robust
+feature extraction capabilities.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/classifier-metrics.pdf}
+  \caption[Classifier accuracy and loss during training.]{Accuracy and
+    loss during training of the classifier. The model converges
+    quickly, but additional epochs do not cause validation loss to
+    increase, which would indicate overfitting. The maximum validation
+    accuracy of 0.9118 is achieved at epoch 27.}
+  \label{fig:classifier-training-metrics}
+\end{figure}
+
+Estimated 2 pages for this section.
+
+\section{Deployment}
+
+Describe the Jetson Nano, how the model is deployed to the device and
+how it reports its results (REST API).
+
+Estimated 2 pages for this section.
+
+\chapter{Evaluation}
+\label{chap:evaluation}
+
+The following sections contain a detailed evaluation of the model in
+various scenarios. First, we present metrics from the training phases
+of the constituent models. Second, we employ methods from the field of
+\gls{xai} such as \gls{grad-cam} to get a better understanding of the
+models' abstractions. Finally, we turn to the models' aggregate
+performance on the test set.
+
+\section{Methodology}
+\label{sec:methodology}
+
+Go over the evaluation methodology by explaining the test datasets,
+where they come from, and how they're structured. Explain how the
+testing phase was done and which metrics are employed to compare the
+models to the SOTA.
+
+Estimated 2 pages for this section.
+
+\section{Results}
+\label{sec:results}
+
+Systematically go over the results from the testing phase(s), show the
+plots and metrics, and explain what they contain. 
+
+Estimated 4 pages for this section.
+
+\subsection{Object Detection}
+\label{ssec:yolo-eval}
+
+The following parapraph should probably go into
+section~\ref{sec:development-detection}.
+
+The object detection model was pre-trained on the COCO~\cite{lin2015}
+dataset and fine-tuned with data from the \gls{oid}
+\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
+dataset contains considerably more classes and samples than would be
+feasibly trainable on a small cluster of GPUs, only images from the
+two classes \emph{Plant} and \emph{Houseplant} have been
+downloaded. The samples from the Houseplant class are merged into the
+Plant class because the distinction between the two is not necessary
+for our model. Furthermore, the \gls{oid} contains not only bounding
+box annotations for object detection tasks, but also instance
+segmentations, classification labels and more. These are not needed
+for our purposes and are omitted as well. In total, the dataset
+consists of 91479 images with a roughly 85/5/10 split for training,
+validation and testing, respectively.
+
+\subsubsection{Test Phase}
+\label{sssec:yolo-test}
 
 Of the 91479 images around 10\% were used for the test phase. These
 images contain a total of 12238 ground truth
@@ -707,8 +874,12 @@ for the \emph{Plant} class.
   \label{fig:yolo-ap}
 \end{figure}
 
-\subsection{Hyper-parameter Optimization}
-\label{ssec:yolo-hyp-opt}
+\subsubsection{Hyperparameter Optimization}
+\label{sssec:yolo-hyp-opt}
+
+This section should be moved to the hyperparameter optimization
+section in the development chapter
+(section~\ref{sec:development-detection}).
 
 To further improve the object detection performance, we perform
 hyper-parameter optimization using a genetic algorithm. Evolution of
@@ -835,8 +1006,8 @@ is lower by 1.8\%.
   \label{fig:yolo-ap-hyp}
 \end{figure}
 
-\section{Classification}
-\label{sec:classifier-eval}
+\subsection{Classification}
+\label{ssec:classifier-eval}
 
 The classifier receives cutouts from the object detection model and
 determines whether the image shows a stressed plant or not. To achieve
@@ -857,41 +1028,12 @@ networks have better accuracy in general, but come with trade-offs
 regarding training and inference time as well as required space. The
 50 layer architecture (\gls{resnet}50) is adequate for our use case.
 
-\subsection{Training Phase}
-\label{ssec:classifier-training}
+\subsubsection{Hyperparameter Optimization}
+\label{sssec:classifier-hyp-opt}
 
-The dataset was split 85/15 into training and validation sets. The
-images in the training set were augmented with a random crop to arrive
-at the expected image dimensions of 224 pixels. Additionally, the
-training images were modified with a random horizontal flip to
-increase the variation in the set and to train a rotation invariant
-classifier. All images, regardless of their membership in the training
-or validation set, were normalized with the mean and standard
-deviation of the ImageNet~\cite{deng2009} dataset, which the original
-\gls{resnet} model was pre-trained with. Training was done for 50
-epochs and the best-performing model as measured by validation
-accuracy was selected as the final version.
-
-Figure~\ref{fig:classifier-training-metrics} shows accuracy and loss
-on the training and validation sets. There is a clear upwards trend
-until epoch 20 when validation accuracy and loss stabilize at around
-0.84 and 0.3, respectively. The quick convergence and resistance to
-overfitting can be attributed to the model already having robust
-feature extraction capabilities.
-
-\begin{figure}
-  \centering
-  \includegraphics{graphics/classifier-metrics.pdf}
-  \caption[Classifier accuracy and loss during training.]{Accuracy and
-    loss during training of the classifier. The model converges
-    quickly, but additional epochs do not cause validation loss to
-    increase, which would indicate overfitting. The maximum validation
-    accuracy of 0.9118 is achieved at epoch 27.}
-  \label{fig:classifier-training-metrics}
-\end{figure}
-
-\subsection{Hyper-parameter Optimization}
-\label{ssec:classifier-hyp-opt}
+This section should be moved to the hyperparameter optimization
+section in the development chapter
+(section~\ref{sec:development-classification}).
 
 In order to improve the aforementioned accuracy values, we perform
 hyper-parameter optimization across a wide range of
@@ -1045,8 +1187,8 @@ F1-score of 1 on the training set.
 \end{figure}
 
 
-\subsection{Class Activation Maps}
-\label{ssec:classifier-cam}
+\subsubsection{Class Activation Maps}
+\label{sssec:classifier-cam}
 
 Neural networks are notorious for their black-box behavior, where it
 is possible to observe the inputs and the corresponding outputs, but
@@ -1105,8 +1247,8 @@ of the image during classification.
 \end{figure}
 
 
-\section{Aggregate Model}
-\label{sec:aggregate-model}
+\subsection{Aggregate Model}
+\label{ssec:aggregate-model}
 
 In this section we turn to the evaluation of the aggregate model. We
 have confirmed the performance of the constituent models: the object
@@ -1202,7 +1344,7 @@ led to significant model improvements, while the object detector has
 improved precision but lower recall and slightly lower \gls{map}
 values. To evaluate the final aggregate model which consists of the
 individual optimized models, we run the same test described in
-section~\ref{sec:aggregate-model}.
+section~\ref{ssec:aggregate-model}.
 
 \begin{table}
   \centering
@@ -1257,11 +1399,11 @@ more plants are correctly detected and classified overall, but the
 confidence scores tend to be lower with the optimized model. The
 \textsf{mAP}@0.5:0.95 could be improved by about 0.025.
 
-\chapter{Discussion}
-\label{chap:discussion}
+\section{Discussion}
+\label{sec:discussion}
 
 Pull out discussion parts from current results chapter
-(~\ref{chap:results}) and add a section about achievement of the aim
+(~\ref{sec:results}) and add a section about achievement of the aim
 of the work discussed in motivation and problem statement section
 (~\ref{sec:methods}).
 
@@ -1270,12 +1412,20 @@ Estimated 2 pages for this chapter.
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-Conclude with a part on possible improvements to the
-approach/prototype. Suggest further research directions regarding the
-approach. Give an outlook on further possibilities in this research
-field with respect to object detection and plant classification.
+Conclude the thesis with a short recap of the results and the
+discussion. Establish whether the research questions from
+section~\ref{sec:methods} can be answered successfully.
 
-Estimated 1 page for this chapter.
+Estimated 2 pages for this chapter.
+
+\section{Future Work}
+\label{sec:future-work}
+
+Suggest further research directions regarding the approach. Give an
+outlook on further possibilities in this research field with respect
+to object detection and plant classification.
+
+Estimated 1 page for this section
 
 \backmatter
 
@@ -1303,10 +1453,8 @@ Estimated 1 page for this chapter.
 \end{document}
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
 %%% TeX-master: "thesis"
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% End:
