@@ -51,6 +51,7 @@ plantsdata/
 
 images/
 dataset*/
+wandb/
 *.ptl
 venv/
 
@@ -96,3 +97,5 @@ MANIFEST
 *.bcf
 *.glg
 *.run.xml
+
+auto/
