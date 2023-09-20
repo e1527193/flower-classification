@@ -85,6 +85,11 @@
 \newacronym{sgd}{SGD}{Stochastic Gradient Descent}
 \newacronym{roc}{ROC}{Receiver Operating Characteristic}
 \newacronym{auc}{AUC}{Area Under the Curve}
+\newacronym{coco}{COCO}{Common Objects in Context}
+\newacronym{pascal-voc}{\textsc{PASCAL} VOC}{\textsc{PASCAL} Visual Object Classes}
+\newacronym{sbc}{SBC}{single-board computer}
+\newacronym{api}{API}{Application Programming Interface}
+\newacronym{rest}{REST}{Representational State Transfer}
 
 \begin{document}
 
@@ -168,7 +173,9 @@ installation which is deployable by homeowners, gathers data using
 readily available hardware and performs computation on the device
 without a connection to a central server. The device should be able to
 visually determine whether the plants in its field of view need water
-or not and output its recommendation.
+or not and output its recommendation. The recommendation should then
+be used as a data point off of which homeowners can automatically
+water their plants with an automated watering system.
 
 The aim of this work is to develop a prototype which can be deployed
 by gardeners to survey plants and recommend watering or not. To this
@@ -177,14 +184,13 @@ plants in the field of view and then to determine if the plants need
 water or not. The model should be suitable for edge devices equipped
 with a TPU or GPU but with otherwise limited processing
 capabilities. Examples of such systems include Google's Coral
-development board and the Nvidia Jetson series of single-board
-computers (SBCs). The model should make use of state-of-the-art
-algorithms from either classical machine learning or deep
-learning. The literature review will yield an appropriate machine
-learning method. Furthermore, the adaption of existing models
-(transfer learning) for object detection to the domain of plant
-recognition may provide higher performance than would otherwise be
-achievable within the time constraints.
+development board and the Nvidia Jetson series of~\glspl{sbc}. The
+model should make use of state-of-the-art algorithms from either
+classical machine learning or deep learning. The literature review
+will yield an appropriate machine learning method. Furthermore, the
+adaption of existing models (transfer learning) for object detection
+to the domain of plant recognition may provide higher performance than
+would otherwise be achievable within the time constraints.
 
 The model will be deployed to the single-board computer and evaluated
 using established and well-known metrics from the field of machine
@@ -245,44 +251,122 @@ learning. The evaluation will seek to answer the following questions:
 
 The methodological approach consists of the following steps:
 
-\begin{description}
-\item[Literature Review] The literature review informs the type of
-  machine learning methods which are later applied during the
+\begin{enumerate}
+\item \textbf{Literature Review}: The literature review informs the
+  type of machine learning methods which are later applied during the
   implementation of the prototype.
-\item[Object Detection] Flowers present in the image will be detected
-  using object detection methods. These methods will draw bounding
-  boxes around the objects of interest. The output is fed into the
-  next stage.
-\item[State Classification] The bounded images will be fed to a
-  classifier which will determine whether the plant needs water or
-  not.
-\item[Deployment to SBC] The software prototype will be deployed to
-  the single-board computer.
-\item[Evaluation] The prototype will be evaluated to determine its
-  feasibility and performance. During evaluation the author seeks to
-  provide a basis for answering the research questions.
-\end{description}
+\item \textbf{Dataset Curation}: After selecting the methods to use
+  for the implementation, we have to create our own dataset or use
+  existing ones, depending on availability.
+\item \textbf{Model Training}: The selected models will be trained
+  with the datasets curated in the previous step.
+\item \textbf{Optimization}: The selected models will be optimized
+  with respect to their parameters.
+\item \textbf{Deployment to SBC}: The software prototype will be
+  deployed to the single-board computer.
+\item \textbf{Evaluation}: The models will be evaluated extensively
+  and compared to other state-of-the-art systems. During evaluation,
+  the author seeks to provide a basis for answering the research
+  questions.
+\end{enumerate}
 
-Additionally, go into detail about how the literature was selected to
-be relevant for the decisions underlying the choice of
-models/algorithms. Mention how literature in general was found (search
-terms, platforms, etc.).
+During the literature review, the search is centered around the terms
+\emph{plant classification}, \emph{plant state classification},
+\emph{plant detection}, \emph{water stress detection}, \emph{machine
+learning agriculture}, \emph{crop machine learning} and \emph{remote
+sensing}. These terms provide a solid basis for understanding the
+state of the art in plant detection and stress classification. We will
+use multiple search engines such as Google Scholar, Semantic Scholar,
+the ACM Digital Library, and IEEE Xplore. It is common to only publish
+research papers in preprint form in the data science and machine
+learning fields. For this reason, we will also reference arXiv.org for
+these papers. The work discovered in this way will also lead to
+further insights about the type of models which are commonly used.
+
+In order to find and select appropriate datasets to train the models
+on, we will survey the existing big datasets for classes we can
+use. Datasets such as the \gls{coco}~\cite{lin2015} and
+\gls{pascal-voc}~\cite{everingham2010} contain the highly relevant
+class \emph{Potted Plant}. By extracting only these classes from
+multiple datasets and concatenating them together, it is possible to
+create one unified dataset which only contains the classes necessary
+for training the model.
+
+The training of the models will happen in an environment where more
+computational resources are available than what the~\gls{sbc}
+offers. We will deploy the final model with the~\gls{api} to
+the~\gls{sbc} after training and optimization. Furthermore, training
+will happen in tandem with a continuous evaluation process. After
+every iteration of the model, an evaluation run against the test set
+determines if there has been an improvement in performance. The
+results of the evaluation feed back into the parameter selection at
+the beginning of each training phase. Small changes to the training
+parameters, augmentations or structure of the model are followed by
+another test phase. The iterative nature of the development of the
+prototype increases the likelihood that the model's performance is not
+only locally maximal but also as close as possible to the global
+maximum.
+
+In the final evaluation phase, we will measure the resulting model
+against the test set and evaluate its performance with common
+metrics. The aim is to first provide a solid basis of facts regarding
+the model(s). Second, the results will be discussed in detail. Third,
+we will cross-check the results with the hypotheses from
+section~\ref{sec:motivation} and determine whether the aim of the work
+has been met, and—if not—give reasons for the rejection of all or part
+of the hypotheses.
+
+Overall, the development of our application follows an evolutionary
+pototyping process~\cite{davis1992,sears2007}. Instead of producing a
+full-fledged product from the start, development happens iteratively
+in phases. The main phases and their order for the prototype at hand
+are: model selection, implementation, and evaluation. The results of
+each phase—for example, which model has been selected—inform the
+decisions which have to be made in the next phase (implementation). In
+other words, every subsequent phase is dependent on the results of the
+previous phase. All three phases, in turn, constitute one iteration
+within the prototyping process. At the start of the next prototype,
+the results of the previous iteration determine the path forward.
+
+The decision to use an evolutionary prototyping process follows in
+large part from the problem to be solved (as specified in
+section~\ref{sec:motivation}). Since the critical requirements have
+been established from the start, it is possible to build a solid
+prototype from the beginning by implementing only those features which
+are well-understood. The aim is to allow the developer to explore the
+problem further so that additional requirements which arise during
+development can be incorporated properly.
+
+The prototyping process is embedded within the concepts of the
+\emph{Scientific Method}. This thesis not only produces a prototype,
+but also explores the problem of plant detection and classification
+scientifically. Exploration of the problem requires making falsifiable
+hypotheses (see section~\ref{sec:motivation}), gathering empirical
+evidence (see section~\ref{sec:results}), and accepting or rejecting
+the initial hypotheses (see section~\ref{sec:discussion}). Empirical
+evidence is provided by measuring the model(s) against out-of-sample
+test sets. This provides the necessary foundation for acceptance or
+rejection of the hypotheses.
 
 \section{Thesis Structure}
 \label{sec:structure}
 
 The first part of the thesis (chapter~\ref{chap:background}) contains
 the theoretical basis of the models which we use for the
-prototype. Chapter~\ref{chap:design} goes into detail about the design
-of the prototype, the construction of the training/test sets and how
-the prototype reports its results via its REST
-API. Chapter~\ref{chap:evaluation} shows the results of the testing
-phases as well as the performance of the aggregate model. Futhermore,
-the results are compared with the expectations and it is discussed
-whether they are explainable in the context of the task at hand as
-well as benchmark results from other datasets
-(COCO). Chapter~\ref{chap:conclusion} concludes the thesis with an
-outlook on further research questions and possible improvements.
+prototype. Chapter~\ref{chap:design} goes into detail about the
+requirements for the prototype, the overall design and architecture of
+the recognition and classification pipeline, and the structure and
+unique properties of the selected
+models. Chapter~\ref{chap:implementation} expands on how the datasets
+are used during training as well as how the prototype publishes its
+classification results. Chapter~\ref{chap:evaluation} shows the
+results of the testing phases as well as the performance of the
+aggregate model. Futhermore, the results are compared with the
+expectations and it is discussed whether they are explainable in the
+context of the task at hand as well as benchmark results from other
+datasets (\gls{coco}~\cite{lin2015}). Chapter~\ref{chap:conclusion}
+concludes the thesis with a summary and an outlook on possible
+improvements and further research questions.
 
 \chapter{Theoretical Background}
 \label{chap:background}
@@ -553,16 +637,17 @@ loop on the prototype in Figure~\ref{fig:setup}.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{graphics/setup.pdf}
-  \caption{Methodological approach for the prototype. The prototype
-    will run in a loop which starts at the top left corner. First, the
-    camera attached to the prototype takes images of plants. These
-    images are passed to the models running on the prototype. The
-    first model generates bounding boxes for all detected plants. The
-    bounding boxes are used to cut out the individual plants and pass
-    them to the state classifier in sequence. The classifier outputs a
-    probability score indicating the amount of stress the plant is
-    experiencing. After a set amount of time, the camera takes a
-    picture again and the process continues indefinitely.}
+  \caption[Methodological approach for the prototype.]{Methodological
+    approach for the prototype. The prototype will run in a loop which
+    starts at the top left corner. First, the camera attached to the
+    prototype takes images of plants. These images are passed to the
+    models running on the prototype. The first model generates
+    bounding boxes for all detected plants. The bounding boxes are
+    used to cut out the individual plants and pass them to the state
+    classifier in sequence. The classifier outputs a probability score
+    indicating the amount of stress the plant is experiencing. After a
+    set amount of time, the camera takes a picture again and the
+    process continues indefinitely.}
   \label{fig:setup}
 \end{figure}
 
@@ -1454,6 +1539,11 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
+%%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
