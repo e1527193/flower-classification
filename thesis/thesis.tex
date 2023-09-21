@@ -90,6 +90,13 @@
 \newacronym{sbc}{SBC}{single-board computer}
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{rest}{REST}{Representational State Transfer}
+\newacronym{dl}{DL}{Deep Learning}
+\newacronym{gpu}{GPU}{Graphics Processing Unit}
+\newacronym{tpu}{TPU}{Tensor Processing Unit}
+\newacronym{hog}{HOG}{Histogram of Oriented Gradients}
+\newacronym{sift}{SIFT}{Scale-Invariant Feature Transform}
+\newacronym{svm}{SVM}{Support Vector Machine}
+\newacronym{dpm}{DPM}{Deformable Part-Based Model}
 
 \begin{document}
 
@@ -182,7 +189,7 @@ by gardeners to survey plants and recommend watering or not. To this
 end, a machine learning model will be trained to first identify the
 plants in the field of view and then to determine if the plants need
 water or not. The model should be suitable for edge devices equipped
-with a TPU or GPU but with otherwise limited processing
+with a \gls{tpu} or \gls{gpu} but with otherwise limited processing
 capabilities. Examples of such systems include Google's Coral
 development board and the Nvidia Jetson series of~\glspl{sbc}. The
 model should make use of state-of-the-art algorithms from either
@@ -413,6 +420,104 @@ previous region-based methods with newer single-shot detectors such as
 YOLO and SSDnet. 
 
 Estimated 8 pages for this section.
+
+From facial detection to fully automated driving—object detection
+provides the basis for a wide variety of tasks within the computer
+vision world. While most implementations in the 1990s and early 2000s
+relied on cumbersome manual feature extraction, current methods almost
+exclusively leverage a deep learning based approach. This chapter
+gives an introduction to object detection, explains common problems
+researchers have faced and how they have been solved, and discusses
+the two main approaches to object detection via deep learning.
+
+\subsection{Definition}
+\label{ssec:obj-definition}
+
+\subsection{Traditional Methods}
+\label{ssec:obj-traditional}
+
+Before the advent of powerful \glspl{gpu}, object detection was
+commonly done by manually extracting features from images and passing
+these features on to a classical machine learning algorithm. Early
+methods were generally far from being able to detect objects in real
+time.
+
+\subsubsection{Viola-Jones Detector}
+\label{sssec:obj-viola-jones}
+
+The first milestone was the face detector by
+~\textcite{viola2001,viola2001} which is able to perform face
+recognition on $384$ by $288$ pixel (grayscale) images with
+\qty{15}{fps} on a \qty{700}{\MHz} Intel Pentium III processor. The
+authors use an integral image representation where every pixel is the
+summation of the pixels above and to the left of it. This
+representation allows them to quickly and efficiently calculate
+Haar-like features.
+
+The Haar-like features are passed to a modified AdaBoost
+algorithm~\cite{freund1995} which only selects the (presumably) most
+important features. At the end there is a cascading stage of
+classifiers where regions are only considered further if they are
+promising. Every additional classifier adds complexity, but once a
+classifier rejects a sub-window, the processing stops and the
+algorithm moves on to the next window. Despite their final structure
+containing 32 classifiers, the sliding-window approach is fast and
+achieves comparable results to the state of the art in 2001.
+
+\subsubsection{HOG Detector}
+\label{sssec:obj-hog}
+
+The \gls{hog}~\cite{dalal2005} is a feature descriptor used in
+computer vision and image processing to detect objects in images. It
+is a detector which detects shape like other methods such as
+\gls{sift}. The idea is to use the distribution of local intensity
+gradients or edge directions to describe an object. To this end, the
+authors divide the image into a grid of cells and calculate a
+histogram of edge orientations within each cell. Additionally, each
+histogram is normalized by taking a larger region and adjusting the
+local histograms based on the larger region's intensity levels. The
+resulting blocks of normalized gradients are evenly spaced out across
+the image with some overlap. These patches are then passed as a
+feature vector to a classifier.
+
+\textcite{dalal2005} successfully use the \gls{hog} with a linear
+\gls{svm} for classification to detect humans in images. They work
+with images of 64 by 128 pixels and make sure that the image contains
+a margin of 16 pixels around the person. Decreasing the border by
+either enlarging the person or reducing the overall image size results
+in worse performance. Unfortunately, their method is far from being
+able to process images in real time—a 320 by 240 image takes roughly a
+second to process.
+
+\subsubsection{Deformable Part-Based Model}
+\label{sssec:obj-dpm}
+
+\glspl{dpm}~\cite{felzenszwalb2008a} were the winners of the
+\gls{pascal-voc} challenge in the years 2007, 2008 and 2009. The
+method is heavily based on the previously discussed \gls{hog} since it
+also uses \gls{hog} descriptors internally. The authors addition is
+the idea of learning how to decompose objects during training and
+classifying/detecting the decomposed parts during inference. The
+\gls{hog} descriptors are computed on different scales to form a
+\gls{hog} feature pyramid. Coarse features are more easily identified
+at the top of the pyramid while details are present at the lower end
+of the pyramid. The coarse features are obtained by calculating the
+histograms over fairly large areas, whereas smaller image patches are
+used for the detailed levels. A root filter works on the coarse levels
+by detecting general features of the object of interest. If the goal
+is to detect a face, for example, the root filter detects the contours
+of the face. Smaller part filters provide additional information about
+the individual parts of the object. For the face example, these
+filters capture information about the eyes, mouth and nose.
+
+The idea of detecting detail at different scales is not unlike what
+happens with the later \glspl{cnn}. The individual layers of a
+\gls{cnn} often describe higher level features in the earlier layers
+and provide additional lower level information as the network
+increases in depth. \textcite{girshick2015} argue that \glspl{dpm}
+\emph{are} in fact \glspl{cnn} because they can be formulated as
+\glspl{cnn} by unrolling each step of the algorithm into a
+corresponding \gls{cnn} layer.
 
 \section{Classification}
 \label{sec:background-classification}
@@ -891,8 +996,8 @@ The object detection model was pre-trained on the COCO~\cite{lin2015}
 dataset and fine-tuned with data from the \gls{oid}
 \cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
 dataset contains considerably more classes and samples than would be
-feasibly trainable on a small cluster of GPUs, only images from the
-two classes \emph{Plant} and \emph{Houseplant} have been
+feasibly trainable on a small cluster of \glspl{gpu}, only images from
+the two classes \emph{Plant} and \emph{Houseplant} have been
 downloaded. The samples from the Houseplant class are merged into the
 Plant class because the distinction between the two is not necessary
 for our model. Furthermore, the \gls{oid} contains not only bounding
@@ -1539,6 +1644,8 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
+%%% TeX-master: t
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
