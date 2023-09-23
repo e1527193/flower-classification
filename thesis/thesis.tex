@@ -97,6 +97,9 @@
 \newacronym{sift}{SIFT}{Scale-Invariant Feature Transform}
 \newacronym{svm}{SVM}{Support Vector Machine}
 \newacronym{dpm}{DPM}{Deformable Part-Based Model}
+\newacronym{ai}{AI}{Artificial Intelligence}
+\newacronym{mfcc}{MFCC}{Mel-frequency Cepstral Coefficient}
+\newacronym{mlp}{MLP}{Multilayer Perceptron}
 
 \begin{document}
 
@@ -404,6 +407,205 @@ Describe the contents of this chapter.
 
 Estimated 25 pages for this chapter.
 
+\section{Machine Learning}
+\label{sec:theory-ml}
+
+The term machine learning was first used by \textcite{samuel2000} in
+1959 in the context of teaching a machine how to play the game
+Checkers. \textcite{mitchell1997a} defines learning in the context of
+programs as:
+\begin{quote}
+  A computer program is said to \textbf{learn} from experience $E$
+  with respect to some class of tasks $T$ and performance measure $P$,
+  if its performance at tasks in $T$, as measured by $P$, improves
+  with experience $E$. \cite[p.2]{mitchell1997a}
+\end{quote}
+In other words, if the aim is to learn to win at a game, the
+performance measure $P$ is defined as the ability to win at that
+game. The tasks in $T$ are playing the game multiple times, and the
+experience $E$ is gained by letting the program play the game against
+itself.
+
+Machine learning is thought to be a sub-field of \gls{ai}. \gls{ai} a
+more general term for the scientific endeavour of creating things
+which possess the kind of intelligence we humans have. Since those
+things will not have been created \emph{naturally}, their intelligence
+is termed \emph{artificial}. Within the field of \gls{ai} there have
+been other approaches than what is commonly referred to as machine
+learning today.
+
+A major area of interest in the 1980s was the development of
+\emph{expert systems}. These systems try to approach problem solving
+as a rational decision-making process. Starting from a knowledge base,
+which contains facts and rules about the world and the problem to be
+solved, the expert system applies an inference engine to arrive at a
+conclusion. An advantage of these systems is that they can often
+explain how they came to a particular conclusion, allowing humans to
+verify and judge the inference process. This kind of explainability is
+missing in the neural network based approaches of today. However, an
+expert system needs a significant base of facts and rules to be able
+to do any meaningful inference. Outside of specialized domains such as
+medical diagnosis, expert systems have always failed at commonsense
+reasoning.
+
+Machine learning can be broadly divided into two distinct approaches:
+\emph{supervised} and \emph{unsupervised}. Supervised learning
+describes a process where the algorithm receives input values as well
+as their corresponding output values and tries to learn the function
+which maps inputs to outputs. This is called supervised learning
+because the model knows a target to map to. In unsupervised learning,
+in contrast, algorithms do not have access to labeled data or output
+values and therefore have to find patterns in the underlying
+inputs. There can be mixed approaches as in \emph{semi-supervised}
+learning where a model receives a small amount of labeled data as an
+aid to better extract the patterns in the unlabeled data. Which type
+of learning to apply depends heavily on the problem at hand. Tasks
+such as image classification and speech recognition are good
+candidates for supervised learning. If a model is required to
+\emph{generate} speech, text or images, an unsupervised approach makes
+more sense. We will go into detail about the general approach in
+supervised learning because it is used throughout this thesis when
+training the models.
+
+\subsection{Supervised Learning}
+\label{ssec:theory-sl}
+
+The overall steps when training a model with labeled data are as
+follows:
+
+\begin{enumerate}
+\item Determine which type of problem is to be solved and select
+  adequate training samples.
+\item Gather enough training samples and obtain their corresponding
+  targets (labels). This stage usually requires humans to create a
+  body of ground truth with which the model can compare itself.
+\item Select the type of representation of the inputs which is fed to
+  the model. The representation heavily relies on the amount of data
+  which the model can process in a reasonable amount of time. For
+  speech recognition, for example, raw waveforms are rarely fed to any
+  classifier. Instead, humans have to select a less granular and more
+  meaningful representation of the waveforms such as
+  \glspl{mfcc}. Selecting the representation to feed to the model is
+  also referred to as \emph{feature selection} or \emph{feature
+  engineering}.
+\item Select the structure of the model or algorithm and the learning
+  function. Depending on the problem, possible choices are
+  \glspl{svm}, \glspl{cnn} and many more.
+\item Train the model on the training set.
+\item Validate the results on out-of-sample data by computing common
+  metrics and comparing the results to other approaches.
+\item Optionally go back to 4. to select different algorithms or to
+  train the model with different parameters or adjusted training
+  sets. Depending on the results, one can also employ computational
+  methods such as hyperparameter optimization to find a better
+  combination of model parameters.
+\end{enumerate}
+
+These steps are generally the same for every type of supervised or
+semi-supervised machine learning approach. The implementation for
+solving a particular problem differs depending on the type of problem,
+how much data is available, how much can reasonably be labeled and any
+other special requirements such as favoring speed over accuracy.
+
+\subsection{Artificial Neural Networks}
+\label{ssec:theory-nn}
+
+Artificial neural networks are the building blocks of most
+state-of-the-art models in use today. The computer sciences have
+adopted the term from biology where it defines the complex structure
+in the human brain which allows us to experience and interact with the
+world around us. A neural network is necessarily composed of neurons
+which act as gatekeepers for the signals they receive. Depending on
+the inputs—electrochemical impulses, numbers, or other—the neuron
+\emph{excites} and produces an output value if the right conditions
+are met. This output value travels via connections to other neurons
+and acts as an input on their side. Each neuron and connection between
+the neurons has an associated weight which changes when the network
+learns. The weights increase or decrease the signal from the
+neuron. The neuron itself only passes a signal on to its output
+connections if the conditions of its \emph{activation function} have
+been met. This is typically a non-linear function. Multiple neurons
+are usually grouped together to form a \emph{layer} within the
+network. Multiple layers are stacked one after the other with
+connections in-between to form a neural network. Layers between the
+input and output layers are commonly referred to as \emph{hidden
+layers}. Figure~\ref{fig:neural-network} shows the structure of a
+three-layer fully-connected artificial neural network.
+
+\begin{figure}
+  \centering
+  \def\svgwidth{\columnwidth}
+  \scalebox{0.75}{\input{graphics/neural-network.pdf_tex}}
+  \caption[Structure of an artificial neural network]{Structure of an
+    artificial neural network. Information travels from left to right
+    through the network using the neurons and the connections between
+    them. Attribution en:User:Cburnett, CC BY-SA 3.0 via Wikimedia
+    Commons.}
+  \label{fig:neural-network}
+\end{figure}
+
+The earliest attempts at describing learning machines were by
+\textcite{mcculloch1943} with the idea of the \emph{perceptron}. This
+idea was implemented in a more general sense by
+\textcite{rosenblatt1957,rosenblatt1962} as a physical machine. At its
+core, the perceptron is the simplest artifical neural network with
+only one neuron in the center. The neuron takes all its inputs,
+aggregates them with a weighted sum and outputs 1 if the result is
+above some threshold $\theta$ and 0 if it is not (see
+equation~\ref{eq:perceptron}). This function is called the
+\emph{activation function} of a perceptron. A perceptron is a type of
+binary classifier which can only classify linearly separable
+variables.
+
+\begin{equation}
+  \label{eq:perceptron}
+  y =
+  \begin{cases}
+    1\;\mathrm{if}\;\sum_{i=1}^{n}w_i\cdot x_i\geq\theta \\
+    0\;\mathrm{if}\;\sum_{i=1}^{n}w_i\cdot x_i<\theta
+  \end{cases}
+\end{equation}
+
+Due to the inherent limitations of perceptrons to only be able to
+classify linearly separable data, \glspl{mlp} are the bedrock of
+modern artifical neural networks. By adding an input layer, a hidden
+layer, and an output layer as well as requiring the activation
+function of each neuron to be non-linear, a \gls{mlp} can classify
+also non-linear data. Every neuron in each layer is fully connected to
+all of the neurons in the next layer and it is the most
+straightforward case of a feedforward
+network. Figure~\ref{fig:neural-network} shows the skeleton of a
+\gls{mlp}.
+
+There are two types of artifical neural networks: feedforward and
+recurrent networks. Their names refer to the way information flows
+through the network. In a feedforward network, the information enters
+the network and flows only uni-directionally to the output nodes. In a
+recurrent network, information can also feed back into previous
+nodes. Which network is best used depends on the task at
+hand. Recurrent networks are usually necessary when \emph{context} is
+needed. For example, if the underlying data to classify is a time
+series, individual data points have some relation to the previous and
+next points in the series. Maintaining a bit of state is beneficial
+because networks should be able to capture these
+dependencies. However, having additional functionality for feeding
+information back into previous neurons and layers comes with increased
+complexity. A feedforward network, as depicted in
+Figure~\ref{fig:neural-network}, represents a simpler structure.
+
+\subsection{Activation Functions}
+\label{ssec:theory-activation-functions}
+
+
+
+\subsection{Loss Function}
+\label{ssec:theory-loss-function}
+
+\subsection{Backpropagation}
+\label{ssec:theory-backpropagation}
+
+
+
 \section{Object Detection}
 \label{sec:background-detection}
 
@@ -518,6 +720,7 @@ increases in depth. \textcite{girshick2015} argue that \glspl{dpm}
 \emph{are} in fact \glspl{cnn} because they can be formulated as
 \glspl{cnn} by unrolling each step of the algorithm into a
 corresponding \gls{cnn} layer.
+
 
 \section{Classification}
 \label{sec:background-classification}
@@ -1644,6 +1847,9 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
+%%% TeX-master: t
+%%% TeX-master: t
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
