@@ -100,6 +100,9 @@
 \newacronym{ai}{AI}{Artificial Intelligence}
 \newacronym{mfcc}{MFCC}{Mel-frequency Cepstral Coefficient}
 \newacronym{mlp}{MLP}{Multilayer Perceptron}
+\newacronym{relu}{ReLU}{Rectified Linear Unit}
+\newacronym{elu}{ELU}{Exponential Linear Unit}
+\newacronym{silu}{SiLU}{Sigmoid Linear Unit}
 
 \begin{document}
 
@@ -596,7 +599,144 @@ Figure~\ref{fig:neural-network}, represents a simpler structure.
 \subsection{Activation Functions}
 \label{ssec:theory-activation-functions}
 
+Activation functions are the functions \emph{inside} each neuron which
+receive inputs and produce an output value. The nature of these
+functions is that they need a certain amount of \emph{excitation} from
+the inputs before they produce an output, hence the name
+\emph{activation function}. Activation functions are either linear or
+non-linear. Linear functions are limited in their capabilities because
+they cannot approximate certain functions. For example, a perceptron,
+which uses a linear activation function, cannot approximate the XOR
+function \cite{minsky2017}. Non-linear functions, however, are a
+requirement for neural networks to become \emph{universal
+approximators} \cite{hornik1989}. We will introduce several activation
+functions which are used in the field of machine learning in the
+following sections.
 
+\subsubsection{Identity}
+\label{sssec:theory-identity}
+
+The simplest activation function is the identity function. It is defined as
+
+\begin{equation}
+  \label{eq:identity}
+  g(x) = x
+\end{equation}
+
+If all layers in an artificial neural network use the identity
+activation function, the network is equivalent to a single-layer
+structure. The identity function is often used for layers which do not
+need an activation function per se, but require one to uphold
+consistency with the rest of the network structure.
+
+\subsubsection{Heaviside Step}
+\label{sssec:theory-heaviside}
+
+The Heaviside step function, also known as the unit step function, is
+a mathematical function that is commonly used in control theory and
+signal processing to represent a signal that switches on at a
+specified time and stays on. The function is named after Oliver
+Heaviside, who introduced it in the late 19th century. It is defined
+as
+
+\begin{equation}
+  \label{eq:heaviside}
+  H(x) = 
+  \begin{cases}
+    1, x\geq 0 \\
+    0, x < 0
+  \end{cases}.
+\end{equation}
+
+In engineering applications, the Heaviside step function is used to
+describe functions whose values change abruptly at specified values of
+time $t$. We have already mentioned the Heaviside step function in
+section~\ref{ssec:theory-nn} when introducing the perceptron. It can
+only classify linearly separable variables when used in a neural
+network and is, therefore, not suitable for complex intra-data
+relationships. A major downside to using the Heaviside step function
+is that it is not differentiable at $x = 0$ and has a $0$ derivative
+elsewhere. These properties make it unsuitable for use with gradient
+descent during \todo[noline]{link to backpropagation section}
+backpropagation.
+
+\subsubsection{Sigmoid}
+\label{sssec:theory-sigmoid}
+
+The sigmoid activation function is one of the most important functions
+to introduce non-linearity into the outputs of a neuron. It is a
+special case of a logistic function and used synonymously with
+logistic function in machine learning. It is defined as
+
+\begin{equation}
+  \label{eq:sigmoid}
+  \sigma(x) = \frac{1}{1 + e^{-x}}
+\end{equation}
+
+It has a characteristic S-shaped curve, mapping each input value to a
+number between $0$ and $1$, regardless of input size. This
+\emph{squashing} property is particularly desirable for binary
+classification problems because the outputs can be interpreted as
+probabilities. Additionally to the squashing propery, it is also a
+saturating function because large values map to $1$ and very small
+values to $0$. If a learning algorithm has to update the weights in
+the network, saturated neurons are very inefficient and difficult to
+process because the outputs do not provide valuable information. In
+contrast to the Heaviside step function
+(section~\ref{sssec:theory-heaviside}), it is differentiable which
+allows it to be used with gradient descent optimization
+algorithms. \todo[noline]{link to gradient descent and vanishing
+gradient sections} Unfortunately, the sigmoid function suffers from
+the vanishing gradient problem, which makes it unsuitable for training
+deep neural networks.
+
+\subsubsection{Rectified Linear Unit}
+\label{sssec:theory-relu}
+
+The \gls{relu} function is defined as
+
+\begin{equation}
+  \label{eq:relu}
+  f(x) = \max(0, x) =
+  \begin{cases}
+    x, x > 0 \\
+    0, x \leq 0
+  \end{cases}
+\end{equation}
+
+which means that it returns the input value if it is positive, and
+returns zero if it is negative. It was first introduced by
+\textcite{fukushima1969} in a modified form to construct a visual
+feature extractor. The \gls{relu} function is nearly linear, and it
+thus preserves many of the properties that make linear models easy to
+optimize with gradient-based methods \cite{goodfellow2016}. In
+contrast to the sigmoid activation function, the \gls{relu} function
+overcomes the vanishing gradient problem \todo{link to vanishing
+gradient problem} and is therefore suitable for training deep neural
+networks. Furthermore, the \gls{relu} function is easier to calculate
+than sigmoid functions which allows networks to be trained more
+quickly. Even though it is not differentiable at $0$, it is
+differentiable everywhere else and often used with gradient descent
+during optimization.
+
+The \gls{relu} function suffers from the dying \gls{relu} problem,
+which can cause some neurons to become inactive. Large gradients,
+which are passed back through the network to update the weights, are
+typically the source of this. If many neurons are pushed into this
+state, the model's capability of learning new patterns is
+diminished. To address this problem, there are two possibilities. One
+solution is to make sure that the learning rate is not set too high,
+which reduces the problem but does not fully remove it. Another
+solution is to use one of the several variants of the ReLU function
+such as leaky \gls{relu}, \gls{elu}, and \gls{silu}.
+
+In recent years, the \gls{relu} function has become the most popular
+activation function for deep neural networks and is recommended as the
+default activation function in modern neural networks
+\cite{goodfellow2016}. Despite its limitations, the \gls{relu}
+function has become an essential tool for deep learning practitioners
+and has contributed to the success of many state-of-the-art models in
+computer vision, natural language processing, and other domains.
 
 \subsection{Loss Function}
 \label{ssec:theory-loss-function}
@@ -1847,6 +1987,7 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
