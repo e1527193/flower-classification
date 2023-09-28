@@ -103,6 +103,7 @@
 \newacronym{relu}{ReLU}{Rectified Linear Unit}
 \newacronym{elu}{ELU}{Exponential Linear Unit}
 \newacronym{silu}{SiLU}{Sigmoid Linear Unit}
+\newacronym{mse}{MSE}{mean squared error}
 
 \begin{document}
 
@@ -611,7 +612,10 @@ function \cite{minsky2017}. Non-linear functions, however, are a
 requirement for neural networks to become \emph{universal
 approximators} \cite{hornik1989}. We will introduce several activation
 functions which are used in the field of machine learning in the
-following sections.
+following sections. There exist many more than can be discussed within
+the scope of this thesis. However, the selection should give an
+overview of the most used and influential ones in the author's
+opinion.
 
 \subsubsection{Identity}
 \label{sssec:theory-identity}
@@ -738,8 +742,99 @@ function has become an essential tool for deep learning practitioners
 and has contributed to the success of many state-of-the-art models in
 computer vision, natural language processing, and other domains.
 
+\subsubsection{Softmax}
+\label{sssec:theory-softmax}
+
+The softmax activation function is often used as the last activation
+function of a neural network to normalize the output of a network to a
+probability distribution over predicted output classes. It takes a
+vector of numbers, known as logits, and scales them into
+probabilities. The output of the softmax function is a vector with
+probabilities of each possible outcome, and the probabilities in the
+vector sum to one for all possible outcomes or classes. In
+mathematical terms, the function is defined as
+
+\begin{equation}
+  \label{eq:softmax}
+  \sigma(\vec{z})_{i} = \frac{e^{z_i}}{\sum_{j=1}^Ke^{z_j}}i\ \mathrm{for}\ i = 1,\dots,K\ \mathrm{and}\ \vec{z} = (z_1,\dots,z_K)\in\mathbb{R}^K
+\end{equation}
+
+where the standard exponential function is applied to each value in
+the vector $\vec{z}$ and the result is normalized with the sum of the
+exponentials.
+
 \subsection{Loss Function}
 \label{ssec:theory-loss-function}
+
+Loss functions play a fundamental role in machine learning, as they
+are used to evaluate the performance of a model and guide its
+training. The choice of loss function can significantly impact the
+accuracy and generalization of the model. There are various types of
+loss functions, each with its strengths and weaknesses, and the
+appropriate choice depends on the specific problem being addressed.
+
+From the definition of a learning program from
+section~\ref{sec:theory-ml}, loss functions constitute the performance
+measure $P$ against which the results of the learning program are
+measured. Only by minimizing the error obtained from the loss function
+and updating the weights within the network is it possible to gain
+experience $E$ at carrying out a task $T$. How the weights are updated
+depends on the algorithm which is used during the \emph{backward pass}
+to minimize the error. This type of procedure is referred to as
+\emph{backpropagation} (see
+section~\ref{ssec:theory-backpropagation}).
+
+One common type of loss function is the \gls{mse} which is widely used
+in regression problems. The \gls{mse} is a popular choice because it
+is easy to compute and has a closed-form solution, making it efficient
+to optimize. It does have some limitations, however. For instance, it
+is sensitive to outliers, and it may not be appropriate for problems
+with non-normal distributions. \gls{mse} measures the average squared
+difference between predicted and actual values. It is calculated with
+
+\begin{equation}
+  \label{eq:mse}
+  \mathrm{MSE_{test}} = \frac{1}{m}\sum_i(\hat{y}^{(\mathrm{test})} - y^{(\mathrm{test})})_i^2
+\end{equation}
+
+where $\hat{y}^{(\mathrm{test})}$ contains the predictions of the
+model on the test set and $y^{(\mathrm{test})}$ refers to the target
+labels \cite{goodfellow2016}. It follows that, if
+$\hat{y}^{(\mathrm{test})} = y^{(\mathrm{test})}$, the error is $0$
+and the model has produced a perfect prediction.
+
+We cannot, however, take the results of the error on the test set to
+update the weights during training because the test set must always
+contain only samples which the model has not seen before. If the model
+is trained to minimize the \gls{mse} on the test set and then
+evaluated against the same set, the results will be how well the model
+fits to the test set and not how well it generalizes. The goal,
+therefore, is to minimize the error on the training set and to compare
+the results against an evaluation on the test set. If the model
+achieves very low error rates on the training set but not on the test
+set, it is likely that the model is suffering from
+\emph{overfitting}. Conversely, if the model does not achieve low
+error rates on the training set, it is likely that the model is
+suffering from \emph{underfitting}.
+
+Another popular loss function is the cross-entropy loss, which is
+commonly used in classification problems. Cross-entropy loss measures
+the difference between predicted probabilities and actual labels. It
+is a good choice for classification problems because it takes into
+account the class imbalance issue and it is less sensitive to
+outliers. However, cross-entropy loss has its own limitations. For
+instance, it may not be appropriate for problems with more than two
+classes, and it can be sensitive to the choice of the softmax
+function.
+
+In recent years, there has been an increasing interest in using
+alternative loss functions that can better handle complex
+problems. For example, the Huber loss is a modification of the MSE
+loss that is more robust to outliers. The Smooth L1 loss is another
+alternative that is less sensitive to outliers and can handle
+non-normal distributions. These alternative loss functions have been
+shown to be effective in various applications such as image
+classification, object detection, and speech recognition.
 
 \subsection{Backpropagation}
 \label{ssec:theory-backpropagation}
@@ -771,9 +866,6 @@ exclusively leverage a deep learning based approach. This chapter
 gives an introduction to object detection, explains common problems
 researchers have faced and how they have been solved, and discusses
 the two main approaches to object detection via deep learning.
-
-\subsection{Definition}
-\label{ssec:obj-definition}
 
 \subsection{Traditional Methods}
 \label{ssec:obj-traditional}
@@ -1987,6 +2079,7 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t

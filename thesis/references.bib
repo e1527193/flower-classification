@@ -273,6 +273,38 @@
   file = {/home/zenon/Zotero/storage/U5UBHUUH/Visual_Feature_Extraction_by_a_Multilayered_Network_of_Analog_Threshold_Elements.pdf;/home/zenon/Zotero/storage/YIJ8SNLD/Fukushima - 1969 - Visual Feature Extraction by a Multilayered Networ.pdf;/home/zenon/Zotero/storage/HLJYDE2X/4082265.html}
 }
 
+@online{ge2021,
+  title = {{{OTA}}: {{Optimal Transport Assignment}} for {{Object Detection}}},
+  shorttitle = {{{OTA}}},
+  author = {Ge, Zheng and Liu, Songtao and Li, Zeming and Yoshie, Osamu and Sun, Jian},
+  date = {2021-03-26},
+  eprint = {2103.14259},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.2103.14259},
+  urldate = {2023-09-28},
+  abstract = {Recent advances in label assignment in object detection mainly seek to independently define positive/negative training samples for each ground-truth (gt) object. In this paper, we innovatively revisit the label assignment from a global perspective and propose to formulate the assigning procedure as an Optimal Transport (OT) problem -- a well-studied topic in Optimization Theory. Concretely, we define the unit transportation cost between each demander (anchor) and supplier (gt) pair as the weighted summation of their classification and regression losses. After formulation, finding the best assignment solution is converted to solve the optimal transport plan at minimal transportation costs, which can be solved via Sinkhorn-Knopp Iteration. On COCO, a single FCOS-ResNet-50 detector equipped with Optimal Transport Assignment (OTA) can reach 40.7\% mAP under 1X scheduler, outperforming all other existing assigning methods. Extensive experiments conducted on COCO and CrowdHuman further validate the effectiveness of our proposed OTA, especially its superiority in crowd scenarios. The code is available at https://github.com/Megvii-BaseDetection/OTA.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/zenon/Zotero/storage/LE4HHL9X/Ge et al. - 2021 - OTA Optimal Transport Assignment for Object Detec.pdf;/home/zenon/Zotero/storage/MCF86ZKV/2103.html}
+}
+
+@online{ge2021a,
+  title = {{{YOLOX}}: {{Exceeding YOLO Series}} in 2021},
+  shorttitle = {{{YOLOX}}},
+  author = {Ge, Zheng and Liu, Songtao and Wang, Feng and Li, Zeming and Sun, Jian},
+  date = {2021-08-05},
+  eprint = {2107.08430},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.2107.08430},
+  urldate = {2023-09-28},
+  abstract = {In this report, we present some experienced improvements to YOLO series, forming a new high-performance detector -- YOLOX. We switch the YOLO detector to an anchor-free manner and conduct other advanced detection techniques, i.e., a decoupled head and the leading label assignment strategy SimOTA to achieve state-of-the-art results across a large scale range of models: For YOLO-Nano with only 0.91M parameters and 1.08G FLOPs, we get 25.3\% AP on COCO, surpassing NanoDet by 1.8\% AP; for YOLOv3, one of the most widely used detectors in industry, we boost it to 47.3\% AP on COCO, outperforming the current best practice by 3.0\% AP; for YOLOX-L with roughly the same amount of parameters as YOLOv4-CSP, YOLOv5-L, we achieve 50.0\% AP on COCO at a speed of 68.9 FPS on Tesla V100, exceeding YOLOv5-L by 1.8\% AP. Further, we won the 1st Place on Streaming Perception Challenge (Workshop on Autonomous Driving at CVPR 2021) using a single YOLOX-L model. We hope this report can provide useful experience for developers and researchers in practical scenes, and we also provide deploy versions with ONNX, TensorRT, NCNN, and Openvino supported. Source code is at https://github.com/Megvii-BaseDetection/YOLOX.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/zenon/Zotero/storage/B9KGZ7N2/Ge et al. - 2021 - YOLOX Exceeding YOLO Series in 2021.pdf;/home/zenon/Zotero/storage/XQTJLGLZ/2107.html}
+}
+
 @inproceedings{girshick2015,
   title = {Deformable Part Models Are Convolutional Neural Networks},
   booktitle = {2015 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
@@ -402,6 +434,21 @@
   issue = {arXiv:1405.0312},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
   file = {/home/zenon/Zotero/storage/ZMCI6A8T/Lin et al. - 2015 - Microsoft COCO Common Objects in Context.pdf}
+}
+
+@online{lin2017,
+  title = {Feature {{Pyramid Networks}} for {{Object Detection}}},
+  author = {Lin, Tsung-Yi and Dollár, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
+  date = {2017-04-19},
+  eprint = {1612.03144},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.1612.03144},
+  urldate = {2023-09-28},
+  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But recent deep learning object detectors have avoided pyramid representations, in part because they are compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using FPN in a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/zenon/Zotero/storage/8BBA7R4F/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/KUPLTHRQ/1612.html}
 }
 
 @incollection{liu2016,
@@ -737,6 +784,22 @@
   issue = {arXiv:1911.08287},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
   file = {/home/zenon/Zotero/storage/A7KFIFE2/Zheng et al. - 2019 - Distance-IoU Loss Faster and Better Learning for .pdf}
+}
+
+@online{zheng2019a,
+  title = {Distance-{{IoU Loss}}: {{Faster}} and {{Better Learning}} for {{Bounding Box Regression}}},
+  shorttitle = {Distance-{{IoU Loss}}},
+  author = {Zheng, Zhaohui and Wang, Ping and Liu, Wei and Li, Jinze and Ye, Rongguang and Ren, Dongwei},
+  date = {2019-11-19},
+  eprint = {1911.08287},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.1911.08287},
+  urldate = {2023-09-28},
+  abstract = {Bounding box regression is the crucial step in object detection. In existing methods, while \$\textbackslash ell\_n\$-norm loss is widely adopted for bounding box regression, it is not tailored to the evaluation metric, i.e., Intersection over Union (IoU). Recently, IoU loss and generalized IoU (GIoU) loss have been proposed to benefit the IoU metric, but still suffer from the problems of slow convergence and inaccurate regression. In this paper, we propose a Distance-IoU (DIoU) loss by incorporating the normalized distance between the predicted box and the target box, which converges much faster in training than IoU and GIoU losses. Furthermore, this paper summarizes three geometric factors in bounding box regression, \textbackslash ie, overlap area, central point distance and aspect ratio, based on which a Complete IoU (CIoU) loss is proposed, thereby leading to faster convergence and better performance. By incorporating DIoU and CIoU losses into state-of-the-art object detection algorithms, e.g., YOLO v3, SSD and Faster RCNN, we achieve notable performance gains in terms of not only IoU metric but also GIoU metric. Moreover, DIoU can be easily adopted into non-maximum suppression (NMS) to act as the criterion, further boosting performance improvement. The source code and trained models are available at https://github.com/Zzh-tju/DIoU.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/zenon/Zotero/storage/4666A7J8/Zheng et al. - 2019 - Distance-IoU Loss Faster and Better Learning for .pdf;/home/zenon/Zotero/storage/V85B5F3R/1911.html}
 }
 
 @article{zhong2022,
