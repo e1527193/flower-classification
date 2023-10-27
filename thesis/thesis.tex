@@ -25,6 +25,7 @@
 \usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
 \usepackage{siunitx}
 \usepackage{float}
+\usepackage{csquotes}
 
 \addbibresource{references.bib}
 
@@ -74,11 +75,10 @@
 \setcurriculum{Software Engineering \& Internet Computing}{Software Engineering \& Internet Computing} % Sets the English and German name of the curriculum.
 
 \newacronym{xai}{XAI}{Explainable Artificial Intelligence}
-\newacronym{grad-cam}{Grad-CAM}{Gradient-weighted Class Activation Mapping}
-\newacronym{cam}{CAM}{Class Activation Mapping}
-\newacronym{oid}{OID}{Open Images Dataset}
-\newacronym{ap}{AP}{Average Precision}
-\newacronym{iou}{IOU}{Intersection over Union}
+\newacronym{grad-cam}{Grad-CAM}{Gradient-weighted Class Activation
+  Mapping} \newacronym{cam}{CAM}{Class Activation Mapping}
+\newacronym{oid}{OID}{Open Images Dataset} \newacronym{ap}{AP}{Average
+  Precision} \newacronym{iou}{IOU}{Intersection over Union}
 \newacronym{map}{mAP}{mean Average Precision}
 \newacronym{resnet}{ResNet}{Residual Neural Network}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
@@ -86,12 +86,13 @@
 \newacronym{roc}{ROC}{Receiver Operating Characteristic}
 \newacronym{auc}{AUC}{Area Under the Curve}
 \newacronym{coco}{COCO}{Common Objects in Context}
-\newacronym{pascal-voc}{\textsc{PASCAL} VOC}{\textsc{PASCAL} Visual Object Classes}
+\newacronym{voc}{VOC}{\textsc{PASCAL} Visual Object Classes}
 \newacronym{sbc}{SBC}{single-board computer}
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{rest}{REST}{Representational State Transfer}
 \newacronym{dl}{DL}{Deep Learning}
 \newacronym{gpu}{GPU}{Graphics Processing Unit}
+\newacronym{cpu}{CPU}{Central Processing Unit}
 \newacronym{tpu}{TPU}{Tensor Processing Unit}
 \newacronym{hog}{HOG}{Histogram of Oriented Gradients}
 \newacronym{sift}{SIFT}{Scale-Invariant Feature Transform}
@@ -104,6 +105,12 @@
 \newacronym{elu}{ELU}{Exponential Linear Unit}
 \newacronym{silu}{SiLU}{Sigmoid Linear Unit}
 \newacronym{mse}{MSE}{mean squared error}
+\newacronym{ilsvrc2012}{ILSVRC2012}{ImageNet Large Scale Visual
+  Recognition Challenge}
+\newacronym{lrn}{LRN}{Local Response Normalization}
+\newacronym[plural=ROIs,longplural=Regions of Interest]{roi}{ROI}{Region of Interest}
+\newacronym{spp}{SPP}{Spatial Pyramid Pooling}
+\newacronym{rpn}{RPN}{Region Proposal Network}
 
 \begin{document}
 
@@ -300,11 +307,11 @@ further insights about the type of models which are commonly used.
 In order to find and select appropriate datasets to train the models
 on, we will survey the existing big datasets for classes we can
 use. Datasets such as the \gls{coco}~\cite{lin2015} and
-\gls{pascal-voc}~\cite{everingham2010} contain the highly relevant
-class \emph{Potted Plant}. By extracting only these classes from
-multiple datasets and concatenating them together, it is possible to
-create one unified dataset which only contains the classes necessary
-for training the model.
+\gls{voc}~\cite{everingham2010} contain the highly relevant class
+\emph{Potted Plant}. By extracting only these classes from multiple
+datasets and concatenating them together, it is possible to create one
+unified dataset which only contains the classes necessary for training
+the model.
 
 The training of the models will happen in an environment where more
 computational resources are available than what the~\gls{sbc}
@@ -414,7 +421,7 @@ Estimated 25 pages for this chapter.
 \section{Machine Learning}
 \label{sec:theory-ml}
 
-The term machine learning was first used by \textcite{samuel2000} in
+The term machine learning was first used by \textcite{samuel1959} in
 1959 in the context of teaching a machine how to play the game
 Checkers. \textcite{mitchell1997a} defines learning in the context of
 programs as:
@@ -661,8 +668,8 @@ network and is, therefore, not suitable for complex intra-data
 relationships. A major downside to using the Heaviside step function
 is that it is not differentiable at $x = 0$ and has a $0$ derivative
 elsewhere. These properties make it unsuitable for use with gradient
-descent during \todo[noline]{link to backpropagation section}
-backpropagation.
+descent during back-propagation (section
+\ref{ssec:theory-back-propagation}).
 
 \subsubsection{Sigmoid}
 \label{sssec:theory-sigmoid}
@@ -781,8 +788,8 @@ and updating the weights within the network is it possible to gain
 experience $E$ at carrying out a task $T$. How the weights are updated
 depends on the algorithm which is used during the \emph{backward pass}
 to minimize the error. This type of procedure is referred to as
-\emph{backpropagation} (see
-section~\ref{ssec:theory-backpropagation}).
+\emph{back-propagation} (see
+section~\ref{ssec:theory-back-propagation}).
 
 One common type of loss function is the \gls{mse} which is widely used
 in regression problems. The \gls{mse} is a popular choice because it
@@ -817,29 +824,41 @@ set, it is likely that the model is suffering from
 error rates on the training set, it is likely that the model is
 suffering from \emph{underfitting}.
 
-Another popular loss function is the cross-entropy loss, which is
-commonly used in classification problems. Cross-entropy loss measures
-the difference between predicted probabilities and actual labels. It
-is a good choice for classification problems because it takes into
-account the class imbalance issue and it is less sensitive to
-outliers. However, cross-entropy loss has its own limitations. For
-instance, it may not be appropriate for problems with more than two
-classes, and it can be sensitive to the choice of the softmax
-function.
+\textcite{goodfellow2016} writes on \gls{mse}: ``\gls{mse} was popular
+in the 1980s and 1990s but was gradually replaced by cross-entropy
+losses and the principle of maximum likelihood as ideas spread between
+the statistics community and the machine learning
+community''~\cite[p.222]{goodfellow2016}. Cross-entropy measures the
+difference in information between two distinct probability
+distributions. Specifically, it gives a number on the average total
+amount of bits needed to represent a message or event from the first
+probability distribution in the second probability distribution. If
+there is the case of binary random variables, i.e. only two classes to
+classify exist, the measure is called binary
+cross-entropy. Cross-entropy loss is known to outperform \gls{mse} for
+classification tasks and allows the model to be trained
+faster~\cite{simard2003}.
 
-In recent years, there has been an increasing interest in using
-alternative loss functions that can better handle complex
-problems. For example, the Huber loss is a modification of the MSE
-loss that is more robust to outliers. The Smooth L1 loss is another
-alternative that is less sensitive to outliers and can handle
-non-normal distributions. These alternative loss functions have been
-shown to be effective in various applications such as image
-classification, object detection, and speech recognition.
+\subsection{Back-Propagation}
+\label{ssec:theory-back-propagation}
 
-\subsection{Backpropagation}
-\label{ssec:theory-backpropagation}
+So far, information only flows forward through the network whenever a
+prediction for a particular input should be made. In order for a
+neural network to learn, information about the computed loss has to
+flow backward through the network. Only then can the weights at the
+individual neurons be updated. This type of information flow is termed
+\emph{back-propagation} \cite{rumelhart1986}. Back-propagation
+computes the gradient of a loss function with respect to the weights
+of a network for an input-output pair. The algorithm computes the
+gradient iteratively starting from the last layer and works its way
+backward through the network until it reaches the first layer.
 
-
+Strictly speaking, back-propagation only computes the gradient, but
+does not determine how the gradient is used to learn the new
+weights. Once the back-propagation algorithm has computed the
+gradient, that gradient is passed to an algorithm which finds a local
+minimum of it. This step is usually performed by some variant of
+gradient descent \cite{cauchy1847}.
 
 \section{Object Detection}
 \label{sec:background-detection}
@@ -926,11 +945,11 @@ second to process.
 \subsubsection{Deformable Part-Based Model}
 \label{sssec:obj-dpm}
 
-\glspl{dpm}~\cite{felzenszwalb2008a} were the winners of the
-\gls{pascal-voc} challenge in the years 2007, 2008 and 2009. The
-method is heavily based on the previously discussed \gls{hog} since it
-also uses \gls{hog} descriptors internally. The authors addition is
-the idea of learning how to decompose objects during training and
+\glspl{dpm}~\cite{felzenszwalb2008a} were the winners of the \gls{voc}
+challenge in the years 2007, 2008 and 2009. The method is heavily
+based on the previously discussed \gls{hog} since it also uses
+\gls{hog} descriptors internally. The authors addition is the idea of
+learning how to decompose objects during training and
 classifying/detecting the decomposed parts during inference. The
 \gls{hog} descriptors are computed on different scales to form a
 \gls{hog} feature pyramid. Coarse features are more easily identified
@@ -953,6 +972,175 @@ increases in depth. \textcite{girshick2015} argue that \glspl{dpm}
 \glspl{cnn} by unrolling each step of the algorithm into a
 corresponding \gls{cnn} layer.
 
+\subsection{Deep Learning Based Methods}
+\label{ssec:theory-dl-based}
+
+After the publication of the \gls{dpm}, the field of object detection
+did not make significant advances regarding speed or accuracy. Only
+the (re-)introduction of \glspl{cnn} by \textcite{krizhevsky2012} with
+their AlexNet architecture and their subsequent win of the
+\gls{ilsvrc2012} gave the field a new influx of ideas. The
+availability of the 12 million labeled images in the ImageNet dataset
+\cite{deng2009} allowed a shift from focusing on better methods to
+being able to use more data to train models. Earlier models had
+difficulties with making use of the large dataset since training was
+unfeasible. AlexNet, however, provided an architecture which was able
+to be trained on two \glspl{gpu} within 6 days.
+
+AlexNet's main contributions are the use of \glspl{relu}, training on
+multiple \glspl{gpu}, \gls{lrn} and overlapping pooling
+\cite{krizhevsky2012}. As mentioned in
+section~\ref{sssec:theory-relu}, \glspl{relu} introduce non-linearity
+into the network. Instead of using the traditional non-linear
+activation function $\tanh$, where the output is bounded between $-1$
+and $1$, \glspl{relu} allow the output layers to grow as high as
+training requires it. Normalization before an activation function is
+usually used to prevent the neuron from saturating, as would be the
+case with $\tanh$. Even though \glspl{relu} do not suffer from
+saturation, the authors found that \gls{lrn} reduces the top-1 error
+rate by 1.4\% \cite{krizhevsky2012}. Overlapping pooling, in contrast
+to regular pooling, does not easily accept the dominant pixel values
+per window. By smoothing out the pooled information, bias is reduced
+and networks are slightly more resilient to overfitting. Overlapping
+pooling reduces the top-1 error rate by 0.4\%
+\cite{krizhevsky2012}. In aggregate, these improvements result in a
+top-5 error rate of below 25\% at 16.4\%.
+
+These results demonstrated that \glspl{cnn} can extract highly
+relevant feature representations from images. While AlexNet was only
+concerned with classification of images, it did not take long for
+researchers to apply \glspl{cnn} to the problem of object
+detection. Object detection networks from 2014 onward either follow a
+\emph{one-stage} or \emph{two-stage} detection approach. The following
+sections go into detail about each model category.
+
+\subsection{Two-Stage Detectors}
+\label{ssec:theory-two-stage}
+
+As their name implies, two-stage detectors consist of two stages which
+together form a complete object detection pipeline. Commonly, the
+first stage extracts \glspl{roi} which might contain relevant objects
+to detect. The second stage operates on the extracted \glspl{roi} and
+returns a vector of class probabilities. Since the computation in the
+second stage is performed for every \gls{roi}, two-stage detectors are
+often not as efficient as one-stage detectors.
+
+\subsubsection{R-\gls{cnn}}
+\label{sssec:theory-rcnn}
+
+\textcite{girshick2014} were the first to propose using feature
+representations of \glspl{cnn} for object detection. Their approach
+consists of generating around 2000 region proposals and passing these
+on to a \gls{cnn} for feature extraction. The fixed-length feature
+vector is used as input for a linear \gls{svm} which classifies the
+region. They name their method R-\gls{cnn}, where the R stands for
+region.
+
+R-\gls{cnn} uses selective search to generate region proposals
+\cite{uijlings2013}.The authors use selective search's \emph{fast
+mode} to generate the 2000 proposals and warp (i.e. aspect ratios are
+not retained) each proposal into the image dimensions required by the
+\gls{cnn}. The \gls{cnn}, which matches the architecture of AlexNet
+\cite{krizhevsky2012}, generates a $4096$-dimensional feature vector
+and each feature vector is scored by a linear \gls{svm} for each
+class. Scored regions are selected/discarded by comparing each region
+to other regions within the same class and rejecting them if there
+exists another region with a higher score and greater \gls{iou} than a
+threshold. The linear \gls{svm} classifiers are trained to only label
+a region as positive if the overlap, as measured by \gls{iou}, is
+above $0.3$.
+
+While the approach of generating region proposals is not new, using a
+\gls{cnn} purely for feature extraction is. Unfortunately, R-\gls{cnn}
+is far from being able to operate in real time. The authors report
+that it takes \qty{13}{\s\per image} on a \gls{gpu} and
+\qty{53}{\s\per image} on a \gls{cpu} to generate the region proposals
+and feature vector. In some sense, these processing times are a step
+backward from the \glspl{dpm} introduced in
+section~\ref{sssec:obj-dpm}. However, the authors showed that
+\glspl{cnn} can function perfectly well as feature extractors, even if
+their processing performance is not yet up to par with traditional
+methods. Furthermore, R-\gls{cnn} crushes \glspl{dpm} on the \gls{voc}
+2007 challenge with a \gls{map} of 58.5\% \cite{girshick2014} versus
+33.7\% (\gls{dpm}-v5 \cite{girshick,felzenszwalb2010}) This was enough
+to spark renewed interest in \glspl{cnn} and—with better availability
+of large data sets and \gls{gpu} processing capabilities—opened the
+way for further research in that direction.
+
+\subsubsection{SPP-net}
+\label{sssec:theory-spp-net}
+
+A year after the publication of R-\gls{cnn}, \textcite{he2015}
+introduce the concept of \gls{spp} to allow \glspl{cnn} to accept
+arbitrarily sized instead of fixed-size input images. They name their
+method \gls{spp}-net and it outputs a fixed-length feature vector of
+the input image.
+
+\gls{spp} layers operate in-between the convolutional and
+fully-connected layers of a \gls{cnn}. Since the fully-connected
+layers require fixed-size inputs but the convolutional layers do not,
+\gls{spp} layers aggregate the information from convolutional layers
+and pass the resulting fixed-size outputs to the fully-connected
+layers. This approach allows only passing the full image through the
+convolutional layers once and calculating features with the \gls{spp}
+layer from these results. This avoids the redundant computations for
+each \gls{roi} present in R-\gls{cnn} and provides a speedup of 24-102
+times while achieving even better metrics on the \gls{voc} 2007 data
+set at a \gls{map} of 59.2\%.
+
+\subsubsection{Fast R-\gls{cnn}}
+\label{sssec:theory-fast-rcnn}
+
+Fast R-\gls{cnn} was proposed by \textcite{girshick2015a} to fix the
+three main problems R-\gls{cnn} and \gls{spp}-net have. The first
+problem is that the training for both models is
+multi-stage. R-\gls{cnn} finetunes the convolutional network which is
+responsible for feature extraction and then trains \glspl{svm} to
+classify the feature vectors. The third stage consists of training the
+bounding box regressors. The second problem is the training time which
+is on the order of multiple days for deep convolutional networks. The
+third problem is the processing time per image which is (depending on
+the convolutional network) upwards of \qty{13}{\s\per image}.
+
+Fast R-\gls{cnn} deals with these problems by having an architecture
+which allows it to take in images and object proposals at once and
+process them simultaneously to arrive at the results. The outputs of
+the network are the class an object proposal belongs to and 4 scalar
+values representing the bounding box of the object. Unfortunately,
+this approach still requires a separate object proposal generator such
+as selective search \cite{uijlings2013}.
+
+\subsubsection{Faster R-\gls{cnn}}
+\label{sssec:theory-faster-rcnn}
+
+Faster R-\gls{cnn} \cite{ren2015,ren2017}—as the name implies—is yet
+another improvement building on R-\gls{cnn}, \gls{spp}-net and Fast
+R-\gls{cnn}. Since the bottleneck in performance with previous
+approaches has been the object proposal generator, the authors of
+Faster R-\gls{cnn} introduce a \gls{rpn} to predict bounding boxes and
+objectness in one step. As with previous networks, the proposals are
+then passed to the detection network.
+
+\glspl{rpn} work by using the already present convolutional features
+in Fast R-\gls{cnn} and adding additional layers on top to also
+regress bounding boxes and objectness scores per location. Instead of
+relying on a pyramid structure such as with \gls{spp}-net (see
+section~\ref{sssec:theory-spp-net}), \glspl{rpn} use \emph{anchor
+boxes} as a basis for the bounding box regressor. These anchor boxes
+are predefined for various scales and aspect ratios and serve as
+starting points for the regressor to properly fit a bounding box
+around an object.
+
+The \gls{rpn} makes object proposal generation inexpensive and
+possible on \glspl{gpu}. The whole network operates on an almost real
+time scale by being able to process \qty{5}{images\per\s} and
+maintaining high state-of-the-art \gls{map} values of 73.2\%
+(\gls{voc} 2007). If the detection network is switched from VGGNet to
+ZF-Net \cite{zeiler2013}, Faster R-\gls{cnn} is able to achieve
+\qty{17}{images\per\s}, albeit at a lower \gls{map} of 59.9\%.
+
+\subsection{One-Stage Detectors}
+\label{ssec:theory-one-stage}
 
 \section{Classification}
 \label{sec:background-classification}
