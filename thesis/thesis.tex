@@ -111,6 +111,13 @@
 \newacronym[plural=ROIs,longplural=Regions of Interest]{roi}{ROI}{Region of Interest}
 \newacronym{spp}{SPP}{Spatial Pyramid Pooling}
 \newacronym{rpn}{RPN}{Region Proposal Network}
+\newacronym{fpn}{FPN}{Feature Pyramid Network}
+\newacronym{yolo}{YOLO}{You Only Look Once}
+\newacronym{ssd}{SSD}{Single Shot MultiBox Detector}
+\newacronym{ann}{ANN}{Artificial Neural Network}
+\newacronym{cuda}{CUDA}{Compute Unified Device Architecture}
+\newacronym{rbf}{RBF}{Radial Basis Function}
+\newacronym{mnist}{MNIST}{Modified National Institute of Standards and Technology}
 
 \begin{document}
 
@@ -863,20 +870,6 @@ gradient descent \cite{cauchy1847}.
 \section{Object Detection}
 \label{sec:background-detection}
 
-Give a definition of object detection and contrast it with instance
-segmentation/other detection tasks. Briefly mention how object
-detection was done before deep neural networks (feature-based methods
-(HOG, SIFT) and sliding window methods (Viola-Jones)). Go over the
-different approaches to object detection, namely region-based methods
-(Mask R-CNN and Faster R-CNN) and single-shot detection. Illustrate
-the approach region-based methods take and discuss problems arising
-from said approach (e.g. Dual-Priorities, multiple image passes and
-slow selective search algorithms for region proposals). Contrast the
-previous region-based methods with newer single-shot detectors such as
-YOLO and SSDnet. 
-
-Estimated 8 pages for this section.
-
 From facial detection to fully automated driving—object detection
 provides the basis for a wide variety of tasks within the computer
 vision world. While most implementations in the 1990s and early 2000s
@@ -923,15 +916,15 @@ achieves comparable results to the state of the art in 2001.
 The \gls{hog}~\cite{dalal2005} is a feature descriptor used in
 computer vision and image processing to detect objects in images. It
 is a detector which detects shape like other methods such as
-\gls{sift}. The idea is to use the distribution of local intensity
-gradients or edge directions to describe an object. To this end, the
-authors divide the image into a grid of cells and calculate a
-histogram of edge orientations within each cell. Additionally, each
-histogram is normalized by taking a larger region and adjusting the
-local histograms based on the larger region's intensity levels. The
-resulting blocks of normalized gradients are evenly spaced out across
-the image with some overlap. These patches are then passed as a
-feature vector to a classifier.
+\gls{sift} \cite{lowe1999}. The idea is to use the distribution of
+local intensity gradients or edge directions to describe an object. To
+this end, the authors divide the image into a grid of cells and
+calculate a histogram of edge orientations within each
+cell. Additionally, each histogram is normalized by taking a larger
+region and adjusting the local histograms based on the larger region's
+intensity levels. The resulting blocks of normalized gradients are
+evenly spaced out across the image with some overlap. These patches
+are then passed as a feature vector to a classifier.
 
 \textcite{dalal2005} successfully use the \gls{hog} with a linear
 \gls{svm} for classification to detect humans in images. They work
@@ -1135,14 +1128,151 @@ The \gls{rpn} makes object proposal generation inexpensive and
 possible on \glspl{gpu}. The whole network operates on an almost real
 time scale by being able to process \qty{5}{images\per\s} and
 maintaining high state-of-the-art \gls{map} values of 73.2\%
-(\gls{voc} 2007). If the detection network is switched from VGGNet to
-ZF-Net \cite{zeiler2013}, Faster R-\gls{cnn} is able to achieve
-\qty{17}{images\per\s}, albeit at a lower \gls{map} of 59.9\%.
+(\gls{voc} 2007). If the detection network is switched from VGGNet
+\cite{liu2015} to ZF-Net \cite{zeiler2013}, Faster R-\gls{cnn} is able
+to achieve \qty{17}{images\per\s}, albeit at a lower \gls{map} of
+59.9\%.
+
+\subsubsection{Feature Pyramid Network}
+\label{sssec:theory-fpn}
+
+\glspl{fpn} were first introduced by \textcite{lin2017} to use the
+hierarchical pyramid structure inherent in \glspl{cnn} to compute
+feature maps on different scales. Previously, detectors were only
+using the features of the top most (coarse) layers because it was
+computationally too expensive to use lower (fine-grained) layers. By
+leveraging feature maps on different scales, \glspl{fpn} are able to
+better detect small objects because predictions are made independently
+on all levels. \glspl{fpn} are an important building block of many
+state-of-the-art object detectors.
+
+A \gls{fpn} first computes the feature pyramid bottom-up with a
+scaling step of 2. The lower levels capture less semantic information
+than the higher levels, but include more spatial information due to
+the higher granularity. In a second step, the \gls{fpn} upsamples the
+higher levels such that the dimensions of two consecutive layers are
+the same. The upsampled top layer is merged with the layer beneath it
+via element-wise addition and convolved with a $1\times 1$ convolutional
+layer to reduce channel dimensions and to smooth out potential
+artifacts introduced during the upsampling step. The results of that
+operation constitute the new \emph{top layer} and the process
+continues with the layer below it until the finest resolution feature
+map is generated. In this way, the features of the different layers at
+different scales are fused to obtain a feature map with high semantic
+information but also high spatial information.
+
+\textcite{lin2017} report results on \gls{coco} with a \gls{map}@0.5
+of 59.1\% with a Faster R-\gls{cnn} structure and a ResNet-101
+backbone. Their submission does not include any specific improvements
+such as hard negative mining \cite{shrivastava2016} or data
+augmentation.
 
 \subsection{One-Stage Detectors}
 \label{ssec:theory-one-stage}
 
-\section{Classification}
+One-stage detectors, in contrast to two-stage detectors, combine the
+proposal generation and detection tasks into one neural network such
+that all objects can be retrieved in a single step. Since the proposal
+generation in two-stage detectors is a costly operation and usually
+the bottleneck, one-stage detectors are significantly faster
+overall. Their speeds allow them to be deployed to low-resource
+devices such as mobile phones while still providing real time object
+detection. Unfortunately, their detection accuracy trailed the
+two-stage approaches for years, especially for small and/or dense
+objects.
+
+\subsubsection{You Only Look Once}
+\label{sssec:theory-yolo}
+
+\gls{yolo} was the first one-stage detector introduced by
+\textcite{redmon2016}. It divides each image into regions and predicts
+bounding boxes and classes of objects simultaneously. This allows it
+to be extremely fast at up to \qty{155}{fps} with a \gls{map} of
+52.7\% on \gls{voc} 2007. The accuracy results were not state of the
+art at the time because the architecture trades localization accuracy
+for speed, especially for small objects. These issues have been
+gradually dealt with in later versions of \gls{yolo} as well as in
+other one-stage detectors such as \gls{ssd}. Since a later version of
+\gls{yolo} is used in this work, we refer to
+section~\ref{sec:methods-detection} for a thorough account of its
+architecture.
+
+\subsubsection{Single Shot MultiBox Detector}
+\label{sssec:theory-ssd}
+
+\gls{ssd} was proposed by \textcite{liu2016} and functions similarly
+to \gls{yolo} in that it does not need an extra proposal generation
+step, but instead detects and classifies objects in one go. The aim of
+one-stage detectors is to be considerably faster and at least as
+accurate as two-stage detectors. While \gls{yolo} paved the way for
+one-stage detectors, the detection accuracy is significantly lower
+than state-of-the-art two-stage detection approaches such as Faster
+R\gls{cnn}. \gls{ssd} combines generating detections on multiple
+scales and an end-to-end architecture to achieve high accuracy as well
+as high speed.
+
+\gls{ssd} is based on a standard \gls{cnn} such as VGG16
+\cite{liu2015} and adds additional feature layers to the network. The
+\gls{cnn}, which the detector is using to extract features, has its
+last fully-connected layer removed such that the output of the
+\gls{cnn} is a scaled down representation of the input image. The
+extra layers are intended to capture features at different scales and
+compare them during training to a range of default anchor boxes. This
+idea comes from MultiBox \cite{erhan2014}, but is implemented in
+\gls{ssd} with a slight twist: during matching of default boxes to the
+ground truth, boxes with a Jaccard overlap (\gls{iou}) of less than
+$0.5$ are discarded. In one-stage detector terms, the feature
+extractor is the \emph{backbone} whereas the extra layers constitute
+the \emph{head} of the network. The outputs of the extra layers
+contain features for smaller regions with higher spatial
+information. Making use of these additional feature maps is what sets
+\gls{ssd} apart from \gls{yolo} and results in \gls{ssd} being able to
+detect smaller and denser objects as well.
+
+The authors report results on \gls{voc} 2007 for their \gls{ssd}300
+and \gls{ssd}512 model varieties. The number refers to the size of the
+input images. \gls{ssd}300 outperforms Fast R-\gls{cnn} by 1.1
+percentage points (\gls{map} 66.9\% vs 68\%). \gls{ssd}512 outperforms
+Faster R-\gls{cnn} by 1.7\% \gls{map}. If trained on the \gls{voc}
+2007, 2012 and \gls{coco} train sets, \gls{ssd}512 achieves a
+\gls{map} of 81.5\% on the \gls{voc} 2007 test set. \gls{ssd}'s speed
+is at \qty{46}{fps} which, although lower than Fast \gls{yolo}'s
+\qty{155}{fps}, is still in real time. Furthermore, \gls{ssd} has a
+\gls{map} which is almost 22\% higher than Fast \gls{yolo}.
+
+\subsubsection{RetinaNet}
+\label{sssec:theory-retinanet}
+
+One-stage detectors before 2017 always trailed the accuracy of top
+two-stage detectors on common and difficult benchmark data sets such
+as \gls{coco}. \textcite{lin2017b} investigated what the culprit for
+the lower accuracy scores could be and found that the severe class
+imbalance between foreground and background instances is the
+problem. They introduce a novel loss function called \emph{Focal Loss}
+which replaces the standard cross-entropy loss. Focal loss
+down-weights the importance of easy negative examples during training
+and instead focuses on instances which are harder but provide more
+information.
+
+Focal loss is based on cross-entropy loss but includes a scaling
+factor which decreases while the classification confidence
+increases. In other words, if the confidence that an object belongs to
+a particular class is already high, focal loss outputs a small value
+such that the weight updates during backpropagation are only
+marginally affected by the current example. The model can thus focus
+on examples which are harder to achieve a good confidence score on.
+
+\textcite{lin2017b} implement their focal loss with a simple one-stage
+detector called \emph{RetinaNet}. It makes use of previous advances in
+object detection and classification by including a \gls{fpn} on top of
+a ResNet \cite{he2016} as the backbone and using anchors for the
+different levels in the feature pyramid. Attached to the backbone are
+two subnetworks which classify anchor boxes and regress them to the
+ground truth boxes. The results are that the RetinaNet-101-500 version
+(with an input size of \qty{500}{px}) achieves a \gls{map} of 34.4\%
+at a speed of around \qty{11}{fp\s} on the \gls{coco} data set.
+
+\section{Image Classification}
 \label{sec:background-classification}
 
 Give a definition of image classification and briefly mention the way
@@ -1159,6 +1289,153 @@ leaky ReLU) as well as normalization techniques and residual
 connections. 
 
 Estimated 8 pages for this section.
+
+Image classification, in contrast to object detection, is a slightly
+easier task because there is no requirement to localize objects in the
+image. Instead, image classification operates always on the image as a
+whole rather than individual parts of it. As has been demonstrated in
+the last chapter, object detection methods often rely on advances in
+image classification to accurately detect objects. After objects have
+been localized, we humans want to know what kind of object it is and
+that is where image classification methods become useful.
+
+This section goes into detail about various image classification
+methods. We first give a short summary on how image classification was
+commonly done before \glspl{cnn} became the de facto
+standard. Afterwards, we will introduce common and influential
+approaches leveraging \glspl{cnn} and discuss problems and solutions
+for training large networks.
+
+\subsection{Traditional Methods}
+\label{ssec:class-traditional}
+
+Similarly to early object detection algorithms, traditional methods
+rely on manual feature extraction and subsequent classification with
+classical algorithms. Passing raw images to the algorithms is often
+not feasible due to the immense information contained in just one
+image. Furthermore, a raw image contains a signal to noise ratio which
+is too low for a computer to successfully learn properties about the
+image. Instead, humans—with the aid of image processing methods—have
+to select a lower-dimensional representation of the input image and
+then pass this representation to a classifier. This process of
+manually reducing the dimensions and complexity of an image to the
+part which is \emph{relevant} is termed \emph{feature engineering}.
+
+Manual feature engineering requires selecting an appropriate
+representation for the task at hand. For example, if the task is to
+classify images which show an object with a special texture, a feature
+engineer will likely select an image representation which clearly
+pulls the texture into the foreground. In other words, engineers help
+the classifier by preprocessing the image such that the most
+discriminative features are easily visible. The methods with which an
+image representation is created is called \emph{feature descriptor}.
+
+In line with the different ways objects can present themselves on
+images, there have been many feature descriptors proposed. Most of the
+feature descriptors used in object detection are also used in image
+classification (see \gls{hog} and \gls{sift} from
+section~\ref{sssec:obj-hog}) because their representational power is
+useful in both domains.
+
+\subsection{Deep Learning Based Methods}
+\label{ssec:class-dl}
+
+Manual feature engineering is a double-edged sword. Although it allows
+to have a high amount of control, it also necessitates the engineer to
+select a meaningful representation for training the downstream
+classifier. Often, humans make unconscious assumptions about the
+problem to be solved as well as the available data and how best to
+extract features. These assumptions can have a detrimental effect on
+classification accuracy later on because the best-performing feature
+descriptor lies outside of the engineer's purview. Therefore, instead
+of manually preparing feature vectors for the classifier, researchers
+turned to allowing an \gls{ann} to recognize and extract the most
+relevant aspects of an image on its own, without human
+intervention. Attention is thus mostly given to the structure of the
+\gls{ann} and less to the preparation of inputs.
+
+The idea of automatic generation of feature maps via \glspl{ann} gave
+rise to \glspl{cnn}. Early \glspl{cnn} \cite{lecun1989} were mostly
+discarded for practical applications because they require much more
+data during training than traditional methods and also more processing
+power during inference. Passing $224\times 224$ pixel images to a
+\gls{cnn}, as is common today, was simply not feasible if one wanted a
+reasonable inference time. With the development of \glspl{gpu} and
+supporting software such as the \gls{cuda} toolkit, it was possible to
+perform many computations in parallel. The architecture of \glspl{cnn}
+lends itself well to parallel processing and thus \glspl{cnn} slowly
+but surely overtook other image classification methods.
+
+\subsubsection{LeNet-5}
+\label{sssec:theory-lenet-5}
+
+LeNet-5, developed and described by \textcite{lecun1998}, laid the
+foundation of \glspl{cnn} as we still use them today. The basic
+structure of convolutional layers with pooling layers in-between and
+one or more fully-connected layers at the end has been iterated on
+many times since then. \textcite{lecun1989} introduced the first
+version of LeNet when describing their system for automatic
+handwritten zip code recognition. They applied backpropagation with
+\gls{sgd} and used the scaled hyperbolic tangent as the activation
+function. The error function with which the weights are updated is
+\gls{mse}.
+
+The architecture of LeNet-5 is composed of two convolutional layers,
+two pooling layers and a dense block of three fully-connected
+layers. The input image is a grayscale image of 32 by 32 pixels. The
+first convolutional layer generates six feature maps, each with a
+scale of 28 by 28 pixels. Each feature map is fed to a pooling layer
+which effectively downsamples the image by a factor of two. By
+aggregating each two by two area in the feature map via averaging, the
+authors are more likely to obtain relative (to each other) instead of
+absolute positions of the features. To make up for the loss in spatial
+resolution, the following convolutional layer increases the amount of
+feature maps to 16 which aims to increase the richness of the learned
+representations. Another pooling layer follows which reduces the size
+of each of the 16 feature maps to five by five pixels. A dense block
+of three fully-connected layers of 120, 84 and 10 neurons respectively
+serves as the actual classifier in the network. The last layer uses
+the euclidean \gls{rbf} to compute the class an image belongs to (0-9
+digits).
+
+The performance of LeNet-5 was measured on the \gls{mnist} database
+which consists of 70.000 labeled images of handwritten digits. The
+\gls{mse} on the test set is 0.95\%. This result is impressive
+considering that character recognition with a \gls{cnn} had not been
+done before. However, standard machine learning methods of the time,
+such as manual feature engineering and \glspl{svm}, achieved a similar
+error rate, even though they are much more memory-intensive. LeNet-5
+was conceived to take advantage of the (then) large \gls{mnist}
+database. Since there were not many data sets available at the time,
+especially with more samples than in the \gls{mnist} database,
+\glspl{cnn} were not widely used even after their viability had been
+demonstrated by \textcite{lecun1998}. Only in 2012
+\textcite{krizhevsky2012} reintroduced \glspl{cnn} (see
+section~\ref{ssec:theory-dl-based}) and since then most
+state-of-the-art image classification methods have used them.
+
+\subsubsection{ZFNet}
+\label{sssec:theory-zfnet}
+
+\subsubsection{GoogLeNet}
+\label{sssec:theory-googlenet}
+
+\subsubsection{VGGNet}
+\label{sssec:theory-vggnet}
+
+\subsubsection{ResNet}
+\label{sssec:theory-resnet}
+
+\subsubsection{Inception v4}
+\label{sssec:theory-inception-v4}
+
+\subsubsection{DenseNet}
+\label{sssec:theory-densenet}
+
+\subsubsection{MobileNet v3}
+\label{sssec:theory-mobilenet-v3}
+
+
 
 \section{Transfer Learning}
 \label{sec:background-transfer-learning}

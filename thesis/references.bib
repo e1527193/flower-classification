@@ -218,6 +218,19 @@
   keywords = {Explosions,Image databases,Image retrieval,Information retrieval,Internet,Large-scale systems,Multimedia databases,Ontologies,Robustness,Spine}
 }
 
+@inproceedings{erhan2014,
+  title = {Scalable {{Object Detection Using Deep Neural Networks}}},
+  booktitle = {2014 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Erhan, Dumitru and Szegedy, Christian and Toshev, Alexander and Anguelov, Dragomir},
+  date = {2014-06},
+  pages = {2155--2162},
+  issn = {1063-6919},
+  doi = {10.1109/CVPR.2014.276},
+  abstract = {Deep convolutional neural networks have recently achieved state-of-the-art performance on a number of image recognition benchmarks, including the ImageNet Large-Scale Visual Recognition Challenge (ILSVRC-2012). The winning model on the localization sub-task was a network that predicts a single bounding box and a confidence score for each object category in the image. Such a model captures the whole-image context around the objects but cannot handle multiple instances of the same object in the image without naively replicating the number of outputs for each instance. In this work, we propose a saliency-inspired neural network model for detection, which predicts a set of class-agnostic bounding boxes along with a single score for each box, corresponding to its likelihood of containing any object of interest. The model naturally handles a variable number of instances for each class and allows for cross-class generalization at the highest levels of the network. We are able to obtain competitive recognition performance on VOC2007 and ILSVRC2012, while using only the top few predicted locations in each image and a small number of neural network evaluations.},
+  eventtitle = {2014 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  file = {/home/zenon/Zotero/storage/QK2PPIT2/Erhan et al. - 2014 - Scalable Object Detection Using Deep Neural Networ.pdf;/home/zenon/Zotero/storage/KRHQRR7X/6909673.html}
+}
+
 @article{everingham2010,
   title = {The {{Pascal Visual Object Classes}} ({{VOC}}) {{Challenge}}},
   author = {Everingham, Mark and Van Gool, Luc and Williams, Christopher K. I. and Winn, John and Zisserman, Andrew},
@@ -229,7 +242,6 @@
   pages = {303--338},
   issn = {1573-1405},
   doi = {10.1007/s11263-009-0275-4},
-  urldate = {2023-09-07},
   abstract = {The Pascal Visual Object Classes (VOC) challenge is a benchmark in visual object category recognition and detection, providing the vision and machine learning communities with a standard dataset of images and annotation, and standard evaluation procedures. Organised annually from 2005 to present, the challenge and its associated dataset has become accepted as the benchmark for object detection.},
   langid = {english},
   keywords = {Benchmark,Database,Object detection,Object recognition},
@@ -274,7 +286,6 @@
   pages = {1627--1645},
   issn = {1939-3539},
   doi = {10.1109/TPAMI.2009.167},
-  urldate = {2023-10-26},
   abstract = {We describe an object detection system based on mixtures of multiscale deformable part models. Our system is able to represent highly variable object classes and achieves state-of-the-art results in the PASCAL object detection challenges. While deformable part models have become quite popular, their value had not been demonstrated on difficult benchmarks such as the PASCAL data sets. Our system relies on new methods for discriminative training with partially labeled data. We combine a margin-sensitive approach for data-mining hard negative examples with a formalism we call latent SVM. A latent SVM is a reformulation of MI–SVM in terms of latent variables. A latent SVM is semiconvex, and the training problem becomes convex once latent information is specified for the positive examples. This leads to an iterative training algorithm that alternates between fixing latent values for positive examples and optimizing the latent SVM objective function.},
   eventtitle = {{{IEEE Transactions}} on {{Pattern Analysis}} and {{Machine Intelligence}}},
   file = {/home/zenon/Zotero/storage/P5378A3K/Felzenszwalb et al. - 2010 - Object Detection with Discriminatively Trained Par.pdf;/home/zenon/Zotero/storage/HYLEIZJU/5255236.html}
@@ -307,7 +318,6 @@
   pages = {322--333},
   issn = {2168-2887},
   doi = {10.1109/TSSC.1969.300225},
-  urldate = {2023-09-27},
   abstract = {A new type of visual feature extracting network has been synthesized, and the response of the network has been simulated on a digital computer. This research has been done as a first step towards the realization of a recognizer of handwritten characters. The design of the network was suggested by biological systems, especially, the visual systems of cat and monkey. The network is composed of analog threshold elements connected in layers. Each analog threshold element receives inputs from a large number of elements in the neighbouring layers and performs its own special functions. It takes care of one restricted part of the photoreceptor layer, on which an input pattem is presented, and it responds to one particular feature of the input pattem, such as brightness contrast, a dot in the pattern, a line segment of a particular orientation, or an end of the line. This means that the network performs parallel processing of the information. With the propagation of the information through the layered network, the input pattern is successively decomposed into dots, groups of line segments of the same orientation, and the ends of these line segments.},
   eventtitle = {{{IEEE Transactions}} on {{Systems Science}} and {{Cybernetics}}},
   file = {/home/zenon/Zotero/storage/U5UBHUUH/Visual_Feature_Extraction_by_a_Multilayered_Network_of_Analog_Threshold_Elements.pdf;/home/zenon/Zotero/storage/YIJ8SNLD/Fukushima - 1969 - Visual Feature Extraction by a Multilayered Networ.pdf;/home/zenon/Zotero/storage/HLJYDE2X/4082265.html}
@@ -322,7 +332,6 @@
   eprinttype = {arxiv},
   eprintclass = {cs},
   doi = {10.48550/arXiv.2103.14259},
-  urldate = {2023-09-28},
   abstract = {Recent advances in label assignment in object detection mainly seek to independently define positive/negative training samples for each ground-truth (gt) object. In this paper, we innovatively revisit the label assignment from a global perspective and propose to formulate the assigning procedure as an Optimal Transport (OT) problem -- a well-studied topic in Optimization Theory. Concretely, we define the unit transportation cost between each demander (anchor) and supplier (gt) pair as the weighted summation of their classification and regression losses. After formulation, finding the best assignment solution is converted to solve the optimal transport plan at minimal transportation costs, which can be solved via Sinkhorn-Knopp Iteration. On COCO, a single FCOS-ResNet-50 detector equipped with Optimal Transport Assignment (OTA) can reach 40.7\% mAP under 1X scheduler, outperforming all other existing assigning methods. Extensive experiments conducted on COCO and CrowdHuman further validate the effectiveness of our proposed OTA, especially its superiority in crowd scenarios. The code is available at https://github.com/Megvii-BaseDetection/OTA.},
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
@@ -338,7 +347,6 @@
   eprinttype = {arxiv},
   eprintclass = {cs},
   doi = {10.48550/arXiv.2107.08430},
-  urldate = {2023-09-28},
   abstract = {In this report, we present some experienced improvements to YOLO series, forming a new high-performance detector -- YOLOX. We switch the YOLO detector to an anchor-free manner and conduct other advanced detection techniques, i.e., a decoupled head and the leading label assignment strategy SimOTA to achieve state-of-the-art results across a large scale range of models: For YOLO-Nano with only 0.91M parameters and 1.08G FLOPs, we get 25.3\% AP on COCO, surpassing NanoDet by 1.8\% AP; for YOLOv3, one of the most widely used detectors in industry, we boost it to 47.3\% AP on COCO, outperforming the current best practice by 3.0\% AP; for YOLOX-L with roughly the same amount of parameters as YOLOv4-CSP, YOLOv5-L, we achieve 50.0\% AP on COCO at a speed of 68.9 FPS on Tesla V100, exceeding YOLOv5-L by 1.8\% AP. Further, we won the 1st Place on Streaming Perception Challenge (Workshop on Autonomous Driving at CVPR 2021) using a single YOLOX-L model. We hope this report can provide useful experience for developers and researchers in practical scenes, and we also provide deploy versions with ONNX, TensorRT, NCNN, and Openvino supported. Source code is at https://github.com/Megvii-BaseDetection/YOLOX.},
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
@@ -348,7 +356,7 @@
 @online{girshick,
   title = {Discriminatively {{Trained Deformable Part Models}} ({{Release}} 5)},
   author = {Girshick, Ross B. and Felzenszwalb, Pedro F. and McAllester, David},
-  url = {https://web.archive.org/web/20231026094412/https://www.rossgirshick.info/latent/},
+  url = {https://www.rossgirshick.info/latent/},
   urldate = {2023-10-26},
   file = {/home/zenon/Zotero/storage/HQTS6PW6/latent.html}
 }
@@ -361,7 +369,6 @@
   pages = {580--587},
   issn = {1063-6919},
   doi = {10.1109/CVPR.2014.81},
-  urldate = {2023-10-22},
   abstract = {Object detection performance, as measured on the canonical PASCAL VOC dataset, has plateaued in the last few years. The best-performing methods are complex ensemble systems that typically combine multiple low-level image features with high-level context. In this paper, we propose a simple and scalable detection algorithm that improves mean average precision (mAP) by more than 30\% relative to the previous best result on VOC 2012 – achieving a mAP of 53.3\%. Our approach combines two key insights: (1) one can apply high-capacity convolutional neural networks (CNNs) to bottom-up region proposals in order to localize and segment objects and (2) when labeled training data is scarce, supervised pre-training for an auxiliary task, followed by domain-specific fine-tuning, yields a significant performance boost. Since we combine region proposals with CNNs, we call our method R-CNN: Regions with CNN features. We also present experiments that provide insight into what the network learns, revealing a rich hierarchy of image features. Source code for the complete system is available at http://www.cs.berkeley.edu/ rbg/rcnn.},
   eventtitle = {2014 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
   file = {/home/zenon/Zotero/storage/EL92YEYD/Girshick et al. - 2014 - Rich Feature Hierarchies for Accurate Object Detec.pdf;/home/zenon/Zotero/storage/TX9APXST/6909475.html}
@@ -389,7 +396,6 @@
   pages = {1440--1448},
   issn = {2380-7504},
   doi = {10.1109/ICCV.2015.169},
-  urldate = {2023-10-22},
   abstract = {This paper proposes a Fast Region-based Convolutional Network method (Fast R-CNN) for object detection. Fast R-CNN builds on previous work to efficiently classify object proposals using deep convolutional networks. Compared to previous work, Fast R-CNN employs several innovations to improve training and testing speed while also increasing detection accuracy. Fast R-CNN trains the very deep VGG16 network 9x faster than R-CNN, is 213x faster at test-time, and achieves a higher mAP on PASCAL VOC 2012. Compared to SPPnet, Fast R-CNN trains VGG16 3x faster, tests 10x faster, and is more accurate. Fast R-CNN is implemented in Python and C++ (using Caffe) and is available under the open-source MIT License at https://github.com/rbgirshick/fast-rcnn.},
   eventtitle = {2015 {{IEEE International Conference}} on {{Computer Vision}} ({{ICCV}})},
   file = {/home/zenon/Zotero/storage/I4Q5NJCT/Girshick - 2015 - Fast R-CNN.pdf;/home/zenon/Zotero/storage/VQZF2I7Z/7410526.html}
@@ -405,7 +411,6 @@
   pages = {142--158},
   issn = {1939-3539},
   doi = {10.1109/TPAMI.2015.2437384},
-  urldate = {2023-10-22},
   abstract = {Object detection performance, as measured on the canonical PASCAL VOC Challenge datasets, plateaued in the final years of the competition. The best-performing methods were complex ensemble systems that typically combined multiple low-level image features with high-level context. In this paper, we propose a simple and scalable detection algorithm that improves mean average precision (mAP) by more than 50 percent relative to the previous best result on VOC 2012-achieving a mAP of 62.4 percent. Our approach combines two ideas: (1) one can apply high-capacity convolutional networks (CNNs) to bottom-up region proposals in order to localize and segment objects and (2) when labeled training data are scarce, supervised pre-training for an auxiliary task, followed by domain-specific fine-tuning, boosts performance significantly. Since we combine region proposals with CNNs, we call the resulting model an R-CNN or Region-based Convolutional Network. Source code for the complete system is available at http://www.cs.berkeley.edu/ rbg/rcnn.},
   eventtitle = {{{IEEE Transactions}} on {{Pattern Analysis}} and {{Machine Intelligence}}},
   file = {/home/zenon/Zotero/storage/MQPF5MGW/Girshick et al. - 2016 - Region-Based Convolutional Networks for Accurate O.pdf;/home/zenon/Zotero/storage/EKC4WHDQ/7112511.html}
@@ -435,7 +440,6 @@
   pages = {1904--1916},
   issn = {1939-3539},
   doi = {10.1109/TPAMI.2015.2389824},
-  urldate = {2023-10-26},
   abstract = {Existing deep convolutional neural networks (CNNs) require a fixed-size (e.g., 224\textbackslash times 224) input image. This requirement is “artificial” and may reduce the recognition accuracy for the images or sub-images of an arbitrary size/scale. In this work, we equip the networks with another pooling strategy, “spatial pyramid pooling”, to eliminate the above requirement. The new network structure, called SPP-net, can generate a fixed-length representation regardless of image size/scale. Pyramid pooling is also robust to object deformations. With these advantages, SPP-net should in general improve all CNN-based image classification methods. On the ImageNet 2012 dataset, we demonstrate that SPP-net boosts the accuracy of a variety of CNN architectures despite their different designs. On the Pascal VOC 2007 and Caltech101 datasets, SPP-net achieves state-of-the-art classification results using a single full-image representation and no fine-tuning. The power of SPP-net is also significant in object detection. Using SPP-net, we compute the feature maps from the entire image only once, and then pool features in arbitrary regions (sub-images) to generate fixed-length representations for training the detectors. This method avoids repeatedly computing the convolutional features. In processing test images, our method is 24-102 \textbackslash times faster than the R-CNN method, while achieving better or comparable accuracy on Pascal VOC 2007. In ImageNet Large Scale Visual Recognition Challenge (ILSVRC) 2014, our methods rank \#2 in object detection and \#3 in image classification among all 38 teams. This manuscript also introduces the improvement made for this competition.},
   eventtitle = {{{IEEE Transactions}} on {{Pattern Analysis}} and {{Machine Intelligence}}},
   file = {/home/zenon/Zotero/storage/4ZANQDJR/He et al. - 2015 - Spatial Pyramid Pooling in Deep Convolutional Netw.pdf;/home/zenon/Zotero/storage/MYNCND4W/7005506.html}
@@ -462,7 +466,6 @@
   pages = {2980--2988},
   issn = {2380-7504},
   doi = {10.1109/ICCV.2017.322},
-  urldate = {2023-10-22},
   abstract = {We present a conceptually simple, flexible, and general framework for object instance segmentation. Our approach efficiently detects objects in an image while simultaneously generating a high-quality segmentation mask for each instance. The method, called Mask R-CNN, extends Faster R-CNN by adding a branch for predicting an object mask in parallel with the existing branch for bounding box recognition. Mask R-CNN is simple to train and adds only a small overhead to Faster R-CNN, running at 5 fps. Moreover, Mask R-CNN is easy to generalize to other tasks, e.g., allowing us to estimate human poses in the same framework. We show top results in all three tracks of the COCO suite of challenges, including instance segmentation, bounding-box object detection, and person keypoint detection. Without tricks, Mask R-CNN outperforms all existing, single-model entries on every task, including the COCO 2016 challenge winners. We hope our simple and effective approach will serve as a solid baseline and help ease future research in instance-level recognition. Code will be made available.},
   eventtitle = {2017 {{IEEE International Conference}} on {{Computer Vision}} ({{ICCV}})},
   file = {/home/zenon/Zotero/storage/Z6CBZ8AI/He et al. - 2017 - Mask R-CNN.pdf;/home/zenon/Zotero/storage/GW42F6UG/8237584.html}
@@ -479,7 +482,6 @@
   pages = {359--366},
   issn = {0893-6080},
   doi = {10.1016/0893-6080(89)90020-8},
-  urldate = {2023-09-27},
   abstract = {This paper rigorously establishes that standard multilayer feedforward networks with as few as one hidden layer using arbitrary squashing functions are capable of approximating any Borel measurable function from one finite dimensional space to another to any desired degree of accuracy, provided sufficiently many hidden units are available. In this sense, multilayer feedforward networks are a class of universal approximators.},
   keywords = {Back-propagation networks,Feedforward networks,Mapping networks,Network representation capability,Sigma-Pi networks,Squashing functions,Stone-Weierstrass Theorem,Universal approximation},
   file = {/home/zenon/Zotero/storage/FN7FDBHL/0893608089900208.html}
@@ -534,7 +536,6 @@
   pages = {1200977},
   issn = {2624-8212},
   doi = {10.3389/frai.2023.1200977},
-  urldate = {2023-08-25},
   abstract = {Machine learning tasks often require a significant amount of training data for the resultant network to perform suitably for a given problem in any domain. In agriculture, dataset sizes are further limited by phenotypical differences between two plants of the same genotype, often as a result of differing growing conditions. Synthetically-augmented datasets have shown promise in improving existing models when real data is not available. In this paper, we employ a contrastive unpaired translation (CUT) generative adversarial network (GAN) and simple image processing techniques to translate indoor plant images to appear as field images. While we train our network to translate an image containing only a single plant, we show that our method is easily extendable to produce multiple-plant field images. Furthermore, we use our synthetic multi-plant images to train several YoloV5 nano object detection models to perform the task of plant detection and measure the accuracy of the model on real field data images. Including training data generated by the CUT-GAN leads to better plant detection performance compared to a network trained solely on real data.},
   keywords = {Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning},
   file = {/home/zenon/Zotero/storage/Y5MUHPDE/Krosney et al. - 2023 - Inside Out Transforming Images of Lab-Grown Plant.pdf;/home/zenon/Zotero/storage/8NB5H9E8/2211.html}
@@ -558,6 +559,52 @@
   file = {/home/zenon/Zotero/storage/R6SKDLQU/Kuznetsova et al. - 2020 - The Open Images Dataset V4 Unified Image Classifi.pdf}
 }
 
+@article{lecun1989,
+  title = {Backpropagation {{Applied}} to {{Handwritten Zip Code Recognition}}},
+  author = {LeCun, Y. and Boser, B. and Denker, J. S. and Henderson, D. and Howard, R. E. and Hubbard, W. and Jackel, L. D.},
+  date = {1989-12-01},
+  journaltitle = {Neural Computation},
+  shortjournal = {Neural Computation},
+  volume = {1},
+  number = {4},
+  pages = {541--551},
+  issn = {0899-7667},
+  doi = {10.1162/neco.1989.1.4.541},
+  abstract = {The ability of learning networks to generalize can be greatly enhanced by providing constraints from the task domain. This paper demonstrates how such constraints can be integrated into a backpropagation network through the architecture of the network. This approach has been successfully applied to the recognition of handwritten zip code digits provided by the U.S. Postal Service. A single network learns the entire recognition operation, going from the normalized image of the character to the final classification.},
+  file = {/home/zenon/Zotero/storage/Y8AWACVG/LeCun et al. - 1989 - Backpropagation Applied to Handwritten Zip Code Re.pdf;/home/zenon/Zotero/storage/R7RK6LZ6/Backpropagation-Applied-to-Handwritten-Zip-Code.html}
+}
+
+@article{lecun1998,
+  title = {Gradient-Based Learning Applied to Document Recognition},
+  author = {Lecun, Y. and Bottou, L. and Bengio, Y. and Haffner, P.},
+  date = {1998-11},
+  journaltitle = {Proceedings of the IEEE},
+  volume = {86},
+  number = {11},
+  pages = {2278--2324},
+  issn = {1558-2256},
+  doi = {10.1109/5.726791},
+  abstract = {Multilayer neural networks trained with the back-propagation algorithm constitute the best example of a successful gradient based learning technique. Given an appropriate network architecture, gradient-based learning algorithms can be used to synthesize a complex decision surface that can classify high-dimensional patterns, such as handwritten characters, with minimal preprocessing. This paper reviews various methods applied to handwritten character recognition and compares them on a standard handwritten digit recognition task. Convolutional neural networks, which are specifically designed to deal with the variability of 2D shapes, are shown to outperform all other techniques. Real-life document recognition systems are composed of multiple modules including field extraction, segmentation recognition, and language modeling. A new learning paradigm, called graph transformer networks (GTN), allows such multimodule systems to be trained globally using gradient-based methods so as to minimize an overall performance measure. Two systems for online handwriting recognition are described. Experiments demonstrate the advantage of global training, and the flexibility of graph transformer networks. A graph transformer network for reading a bank cheque is also described. It uses convolutional neural network character recognizers combined with global training techniques to provide record accuracy on business and personal cheques. It is deployed commercially and reads several million cheques per day.},
+  eventtitle = {Proceedings of the {{IEEE}}},
+  file = {/home/zenon/Zotero/storage/9X5LATEB/Lecun et al. - 1998 - Gradient-based learning applied to document recogn.pdf;/home/zenon/Zotero/storage/DY64NJW5/726791.html}
+}
+
+@article{li2022,
+  title = {A {{Survey}} of {{Convolutional Neural Networks}}: {{Analysis}}, {{Applications}}, and {{Prospects}}},
+  shorttitle = {A {{Survey}} of {{Convolutional Neural Networks}}},
+  author = {Li, Zewen and Liu, Fan and Yang, Wenjie and Peng, Shouheng and Zhou, Jun},
+  date = {2022-12},
+  journaltitle = {IEEE Transactions on Neural Networks and Learning Systems},
+  volume = {33},
+  number = {12},
+  pages = {6999--7019},
+  issn = {2162-2388},
+  doi = {10.1109/TNNLS.2021.3084827},
+  abstract = {A convolutional neural network (CNN) is one of the most significant networks in the deep learning field. Since CNN made impressive achievements in many areas, including but not limited to computer vision and natural language processing, it attracted much attention from both industry and academia in the past few years. The existing reviews mainly focus on CNN’s applications in different scenarios without considering CNN from a general perspective, and some novel ideas proposed recently are not covered. In this review, we aim to provide some novel ideas and prospects in this fast-growing field. Besides, not only 2-D convolution but also 1-D and multidimensional ones are involved. First, this review introduces the history of CNN. Second, we provide an overview of various convolutions. Third, some classic and advanced CNN models are introduced; especially those key points making them reach state-of-the-art results. Fourth, through experimental analysis, we draw some conclusions and provide several rules of thumb for functions and hyperparameter selection. Fifth, the applications of 1-D, 2-D, and multidimensional convolution are covered. Finally, some open issues and promising directions for CNN are discussed as guidelines for future work.},
+  eventtitle = {{{IEEE Transactions}} on {{Neural Networks}} and {{Learning Systems}}},
+  file = {/home/zenon/Zotero/storage/U7JKC8DW/Li et al. - 2022 - A Survey of Convolutional Neural Networks Analysi.pdf;/home/zenon/Zotero/storage/99TTKB2L/9451544.html}
+}
+
 @online{lin2015,
   title = {Microsoft {{COCO}}: {{Common Objects}} in {{Context}}},
   shorttitle = {Microsoft {{COCO}}},
@@ -571,19 +618,17 @@
   file = {/home/zenon/Zotero/storage/ZMCI6A8T/Lin et al. - 2015 - Microsoft COCO Common Objects in Context.pdf}
 }
 
-@online{lin2017,
+@inproceedings{lin2017,
   title = {Feature {{Pyramid Networks}} for {{Object Detection}}},
+  booktitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
   author = {Lin, Tsung-Yi and Dollár, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
-  date = {2017-04-19},
-  eprint = {1612.03144},
-  eprinttype = {arxiv},
-  eprintclass = {cs},
-  doi = {10.48550/arXiv.1612.03144},
-  urldate = {2023-09-28},
-  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But recent deep learning object detectors have avoided pyramid representations, in part because they are compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using FPN in a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
-  pubstate = {preprint},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition},
-  file = {/home/zenon/Zotero/storage/8BBA7R4F/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/KUPLTHRQ/1612.html}
+  date = {2017-07},
+  pages = {936--944},
+  issn = {1063-6919},
+  doi = {10.1109/CVPR.2017.106},
+  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But pyramid representations have been avoided in recent object detectors that are based on deep convolutional networks, partially because they are slow to compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
+  eventtitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  file = {/home/zenon/Zotero/storage/P54JRJGY/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/A8YVPLFS/8099589.html}
 }
 
 @inproceedings{lin2017a,
@@ -594,7 +639,6 @@
   pages = {936--944},
   issn = {1063-6919},
   doi = {10.1109/CVPR.2017.106},
-  urldate = {2023-10-22},
   abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But pyramid representations have been avoided in recent object detectors that are based on deep convolutional networks, partially because they are slow to compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
   eventtitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
   file = {/home/zenon/Zotero/storage/ZBT2Z36R/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/N9EQUFC2/8099589.html}
@@ -608,27 +652,54 @@
   pages = {2999--3007},
   issn = {2380-7504},
   doi = {10.1109/ICCV.2017.324},
-  urldate = {2023-10-22},
   abstract = {The highest accuracy object detectors to date are based on a two-stage approach popularized by R-CNN, where a classifier is applied to a sparse set of candidate object locations. In contrast, one-stage detectors that are applied over a regular, dense sampling of possible object locations have the potential to be faster and simpler, but have trailed the accuracy of two-stage detectors thus far. In this paper, we investigate why this is the case. We discover that the extreme foreground-background class imbalance encountered during training of dense detectors is the central cause. We propose to address this class imbalance by reshaping the standard cross entropy loss such that it down-weights the loss assigned to well-classified examples. Our novel Focal Loss focuses training on a sparse set of hard examples and prevents the vast number of easy negatives from overwhelming the detector during training. To evaluate the effectiveness of our loss, we design and train a simple dense detector we call RetinaNet. Our results show that when trained with the focal loss, RetinaNet is able to match the speed of previous one-stage detectors while surpassing the accuracy of all existing state-of-the-art two-stage detectors.},
   eventtitle = {2017 {{IEEE International Conference}} on {{Computer Vision}} ({{ICCV}})},
   file = {/home/zenon/Zotero/storage/LL8HFKFW/Lin et al. - 2017 - Focal Loss for Dense Object Detection.pdf;/home/zenon/Zotero/storage/982Z922B/8237586.html}
 }
 
-@incollection{liu2016,
+@inproceedings{lin2017c,
+  title = {Feature {{Pyramid Networks}} for {{Object Detection}}},
+  booktitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  author = {Lin, Tsung-Yi and Dollár, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
+  date = {2017-07},
+  pages = {936--944},
+  issn = {1063-6919},
+  doi = {10.1109/CVPR.2017.106},
+  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But pyramid representations have been avoided in recent object detectors that are based on deep convolutional networks, partially because they are slow to compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
+  eventtitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  file = {/home/zenon/Zotero/storage/RNMZUZMQ/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/5JNA38YH/8099589.html}
+}
+
+@inproceedings{liu2015,
+  title = {Very Deep Convolutional Neural Network Based Image Classification Using Small Training Sample Size},
+  booktitle = {2015 3rd {{IAPR Asian Conference}} on {{Pattern Recognition}} ({{ACPR}})},
+  author = {Liu, Shuying and Deng, Weihong},
+  date = {2015-11},
+  pages = {730--734},
+  issn = {2327-0985},
+  doi = {10.1109/ACPR.2015.7486599},
+  abstract = {Since Krizhevsky won the ImageNet Large Scale Visual Recognition Challenge (ILSVRC) 2012 competition with the brilliant deep convolutional neural networks (D-CNNs), researchers have designed lots of D-CNNs. However, almost all the existing very deep convolutional neural networks are trained on the giant ImageNet datasets. Small datasets like CIFAR-10 has rarely taken advantage of the power of depth since deep models are easy to overfit. In this paper, we proposed a modified VGG-16 network and used this model to fit CIFAR-10. By adding stronger regularizer and using Batch Normalization, we achieved 8.45\% error rate on CIFAR-10 without severe overfitting. Our results show that the very deep CNN can be used to fit small datasets with simple and proper modifications and don't need to re-design specific small networks. We believe that if a model is strong enough to fit a large dataset, it can also fit a small one.},
+  eventtitle = {2015 3rd {{IAPR Asian Conference}} on {{Pattern Recognition}} ({{ACPR}})},
+  file = {/home/zenon/Zotero/storage/H9B6RK53/Liu and Deng - 2015 - Very deep convolutional neural network based image.pdf;/home/zenon/Zotero/storage/BIPI3CNN/7486599.html}
+}
+
+@inproceedings{liu2016,
   title = {{{SSD}}: {{Single Shot MultiBox Detector}}},
   shorttitle = {{{SSD}}},
+  booktitle = {Computer {{Vision}} – {{ECCV}} 2016},
   author = {Liu, Wei and Anguelov, Dragomir and Erhan, Dumitru and Szegedy, Christian and Reed, Scott and Fu, Cheng-Yang and Berg, Alexander C.},
+  editor = {Leibe, Bastian and Matas, Jiri and Sebe, Nicu and Welling, Max},
   date = {2016},
-  volume = {9905},
-  eprint = {1512.02325},
-  eprinttype = {arxiv},
-  eprintclass = {cs},
+  series = {Lecture {{Notes}} in {{Computer Science}}},
   pages = {21--37},
+  publisher = {{Springer International Publishing}},
+  location = {{Cham}},
   doi = {10.1007/978-3-319-46448-0_2},
-  urldate = {2023-08-24},
-  abstract = {We present a method for detecting objects in images using a single deep neural network. Our approach, named SSD, discretizes the output space of bounding boxes into a set of default boxes over different aspect ratios and scales per feature map location. At prediction time, the network generates scores for the presence of each object category in each default box and produces adjustments to the box to better match the object shape. Additionally, the network combines predictions from multiple feature maps with different resolutions to naturally handle objects of various sizes. Our SSD model is simple relative to methods that require object proposals because it completely eliminates proposal generation and subsequent pixel or feature resampling stage and encapsulates all computation in a single network. This makes SSD easy to train and straightforward to integrate into systems that require a detection component. Experimental results on the PASCAL VOC, MS COCO, and ILSVRC datasets confirm that SSD has comparable accuracy to methods that utilize an additional object proposal step and is much faster, while providing a unified framework for both training and inference. Compared to other single stage methods, SSD has much better accuracy, even with a smaller input image size. For \$300\textbackslash times 300\$ input, SSD achieves 72.1\% mAP on VOC2007 test at 58 FPS on a Nvidia Titan X and for \$500\textbackslash times 500\$ input, SSD achieves 75.1\% mAP, outperforming a comparable state of the art Faster R-CNN model. Code is available at https://github.com/weiliu89/caffe/tree/ssd .},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition},
-  file = {/home/zenon/Zotero/storage/JQWR9QIY/Liu et al. - 2016 - SSD Single Shot MultiBox Detector.pdf;/home/zenon/Zotero/storage/Y8UXAEEU/1512.html}
+  abstract = {We present a method for detecting objects in images using a single deep neural network. Our approach, named SSD, discretizes the output space of bounding boxes into a set of default boxes over different aspect ratios and scales per feature map location. At prediction time, the network generates scores for the presence of each object category in each default box and produces adjustments to the box to better match the object shape. Additionally, the network combines predictions from multiple feature maps with different resolutions to naturally handle objects of various sizes. SSD is simple relative to methods that require object proposals because it completely eliminates proposal generation and subsequent pixel or feature resampling stages and encapsulates all computation in a single network. This makes SSD easy to train and straightforward to integrate into systems that require a detection component. Experimental results on the PASCAL VOC, COCO, and ILSVRC datasets confirm that SSD has competitive accuracy to methods that utilize an additional object proposal step and is much faster, while providing a unified framework for both training and inference. For \$\$300 \textbackslash times 300\$\$300×300input, SSD achieves 74.3~\% mAP on VOC2007 test at 59~FPS on a Nvidia Titan X and for \$\$512 \textbackslash times 512\$\$512×512input, SSD achieves 76.9~\% mAP, outperforming a comparable state of the art Faster R-CNN model. Compared to other single stage methods, SSD has much better accuracy even with a smaller input image size. Code is available at https://github.com/weiliu89/caffe/tree/ssd.},
+  isbn = {978-3-319-46448-0},
+  langid = {english},
+  keywords = {Convolutional neural network,Real-time object detection},
+  file = {/home/zenon/Zotero/storage/LUL6FCIQ/Liu et al. - 2016 - SSD Single Shot MultiBox Detector.pdf}
 }
 
 @article{lopez-garcia2022,
@@ -644,6 +715,20 @@
   doi = {10.3390/agronomy12092122},
   keywords = {ANN,machine learning,multispectral images,RGB images,UAV,vineyard,water stress},
   file = {/home/zenon/Zotero/storage/MJSM2BFH/López-García et al. - 2022 - Machine Learning-Based Processing of Multispectral.pdf}
+}
+
+@inproceedings{lowe1999,
+  title = {Object {{Recognition}} from {{Local Scale-Invariant Features}}},
+  booktitle = {Proceedings of the {{International Conference}} on {{Computer Vision-Volume}} 2 - {{Volume}} 2},
+  author = {Lowe, David G.},
+  date = {1999-09-20},
+  series = {{{ICCV}} '99},
+  pages = {1150},
+  publisher = {{IEEE Computer Society}},
+  location = {{USA}},
+  abstract = {An object recognition system has been developed that uses a new class of local image features. The features are invariant to image scaling, translation, and rotation, and partially invariant to illumination changes and affine or 3D projection.These features share similar properties with neurons in inferior temporal cortex that are used for object recognition in primate vision. Features are efficiently detected through a staged filtering approach that identifies stable points in scale space. Image keys are created that allow for local geometric deformations by representing blurred image gradients in multiple orientation planes and at multiple scales.The keys are used as input to a nearest-neighbor indexing method that identifies candidate object matches. Final verification of each match is achieved by finding a low-residual least-squares solution for the unknown model parameters. Experimental results show that robust object recognition can be achieved in cluttered partially-occluded images with a computation time of under 2 seconds.},
+  isbn = {978-0-7695-0164-2},
+  file = {/home/zenon/Zotero/storage/XTECRTI7/Lowe - 1999 - Object Recognition from Local Scale-Invariant Feat.pdf}
 }
 
 @article{mateo-aroca2019,
@@ -672,7 +757,6 @@
   pages = {115--133},
   issn = {1522-9602},
   doi = {10.1007/BF02478259},
-  urldate = {2023-09-22},
   abstract = {Because of the “all-or-none” character of nervous activity, neural events and the relations among them can be treated by means of propositional logic. It is found that the behavior of every net can be described in these terms, with the addition of more complicated logical means for nets containing circles; and that for any logical expression satisfying certain conditions, one can find a net behaving in the fashion it describes. It is shown that many particular choices among possible neurophysiological assumptions are equivalent, in the sense that for every net behaving under one assumption, there exists another net which behaves under the other and gives the same results, although perhaps not in the same time. Various applications of the calculus are discussed.},
   langid = {english},
   keywords = {Excitatory Synapse,Inhibitory Synapse,Nervous Activity,Spatial Summation,Temporal Summation}
@@ -701,7 +785,6 @@
   date = {2017-09-22},
   publisher = {{The MIT Press}},
   doi = {10.7551/mitpress/11301.001.0001},
-  urldate = {2023-09-27},
   abstract = {The first systematic study of parallelism in computation by two pioneers in the field.Reissue of the 1988 Expanded Edition with a new foreword by Léon BottouIn},
   isbn = {978-0-262-34393-0},
   langid = {english},
@@ -785,7 +868,6 @@
   pages = {779--788},
   issn = {1063-6919},
   doi = {10.1109/CVPR.2016.91},
-  urldate = {2023-10-22},
   abstract = {We present YOLO, a new approach to object detection. Prior work on object detection repurposes classifiers to perform detection. Instead, we frame object detection as a regression problem to spatially separated bounding boxes and associated class probabilities. A single neural network predicts bounding boxes and class probabilities directly from full images in one evaluation. Since the whole detection pipeline is a single network, it can be optimized end-to-end directly on detection performance. Our unified architecture is extremely fast. Our base YOLO model processes images in real-time at 45 frames per second. A smaller version of the network, Fast YOLO, processes an astounding 155 frames per second while still achieving double the mAP of other real-time detectors. Compared to state-of-the-art detection systems, YOLO makes more localization errors but is less likely to predict false positives on background. Finally, YOLO learns very general representations of objects. It outperforms other detection methods, including DPM and R-CNN, when generalizing from natural images to other domains like artwork.},
   eventtitle = {2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
   file = {/home/zenon/Zotero/storage/YMA63KNY/Redmon et al. - 2016 - You Only Look Once Unified, Real-Time Object Dete.pdf;/home/zenon/Zotero/storage/DJ3JER52/7780460.html}
@@ -816,7 +898,6 @@
   pages = {1137--1149},
   issn = {1939-3539},
   doi = {10.1109/TPAMI.2016.2577031},
-  urldate = {2023-10-22},
   abstract = {State-of-the-art object detection networks depend on region proposal algorithms to hypothesize object locations. Advances like SPPnet [1] and Fast R-CNN [2] have reduced the running time of these detection networks, exposing region proposal computation as a bottleneck. In this work, we introduce a Region Proposal Network(RPN) that shares full-image convolutional features with the detection network, thus enabling nearly cost-free region proposals. An RPN is a fully convolutional network that simultaneously predicts object bounds and objectness scores at each position. The RPN is trained end-to-end to generate high-quality region proposals, which are used by Fast R-CNN for detection. We further merge RPN and Fast R-CNN into a single network by sharing their convolutional features-using the recently popular terminology of neural networks with 'attention' mechanisms, the RPN component tells the unified network where to look. For the very deep VGG-16 model [3], our detection system has a frame rate of 5 fps (including all steps) on a GPU, while achieving state-of-the-art object detection accuracy on PASCAL VOC 2007, 2012, and MS COCO datasets with only 300 proposals per image. In ILSVRC and COCO 2015 competitions, Faster R-CNN and RPN are the foundations of the 1st-place winning entries in several tracks. Code has been made publicly available.},
   eventtitle = {{{IEEE Transactions}} on {{Pattern Analysis}} and {{Machine Intelligence}}},
   file = {/home/zenon/Zotero/storage/NBA8U8VS/Ren et al. - 2017 - Faster R-CNN Towards Real-Time Object Detection w.pdf;/home/zenon/Zotero/storage/FJKQTY4F/7485869.html}
@@ -836,7 +917,6 @@
   pages = {970},
   issn = {2223-7747},
   doi = {10.3390/plants11070970},
-  urldate = {2023-08-25},
   abstract = {Plant stress is one of the most significant factors affecting plant fitness and, consequently, food production. However, plant stress may also be profitable since it behaves hormetically; at low doses, it stimulates positive traits in crops, such as the synthesis of specialized metabolites and additional stress tolerance. The controlled exposure of crops to low doses of stressors is therefore called hormesis management, and it is a promising method to increase crop productivity and quality. Nevertheless, hormesis management has severe limitations derived from the complexity of plant physiological responses to stress. Many technological advances assist plant stress science in overcoming such limitations, which results in extensive datasets originating from the multiple layers of the plant defensive response. For that reason, artificial intelligence tools, particularly Machine Learning (ML) and Deep Learning (DL), have become crucial for processing and interpreting data to accurately model plant stress responses such as genomic variation, gene and protein expression, and metabolite biosynthesis. In this review, we discuss the most recent ML and DL applications in plant stress science, focusing on their potential for improving the development of hormesis management protocols.},
   pmcid = {PMC9003083},
   file = {/home/zenon/Zotero/storage/56I7ELHW/Rico-Chávez et al. - 2022 - Machine Learning for Plant Stress Modeling A Pers.pdf}
@@ -877,7 +957,6 @@
   publisher = {{Nature Publishing Group}},
   issn = {1476-4687},
   doi = {10.1038/323533a0},
-  urldate = {2023-09-29},
   abstract = {We describe a new learning procedure, back-propagation, for networks of neurone-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector. As a result of the weight adjustments, internal ‘hidden’ units which are not part of the input or output come to represent important features of the task domain, and the regularities in the task are captured by the interactions of these units. The ability to create useful new features distinguishes back-propagation from earlier, simpler methods such as the perceptron-convergence procedure1.},
   issue = {6088},
   langid = {english},
@@ -893,7 +972,6 @@
   eprinttype = {arxiv},
   eprintclass = {cs},
   doi = {10.48550/arXiv.1409.0575},
-  urldate = {2023-10-22},
   abstract = {The ImageNet Large Scale Visual Recognition Challenge is a benchmark in object category classification and detection on hundreds of object categories and millions of images. The challenge has been run annually from 2010 to present, attracting participation from more than fifty institutions. This paper describes the creation of this benchmark dataset and the advances in object recognition that have been possible as a result. We discuss the challenges of collecting large-scale ground truth annotation, highlight key breakthroughs in categorical object recognition, provide a detailed analysis of the current state of the field of large-scale image classification and object detection, and compare the state-of-the-art computer vision accuracy with human accuracy. We conclude with lessons learned in the five years of the challenge, and propose future directions and improvements.},
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition,I.4.8,I.5.2},
@@ -910,7 +988,6 @@
   pages = {210--229},
   issn = {0018-8646},
   doi = {10.1147/rd.33.0210},
-  urldate = {2023-10-01},
   abstract = {Two machine-learning procedures have been investigated in some detail using the game of checkers. Enough work has been done to verify the fact that a computer can be programmed so that it will learn to play a better game of checkers than can be played by the person who wrote the program. Furthermore, it can learn to do this in a remarkably short period of time (8 or 10 hours of machine-playing time) when given only the rules of the game, a sense of direction, and a redundant and incomplete list of parameters which are thought to have something to do with the game, but whose correct signs and relative weights are unknown and unspecified. The principles of machine learning verified by these experiments are, of course, applicable to many other situations.},
   eventtitle = {{{IBM Journal}} of {{Research}} and {{Development}}},
   file = {/home/zenon/Zotero/storage/9YJSG7IJ/Samuel - 1959 - Some Studies in Machine Learning Using the Game of.pdf;/home/zenon/Zotero/storage/6XF4QCUQ/5392560.html}
@@ -924,7 +1001,6 @@
   pages = {1043--1066},
   publisher = {{CRC Press}},
   doi = {10.1201/9781410615862-66},
-  urldate = {2023-09-17},
   abstract = {We begin with our definition of a prototype and then discuss prototypes as design artifacts, introducing four dimensions for analyzing them. We then discuss the role of prototyping within the design process, in particular the concept of a design space, and how it is expanded and contracted by generating and selecting design ideas. The next three sections describe specific prototyping approaches: Rapid prototyping, both off-line and on-line, for early stages of design, iterative prototyping, which uses on-line development tools, and evolutionary prototyping, which must be based on a sound software architecture.},
   isbn = {978-0-429-16397-5},
   langid = {english}
@@ -948,6 +1024,19 @@
   file = {/home/zenon/Zotero/storage/QC22JBMX/Selvaraju et al. - 2020 - Grad-CAM Visual Explanations from Deep Networks v.pdf}
 }
 
+@inproceedings{shrivastava2016,
+  title = {Training {{Region-Based Object Detectors}} with {{Online Hard Example Mining}}},
+  booktitle = {2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  author = {Shrivastava, Abhinav and Gupta, Abhinav and Girshick, Ross},
+  date = {2016-06},
+  pages = {761--769},
+  issn = {1063-6919},
+  doi = {10.1109/CVPR.2016.89},
+  abstract = {The field of object detection has made significant advances riding on the wave of region-based ConvNets, but their training procedure still includes many heuristics and hyperparameters that are costly to tune. We present a simple yet surprisingly effective online hard example mining (OHEM) algorithm for training region-based ConvNet detectors. Our motivation is the same as it has always been - detection datasets contain an overwhelming number of easy examples and a small number of hard examples. Automatic selection of these hard examples can make training more effective and efficient. OHEM is a simple and intuitive algorithm that eliminates several heuristics and hyperparameters in common use. But more importantly, it yields consistent and significant boosts in detection performance on benchmarks like PASCAL VOC 2007 and 2012. Its effectiveness increases as datasets become larger and more difficult, as demonstrated by the results on the MS COCO dataset. Moreover, combined with complementary advances in the field, OHEM leads to state-of-the-art results of 78.9\% and 76.3\% mAP on PASCAL VOC 2007 and 2012 respectively.},
+  eventtitle = {2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  file = {/home/zenon/Zotero/storage/HB7BQR72/Shrivastava et al. - 2016 - Training Region-Based Object Detectors with Online.pdf;/home/zenon/Zotero/storage/PEAFAEE9/7780458.html}
+}
+
 @inproceedings{simard2003,
   title = {Best Practices for Convolutional Neural Networks Applied to Visual Document Analysis},
   booktitle = {Seventh {{International Conference}} on {{Document Analysis}} and {{Recognition}}, 2003. {{Proceedings}}.},
@@ -955,7 +1044,6 @@
   date = {2003-08},
   pages = {958--963},
   doi = {10.1109/ICDAR.2003.1227801},
-  urldate = {2023-10-01},
   eventtitle = {Seventh {{International Conference}} on {{Document Analysis}} and {{Recognition}}, 2003. {{Proceedings}}.},
   file = {/home/zenon/Zotero/storage/S6SE8F56/Simard et al. - 2003 - Best practices for convolutional neural networks a.pdf;/home/zenon/Zotero/storage/FQHDISEK/1227801.html}
 }
@@ -987,7 +1075,6 @@
   pages = {154--171},
   issn = {1573-1405},
   doi = {10.1007/s11263-013-0620-5},
-  urldate = {2023-10-22},
   abstract = {This paper addresses the problem of generating possible object locations for use in object recognition. We introduce selective search which combines the strength of both an exhaustive search and segmentation. Like segmentation, we use the image structure to guide our sampling process. Like exhaustive search, we aim to capture all possible object locations. Instead of a single technique to generate possible object locations, we diversify our search and use a variety of complementary image partitionings to deal with as many image conditions as possible. Our selective search results in a small set of data-driven, class-independent, high quality locations, yielding 99~\% recall and a Mean Average Best Overlap of 0.879 at 10,097 locations. The reduced number of locations compared to an exhaustive search enables the use of stronger machine learning techniques and stronger appearance models for object recognition. In this paper we show that our selective search enables the use of the powerful Bag-of-Words model for recognition. The selective search software is made publicly available (Software: http://disi.unitn.it/\textasciitilde uijlings/SelectiveSearch.html).},
   langid = {english},
   keywords = {Appearance Model,Colour Space,Exhaustive Search,Object Location,Object Recognition},
@@ -1071,7 +1158,6 @@
   eprinttype = {arxiv},
   eprintclass = {cs},
   doi = {10.48550/arXiv.1311.2901},
-  urldate = {2023-10-27},
   abstract = {Large Convolutional Network models have recently demonstrated impressive classification performance on the ImageNet benchmark. However there is no clear understanding of why they perform so well, or how they might be improved. In this paper we address both issues. We introduce a novel visualization technique that gives insight into the function of intermediate feature layers and the operation of the classifier. We also perform an ablation study to discover the performance contribution from different model layers. This enables us to find model architectures that outperform Krizhevsky \textbackslash etal on the ImageNet classification benchmark. We show our ImageNet model generalizes well to other datasets: when the softmax classifier is retrained, it convincingly beats the current state-of-the-art results on Caltech-101 and Caltech-256 datasets.},
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
@@ -1100,7 +1186,6 @@
   eprinttype = {arxiv},
   eprintclass = {cs},
   doi = {10.48550/arXiv.1911.08287},
-  urldate = {2023-09-28},
   abstract = {Bounding box regression is the crucial step in object detection. In existing methods, while \$\textbackslash ell\_n\$-norm loss is widely adopted for bounding box regression, it is not tailored to the evaluation metric, i.e., Intersection over Union (IoU). Recently, IoU loss and generalized IoU (GIoU) loss have been proposed to benefit the IoU metric, but still suffer from the problems of slow convergence and inaccurate regression. In this paper, we propose a Distance-IoU (DIoU) loss by incorporating the normalized distance between the predicted box and the target box, which converges much faster in training than IoU and GIoU losses. Furthermore, this paper summarizes three geometric factors in bounding box regression, \textbackslash ie, overlap area, central point distance and aspect ratio, based on which a Complete IoU (CIoU) loss is proposed, thereby leading to faster convergence and better performance. By incorporating DIoU and CIoU losses into state-of-the-art object detection algorithms, e.g., YOLO v3, SSD and Faster RCNN, we achieve notable performance gains in terms of not only IoU metric but also GIoU metric. Moreover, DIoU can be easily adopted into non-maximum suppression (NMS) to act as the criterion, further boosting performance improvement. The source code and trained models are available at https://github.com/Zzh-tju/DIoU.},
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
@@ -1158,6 +1243,18 @@
   url = {https://www.google.at/books/edition/Pattern_Recognition_and_Machine_Learning/qWPwnQEACAAJ?hl=de&bshm=rimc/1},
   urldate = {2023-10-01},
   file = {/home/zenon/Zotero/storage/CLHDBTJ2/qWPwnQEACAAJ.html}
+}
+
+@online{zotero-204,
+  title = {Feature {{Pyramid Networks}} for {{Object Detection}} | {{IEEE Conference Publication}} | {{IEEE Xplore}}},
+  url = {https://ieeexplore.ieee.org/document/8099589},
+  urldate = {2023-10-27}
+}
+
+@online{zotero-219,
+  title = {Scalable {{Object Detection Using Deep Neural Networks}} | {{IEEE Conference Publication}} | {{IEEE Xplore}}},
+  url = {https://ieeexplore.ieee.org/document/6909673},
+  urldate = {2023-10-29}
 }
 
 @article{zou2023,
