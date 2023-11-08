@@ -1453,6 +1453,34 @@ rate of 1.6\% over their own replicated AlexNet result of 18.1\%.
 \subsubsection{GoogLeNet}
 \label{sssec:theory-googlenet}
 
+GoogLeNet, also known as Inception-v1, was proposed by
+\textcite{szegedy2015} to increase the depth of the network without
+introducing too much additional complexity. Since the relevant parts
+of an image can often be of different sizes, but kernels within
+convolutional layers are fixed, there is a mismatch between what can
+realistically be detected by the layers and what is present in the
+data set. Therefore, the authors propose to perform multiple
+convolutions with different kernel sizes and concatenating them
+together before sending the result to the next layer. Unfortunately,
+three by three and five by five kernel sizes within a convolutional
+layer can make the network too expensive to train. The authors add one
+by one convolutions to the outputs of the previous layer before
+passing the result to the three by three and five by five
+convolutions. The one by one convolutions have the effect that the
+channels of the inputs (feature maps) are reduced and are thus easier
+to process by the subsequent larger filters. Figure \todo{insert
+figure of inception module with dimension reduction} shows the
+structure proposed by the authors which they call an Inception module.
+
+GoogLeNet consists of nine Inception modules stacked one after the
+other and a \emph{stem} with convolutions at the beginning as well as
+two auxiliary classifiers which help retain the gradient during
+backpropagation. The auxiliary classifiers are only used during
+training. The authors submitted multiple model versions to the 2004
+\gls{ilsvrc} and their ensemble prediction model consisting of 7
+GoogleNet's achieved a top-5 error rate of 6.67\%, which resulted in
+first place.
+
 \subsubsection{VGGNet}
 \label{sssec:theory-vggnet}
 
