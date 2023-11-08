@@ -1106,7 +1106,7 @@ possible on \glspl{gpu}. The whole network operates on an almost real
 time scale by being able to process \qty{5}{images\per\s} and
 maintaining high state-of-the-art \gls{map} values of 73.2\%
 (\gls{voc} 2007). If the detection network is switched from VGGNet
-\cite{liu2015} to ZF-Net \cite{zeiler2013}, Faster R-\gls{cnn} is able
+\cite{liu2015} to ZF-Net \cite{zeiler2014}, Faster R-\gls{cnn} is able
 to achieve \qty{17}{images\per\s}, albeit at a lower \gls{map} of
 59.9\%.
 
@@ -1420,6 +1420,35 @@ researchers to apply \glspl{cnn} to the problem of object detection.
 
 \subsubsection{ZFNet}
 \label{sssec:theory-zfnet}
+
+ZFNet's \cite{zeiler2014} contributions to the image classification
+field are twofold. First, the authors develop a way to visualize the
+internals of a \gls{cnn} with the use of \emph{deconvolution}
+techniques. Second, with the added knowledge gained from looking
+\emph{inside} a \gls{cnn}, they improve AlexNet's structure. The
+deconvolution technique is essentially the reverse operation of a
+\gls{cnn} layer. Instead of pooling (downsampling) the results of the
+layer, \textcite{zeiler2014} \emph{unpool} the max-pooled values by
+recording the maximum positions of the maximum value per kernel. The
+maximum values are then put back into each two by two area (depending
+on the kernel size). This process loses information because a
+max-pooling layer is not invertible. The subsequent \gls{relu}
+function can be easily inverted because negative values are squashed
+to zero and and positive values are retained. The final deconvolution
+operation concerns the convolutional layer itself. In order to
+\emph{reconstruct} the original spatial dimensions (before
+convolution), a transposed convolution is performed. This process
+reverses the downsampling which happens during convolution.
+
+With these techniques in place, the authors visualize the first and
+second layers of the feature maps present in AlexNet. They identify
+multiple problems with their structure such as aliasing artifacts and
+a mix of low and high frequency information without any mid
+frequencies. These results indicate that the filter size in AlexNet is
+too large at 11 by 11 and the authors reduce it to seven by
+seven. Additionally, they modify the original stride of four to
+two. These two changes result in an improvement in the top-5 error
+rate of 1.6\% over their own replicated AlexNet result of 18.1\%.
 
 \subsubsection{GoogLeNet}
 \label{sssec:theory-googlenet}
