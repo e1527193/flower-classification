@@ -978,34 +978,11 @@ availability of the 12 million labeled images in the ImageNet dataset
 being able to use more data to train models. Earlier models had
 difficulties with making use of the large dataset since training was
 unfeasible. AlexNet, however, provided an architecture which was able
-to be trained on two \glspl{gpu} within 6 days.
-
-AlexNet's main contributions are the use of \glspl{relu}, training on
-multiple \glspl{gpu}, \gls{lrn} and overlapping pooling
-\cite{krizhevsky2012}. As mentioned in
-section~\ref{sssec:theory-relu}, \glspl{relu} introduce non-linearity
-into the network. Instead of using the traditional non-linear
-activation function $\tanh$, where the output is bounded between $-1$
-and $1$, \glspl{relu} allow the output layers to grow as high as
-training requires it. Normalization before an activation function is
-usually used to prevent the neuron from saturating, as would be the
-case with $\tanh$. Even though \glspl{relu} do not suffer from
-saturation, the authors found that \gls{lrn} reduces the top-1 error
-rate by 1.4\% \cite{krizhevsky2012}. Overlapping pooling, in contrast
-to regular pooling, does not easily accept the dominant pixel values
-per window. By smoothing out the pooled information, bias is reduced
-and networks are slightly more resilient to overfitting. Overlapping
-pooling reduces the top-1 error rate by 0.4\%
-\cite{krizhevsky2012}. In aggregate, these improvements result in a
-top-5 error rate of below 25\% at 16.4\%.
-
-These results demonstrated that \glspl{cnn} can extract highly
-relevant feature representations from images. While AlexNet was only
-concerned with classification of images, it did not take long for
-researchers to apply \glspl{cnn} to the problem of object
-detection. Object detection networks from 2014 onward either follow a
-\emph{one-stage} or \emph{two-stage} detection approach. The following
-sections go into detail about each model category.
+to be trained on two \glspl{gpu} within 6 days. For an in depth
+overview of AlexNet see section~\ref{sssec:theory-alexnet}. Object
+detection networks from 2014 onward either follow a \emph{one-stage}
+or \emph{two-stage} detection approach. The following sections go into
+detail about each model category.
 
 \subsection{Two-Stage Detectors}
 \label{ssec:theory-two-stage}
@@ -1413,6 +1390,33 @@ demonstrated by \textcite{lecun1998}. Only in 2012
 \textcite{krizhevsky2012} reintroduced \glspl{cnn} (see
 section~\ref{ssec:theory-dl-based}) and since then most
 state-of-the-art image classification methods have used them.
+
+\subsubsection{AlexNet}
+\label{sssec:theory-alexnet}
+
+AlexNet's main contributions are the use of \glspl{relu}, training on
+multiple \glspl{gpu}, \gls{lrn} and overlapping pooling
+\cite{krizhevsky2012}. As mentioned in
+section~\ref{sssec:theory-relu}, \glspl{relu} introduce non-linearity
+into the network. Instead of using the traditional non-linear
+activation function $\tanh$, where the output is bounded between $-1$
+and $1$, \glspl{relu} allow the output layers to grow as high as
+training requires it. Normalization before an activation function is
+usually used to prevent the neuron from saturating, as would be the
+case with $\tanh$. Even though \glspl{relu} do not suffer from
+saturation, the authors found that \gls{lrn} reduces the top-1 error
+rate by 1.4\% \cite{krizhevsky2012}. Overlapping pooling, in contrast
+to regular pooling, does not easily accept the dominant pixel values
+per window. By smoothing out the pooled information, bias is reduced
+and networks are slightly more resilient to overfitting. Overlapping
+pooling reduces the top-1 error rate by 0.4\%
+\cite{krizhevsky2012}. In aggregate, these improvements result in a
+top-5 error rate of below 25\% at 16.4\%.
+
+These results demonstrated that \glspl{cnn} can extract highly
+relevant feature representations from images. While AlexNet was only
+concerned with the classification of images, it did not take long for
+researchers to apply \glspl{cnn} to the problem of object detection.
 
 \subsubsection{ZFNet}
 \label{sssec:theory-zfnet}
