@@ -1484,6 +1484,33 @@ first place.
 \subsubsection{VGGNet}
 \label{sssec:theory-vggnet}
 
+In the quest for ever-more layers and deeper networks,
+\textcite{simonyan2015} propose an architecture which is based on
+small-resolution kernels (receptive fields) for each convolutional
+layer. They make extensive use of stacked three by three kernels and
+one by one convolutions with \glspl{relu} in-between to decrease the
+number of parameters. Their choice relies on the fact that two three
+by three convolutional layers have an effective receptive field of one
+five by five layer. The advantage is that they introduce additional
+non-linearities by having two \glspl{relu} instead of only one. The
+authors provide five different networks with increasing number of
+parameters based on these principles. The smallest network has a depth
+of eight convolutional layers and three fully-connected layers for the
+head (11 in total). The largest network has 16 convolutional and three
+fully-connected layers (19 in total). The fully-connected layers are
+the same for each architecture, only the layout of the convolutional
+layers varies.
+
+The deepest network with 19 layers achieves a top-5 error rate on
+\gls{ilsvrc} 2014 of 9\%. If trained with different image scales in
+the range of $S \in [256, 512]$, the same network achieves a top-5 error
+rate of 8\% (test set at scale 256). By combining their two largest
+architectures and multi-crop as well as dense evaluation, they achieve
+an ensemble top-5 error rate of 6.8\%, while their best single network
+with multi-crop and dense evaluation results in 7\%, thus beating the
+single-net submission of GoogLeNet (see
+section~\ref{sssec:theory-googlenet}) by 0.9\%.
+
 \subsubsection{ResNet}
 \label{sssec:theory-resnet}
 
