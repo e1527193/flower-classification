@@ -701,9 +701,8 @@ process because the outputs do not provide valuable information. In
 contrast to the Heaviside step function
 (section~\ref{sssec:theory-heaviside}), it is differentiable which
 allows it to be used with gradient descent optimization
-algorithms. \todo[noline]{link to gradient descent and vanishing
-gradient sections} Unfortunately, the sigmoid function suffers from
-the vanishing gradient problem, which makes it unsuitable for training
+algorithms. Unfortunately, the sigmoid function exacerbates the
+vanishing gradient problem, which makes it unsuitable for training
 deep neural networks.
 
 \subsubsection{Rectified Linear Unit}
@@ -727,13 +726,12 @@ feature extractor. The \gls{relu} function is nearly linear, and it
 thus preserves many of the properties that make linear models easy to
 optimize with gradient-based methods \cite{goodfellow2016}. In
 contrast to the sigmoid activation function, the \gls{relu} function
-overcomes the vanishing gradient problem \todo{link to vanishing
-gradient problem} and is therefore suitable for training deep neural
-networks. Furthermore, the \gls{relu} function is easier to calculate
-than sigmoid functions which allows networks to be trained more
-quickly. Even though it is not differentiable at $0$, it is
-differentiable everywhere else and often used with gradient descent
-during optimization.
+partially mitigates the vanishing gradient problem and is therefore
+suitable for training deep neural networks. Furthermore, the
+\gls{relu} function is easier to calculate than sigmoid functions
+which allows networks to be trained more quickly. Even though it is
+not differentiable at $0$, it is differentiable everywhere else and
+often used with gradient descent during optimization.
 
 The \gls{relu} function suffers from the dying \gls{relu} problem,
 which can cause some neurons to become inactive. Large gradients,
