@@ -1510,8 +1510,17 @@ section~\ref{sssec:theory-googlenet}) by 0.9\%.
 \subsubsection{ResNet}
 \label{sssec:theory-resnet}
 
-\subsubsection{Inception v4}
-\label{sssec:theory-inception-v4}
+The 22-layer structure of GoogLeNet \cite{szegedy2015} and the
+19-layer structure of VGGNet \cite{simonyan2015} showed that
+\emph{going deeper} is beneficial for achieving better classification
+performance. However, the authors of VGGNet already note that stacking
+even more layers does not lead to better performance because the model
+is \emph{saturated}. \textcite{he2016} provide a solution to the
+vanishing gradient as well as the degradation problem by introducing
+\emph{skip connections} to the network. They call their resulting
+network architecture \emph{ResNet} and since it is used in this work,
+we will give a more detailed account of its structure in
+section~\ref{sec:methods-classification}.
 
 \subsubsection{DenseNet}
 \label{sssec:theory-densenet}
