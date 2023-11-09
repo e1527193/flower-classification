@@ -1525,10 +1525,42 @@ section~\ref{sec:methods-classification}.
 \subsubsection{DenseNet}
 \label{sssec:theory-densenet}
 
+The authors of DenseNet \cite{huang2017} go one step further than
+ResNets by connecting every convolutional layer to every other layer
+in the chain. Previously, each layer was connected in sequence with
+the one before and the one after it. Residual connections establish a
+link between the previous layer and the next one, but still do not
+always propagate enough information forward. These \emph{shortcut
+connections} from earlier layers to later layers are thus only taking
+place in an episodic way for short sections in the chain. DenseNets
+are structured in a way such that every layer receives the feature map
+of every previous layer as input. In ResNets, information from
+previous layers is added on to the next layer via element-wise
+addition. DenseNets concatenate the features of the previous
+layers. The number of feature maps per layer has to be kept low so
+that the subsequent layers can still process their inputs. Otherwise,
+the last layer in each dense block would receive too many channels
+which increases computational complexity.
+
+The authors construct their network from multiple dense blocks which
+are connected via a batch normalization layer, a one by one
+convolutional layer and a two by two pooling layer to reduce the
+spatial resolution for the next dense block. Each dense block consists
+of a batch normalization layer, a \gls{relu} layer and a three by
+three convolutional layer. In order to keep the number of feature maps
+low, the authors introduce a \emph{growth rate} $k$ as a
+hyperparameter. The growth rate can be as low as $k=4$ and still allow
+the network to learn highly relevant representations.
+
+In their experiments, the authors evaluate different combinations of
+dense blocks and growth rates against ImageNet. Their DenseNet-161
+($k=48$) achieves a top-5 error rate with single-crop of 6.15\% and
+with multi-crop 5.3\%. Their DenseNet-BC variant requires only one
+third of the amount of parameters of a ResNet-101 network to achieve
+the same test error on the CIFAR-10 dataset.
+
 \subsubsection{MobileNet v3}
 \label{sssec:theory-mobilenet-v3}
-
-
 
 \section{Transfer Learning}
 \label{sec:background-transfer-learning}
