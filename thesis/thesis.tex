@@ -1810,6 +1810,41 @@ paper~\cite{he2016}.
 
 Estimated 2 pages for this section.
 
+Early research \cite{bengio1994,glorot2010} already demonstrated that
+the vanishing/exploding gradient problem with standard gradient
+descent and random initialization adversely affects convergence during
+training and results in worse performance than would be otherwise
+achievable with the same architecture. If a neural network is trained
+with gradient descent by the application of the chain rule
+(backpropagation), weight updates are passed from the later layers
+back through the network to the early layers. Unfortunately, with some
+activation functions (notably $\tanh$), the gradient can be very small
+and decreases exponentially the further it passes through the
+network. The effect being that the early layers do not receive any
+weight updates which can stop the learning process entirely.
+
+There are multiple potential solutions to the vanishing gradient
+problem. Different weight initialization schemes
+\cite{glorot2010,sussillo2015} as well as batch normalization layers
+\cite{ioffe2015} can help mitigate the problem. The most effective
+solution yet, however, was proposed as \emph{residual connections} by
+\textcite{he2016}. Instead of connecting each layer only to the
+previous and next layer in a sequential way, the authors add the input
+of the previous layer to the output of the next layer. This is
+achieved through the aforementioned residual or skip connections (see
+figure~\ref{fig:residual-connection}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.35\textwidth]{graphics/residual-connection/res.pdf}
+  \caption[Residual connection]{Residual connections: information from
+    previous layers flows into subsequent layers before the activation
+    function is applied. The symbol $\bigoplus$ represents simple
+    element-wise addition. Figure redrawn from \textcite{he2016}.}
+  \label{fig:residual-connection}
+\end{figure}
+
+
 \subsection{Data Augmentation}
 \label{sec:methods-augmentation}
 
