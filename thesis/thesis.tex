@@ -1562,6 +1562,54 @@ the same test error on the CIFAR-10 dataset.
 \subsubsection{MobileNet v3}
 \label{sssec:theory-mobilenet-v3}
 
+MobileNet v3 by \textcite{howard2019} is the third iteration of the
+original MobileNet architecture \cite{howard2017}. MobileNets use
+depthwise separable convolution instead of regular convolution. In the
+latter, the kernel in each convolutional layer is applied to all
+channels of the input simultaneously. Depthwise convolution applies
+the kernel to each channel separately instead and the output is then
+convolved in a second layer with a one by one kernel over all
+channels. The second step is also called a \emph{pointwise
+convolution} because it squeezes the number of channels per one by one
+input field into $n$ output channels.
+
+The effect of using depthwise separable convolutions is that the
+amount of computation needed is severely reduced compared to standard
+convolutions. A standard convolutional layer with a kernel size of
+$D_{K}\times D_{K}$, an output feature map size of $D_{F}\times D_{F}$, $M$
+input channels and $N$ output channels has a computational cost of
+
+\begin{equation}
+  \label{eq:conv-comp-cost}
+  D_{K}\cdot D_{K}\cdot M \cdot N \cdot D_{F}\cdot D_{F}.
+\end{equation}
+
+A depthwise separable convolution, however, has a computational cost of
+
+\begin{equation}
+  \label{eq:dwsconv-comp-cost}
+  D_{K}\cdot D_{K}\cdot M \cdot D_{F}\cdot D_{F} + M \cdot N \cdot D_{F}\cdot D_{F}.
+\end{equation}
+
+The first summand refers to the cost of the depthwise convolution and
+added to it is the cost for the pointwise convolution. The authors
+demonstrate that the reduction in computational cost is
+
+\begin{equation}
+  \label{eq:dwsconv-comp-reduction}
+  \frac{1}{N} + \frac{1}{D^{2}_{K}}
+\end{equation}
+
+which—at a kernel size of three by three—results in a smaller
+computational cost of between eight to nine times. MobileNet v2
+\cite{sandler2018} introduced \emph{inverted residuals} and
+\emph{linear bottlenecks} and MobileNet v3 \cite{howard2019} brought
+\emph{squeeze and excitation layers} among other improvements. These
+concepts led to better classification accuracy at the same or smaller
+model size. The authors evaluate a large and a small variant of
+MobileNet v3 on Imagenet on single-core phone processors and achieve a
+top-1 accuracy of 75.2\% and 67.4\% respectively.
+
 \section{Transfer Learning}
 \label{sec:background-transfer-learning}
 

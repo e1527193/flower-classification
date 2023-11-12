@@ -125,6 +125,23 @@
   keywords = {deep learning,global optimization,model selection,neural networks,response surface modeling}
 }
 
+@article{bischl2023,
+  title = {Hyperparameter Optimization: {{Foundations}}, Algorithms, Best Practices, and Open Challenges},
+  shorttitle = {Hyperparameter Optimization},
+  author = {Bischl, Bernd and Binder, Martin and Lang, Michel and Pielok, Tobias and Richter, Jakob and Coors, Stefan and Thomas, Janek and Ullmann, Theresa and Becker, Marc and Boulesteix, Anne-Laure and Deng, Difan and Lindauer, Marius},
+  date = {2023},
+  journaltitle = {WIREs Data Mining and Knowledge Discovery},
+  volume = {13},
+  number = {2},
+  pages = {e1484},
+  issn = {1942-4795},
+  doi = {10.1002/widm.1484},
+  abstract = {Most machine learning algorithms are configured by a set of hyperparameters whose values must be carefully chosen and which often considerably impact performance. To avoid a time-consuming and irreproducible manual process of trial-and-error to find well-performing hyperparameter configurations, various automatic hyperparameter optimization (HPO) methods—for example, based on resampling error estimation for supervised machine learning—can be employed. After introducing HPO from a general perspective, this paper reviews important HPO methods, from simple techniques such as grid or random search to more advanced methods like evolution strategies, Bayesian optimization, Hyperband, and racing. This work gives practical recommendations regarding important choices to be made when conducting HPO, including the HPO algorithms themselves, performance evaluation, how to combine HPO with machine learning pipelines, runtime improvements, and parallelization. This article is categorized under: Algorithmic Development {$>$} Statistics Technologies {$>$} Machine Learning Technologies {$>$} Prediction},
+  langid = {english},
+  keywords = {automl,hyperparameter optimization,machine learning,model selection,tuning},
+  file = {/home/zenon/Zotero/storage/A9KM545A/Bischl et al. - 2023 - Hyperparameter optimization Foundations, algorith.pdf;/home/zenon/Zotero/storage/HXJ3BRVQ/widm.html}
+}
+
 @book{bishop2006,
   title = {Pattern {{Recognition}} and {{Machine Learning}}},
   author = {Bishop, Christopher M.},
@@ -518,6 +535,34 @@
   file = {/home/zenon/Zotero/storage/FN7FDBHL/0893608089900208.html}
 }
 
+@online{howard2017,
+  title = {{{MobileNets}}: {{Efficient Convolutional Neural Networks}} for {{Mobile Vision Applications}}},
+  shorttitle = {{{MobileNets}}},
+  author = {Howard, Andrew G. and Zhu, Menglong and Chen, Bo and Kalenichenko, Dmitry and Wang, Weijun and Weyand, Tobias and Andreetto, Marco and Adam, Hartwig},
+  date = {2017-04-16},
+  eprint = {1704.04861},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.1704.04861},
+  abstract = {We present a class of efficient models called MobileNets for mobile and embedded vision applications. MobileNets are based on a streamlined architecture that uses depth-wise separable convolutions to build light weight deep neural networks. We introduce two simple global hyper-parameters that efficiently trade off between latency and accuracy. These hyper-parameters allow the model builder to choose the right sized model for their application based on the constraints of the problem. We present extensive experiments on resource and accuracy tradeoffs and show strong performance compared to other popular models on ImageNet classification. We then demonstrate the effectiveness of MobileNets across a wide range of applications and use cases including object detection, finegrain classification, face attributes and large scale geo-localization.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/home/zenon/Zotero/storage/3LNIUGZQ/Howard et al. - 2017 - MobileNets Efficient Convolutional Neural Network.pdf;/home/zenon/Zotero/storage/4TT8Z6JP/1704.html}
+}
+
+@inproceedings{howard2019,
+  title = {Searching for {{MobileNetV3}}},
+  booktitle = {2019 {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}} ({{ICCV}})},
+  author = {Howard, Andrew and Sandler, Mark and Chen, Bo and Wang, Weijun and Chen, Liang-Chieh and Tan, Mingxing and Chu, Grace and Vasudevan, Vijay and Zhu, Yukun and Pang, Ruoming and Adam, Hartwig and Le, Quoc},
+  date = {2019-10},
+  pages = {1314--1324},
+  issn = {2380-7504},
+  doi = {10.1109/ICCV.2019.00140},
+  abstract = {We present the next generation of MobileNets based on a combination of complementary search techniques as well as a novel architecture design. MobileNetV3 is tuned to mobile phone CPUs through a combination of hardware-aware network architecture search (NAS) complemented by the NetAdapt algorithm and then subsequently improved through novel architecture advances. This paper starts the exploration of how automated search algorithms and network design can work together to harness complementary approaches improving the overall state of the art. Through this process we create two new MobileNet models for release: MobileNetV3-Large and MobileNetV3-Small which are targeted for high and low resource use cases. These models are then adapted and applied to the tasks of object detection and semantic segmentation. For the task of semantic segmentation (or any dense pixel prediction), we propose a new efficient segmentation decoder Lite Reduced Atrous Spatial Pyramid Pooling (LR-ASPP). We achieve new state of the art results for mobile classification, detection and segmentation. MobileNetV3-Large is 3.2\% more accurate on ImageNet classification while reducing latency by 20\% compared to MobileNetV2. MobileNetV3-Small is 6.6\% more accurate compared to a MobileNetV2 model with comparable latency. MobileNetV3-Large detection is over 25\% faster at roughly the same accuracy as MobileNetV2 on COCO detection. MobileNetV3-Large LR-ASPP is 34\% faster than MobileNetV2 R-ASPP at similar accuracy for Cityscapes segmentation.},
+  eventtitle = {2019 {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}} ({{ICCV}})},
+  file = {/home/zenon/Zotero/storage/6369RRPZ/Howard et al. - 2019 - Searching for MobileNetV3.pdf;/home/zenon/Zotero/storage/FBTXJ8V7/9008835.html}
+}
+
 @inproceedings{huang2017,
   title = {Densely {{Connected Convolutional Networks}}},
   booktitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
@@ -692,19 +737,6 @@
   file = {/home/zenon/Zotero/storage/P54JRJGY/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/A8YVPLFS/8099589.html}
 }
 
-@inproceedings{lin2017a,
-  title = {Feature {{Pyramid Networks}} for {{Object Detection}}},
-  booktitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
-  author = {Lin, Tsung-Yi and Dollár, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
-  date = {2017-07},
-  pages = {936--944},
-  issn = {1063-6919},
-  doi = {10.1109/CVPR.2017.106},
-  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But pyramid representations have been avoided in recent object detectors that are based on deep convolutional networks, partially because they are slow to compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
-  eventtitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
-  file = {/home/zenon/Zotero/storage/ZBT2Z36R/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/N9EQUFC2/8099589.html}
-}
-
 @inproceedings{lin2017b,
   title = {Focal {{Loss}} for {{Dense Object Detection}}},
   booktitle = {2017 {{IEEE International Conference}} on {{Computer Vision}} ({{ICCV}})},
@@ -716,19 +748,6 @@
   abstract = {The highest accuracy object detectors to date are based on a two-stage approach popularized by R-CNN, where a classifier is applied to a sparse set of candidate object locations. In contrast, one-stage detectors that are applied over a regular, dense sampling of possible object locations have the potential to be faster and simpler, but have trailed the accuracy of two-stage detectors thus far. In this paper, we investigate why this is the case. We discover that the extreme foreground-background class imbalance encountered during training of dense detectors is the central cause. We propose to address this class imbalance by reshaping the standard cross entropy loss such that it down-weights the loss assigned to well-classified examples. Our novel Focal Loss focuses training on a sparse set of hard examples and prevents the vast number of easy negatives from overwhelming the detector during training. To evaluate the effectiveness of our loss, we design and train a simple dense detector we call RetinaNet. Our results show that when trained with the focal loss, RetinaNet is able to match the speed of previous one-stage detectors while surpassing the accuracy of all existing state-of-the-art two-stage detectors.},
   eventtitle = {2017 {{IEEE International Conference}} on {{Computer Vision}} ({{ICCV}})},
   file = {/home/zenon/Zotero/storage/LL8HFKFW/Lin et al. - 2017 - Focal Loss for Dense Object Detection.pdf;/home/zenon/Zotero/storage/982Z922B/8237586.html}
-}
-
-@inproceedings{lin2017c,
-  title = {Feature {{Pyramid Networks}} for {{Object Detection}}},
-  booktitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
-  author = {Lin, Tsung-Yi and Dollár, Piotr and Girshick, Ross and He, Kaiming and Hariharan, Bharath and Belongie, Serge},
-  date = {2017-07},
-  pages = {936--944},
-  issn = {1063-6919},
-  doi = {10.1109/CVPR.2017.106},
-  abstract = {Feature pyramids are a basic component in recognition systems for detecting objects at different scales. But pyramid representations have been avoided in recent object detectors that are based on deep convolutional networks, partially because they are slow to compute and memory intensive. In this paper, we exploit the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. This architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using a basic Faster R-CNN system, our method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-model entries including those from the COCO 2016 challenge winners. In addition, our method can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. Code will be made publicly available.},
-  eventtitle = {2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
-  file = {/home/zenon/Zotero/storage/RNMZUZMQ/Lin et al. - 2017 - Feature Pyramid Networks for Object Detection.pdf;/home/zenon/Zotero/storage/5JNA38YH/8099589.html}
 }
 
 @inproceedings{liu2015,
@@ -894,6 +913,21 @@
   keywords = {Artificial neural network,Digital image processing,Drought stress,Genetic algorithm,Intelligent irrigation control}
 }
 
+@article{pan2010,
+  title = {A {{Survey}} on {{Transfer Learning}}},
+  author = {Pan, Sinno Jialin and Yang, Qiang},
+  date = {2010-10},
+  journaltitle = {IEEE Transactions on Knowledge and Data Engineering},
+  volume = {22},
+  number = {10},
+  pages = {1345--1359},
+  issn = {1558-2191},
+  doi = {10.1109/TKDE.2009.191},
+  abstract = {A major assumption in many machine learning and data mining algorithms is that the training and future data must be in the same feature space and have the same distribution. However, in many real-world applications, this assumption may not hold. For example, we sometimes have a classification task in one domain of interest, but we only have sufficient training data in another domain of interest, where the latter data may be in a different feature space or follow a different data distribution. In such cases, knowledge transfer, if done successfully, would greatly improve the performance of learning by avoiding much expensive data-labeling efforts. In recent years, transfer learning has emerged as a new learning framework to address this problem. This survey focuses on categorizing and reviewing the current progress on transfer learning for classification, regression, and clustering problems. In this survey, we discuss the relationship between transfer learning and other related machine learning techniques such as domain adaptation, multitask learning and sample selection bias, as well as covariate shift. We also explore some potential future issues in transfer learning research.},
+  eventtitle = {{{IEEE Transactions}} on {{Knowledge}} and {{Data Engineering}}},
+  file = {/home/zenon/Zotero/storage/6A5WF47N/Pan and Yang - 2010 - A Survey on Transfer Learning.pdf;/home/zenon/Zotero/storage/ICD8848I/5288526.html}
+}
+
 @article{ramos-giraldo2020,
   title = {Drought {{Stress Detection Using Low-Cost Computer Vision Systems}} and {{Machine Learning Techniques}}},
   author = {Ramos-Giraldo, Paula and Reberg-Horton, Chris and Locke, Anna M. and Mirsky, Steven and Lobaton, Edgar},
@@ -1052,6 +1086,20 @@
   abstract = {Two machine-learning procedures have been investigated in some detail using the game of checkers. Enough work has been done to verify the fact that a computer can be programmed so that it will learn to play a better game of checkers than can be played by the person who wrote the program. Furthermore, it can learn to do this in a remarkably short period of time (8 or 10 hours of machine-playing time) when given only the rules of the game, a sense of direction, and a redundant and incomplete list of parameters which are thought to have something to do with the game, but whose correct signs and relative weights are unknown and unspecified. The principles of machine learning verified by these experiments are, of course, applicable to many other situations.},
   eventtitle = {{{IBM Journal}} of {{Research}} and {{Development}}},
   file = {/home/zenon/Zotero/storage/9YJSG7IJ/Samuel - 1959 - Some Studies in Machine Learning Using the Game of.pdf;/home/zenon/Zotero/storage/6XF4QCUQ/5392560.html}
+}
+
+@inproceedings{sandler2018,
+  title = {{{MobileNetV2}}: {{Inverted Residuals}} and {{Linear Bottlenecks}}},
+  shorttitle = {{{MobileNetV2}}},
+  booktitle = {2018 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  author = {Sandler, Mark and Howard, Andrew and Zhu, Menglong and Zhmoginov, Andrey and Chen, Liang-Chieh},
+  date = {2018-06},
+  pages = {4510--4520},
+  issn = {2575-7075},
+  doi = {10.1109/CVPR.2018.00474},
+  abstract = {In this paper we describe a new mobile architecture, MobileNetV2, that improves the state of the art performance of mobile models on multiple tasks and benchmarks as well as across a spectrum of different model sizes. We also describe efficient ways of applying these mobile models to object detection in a novel framework we call SSDLite. Additionally, we demonstrate how to build mobile semantic segmentation models through a reduced form of DeepLabv3 which we call Mobile DeepLabv3. is based on an inverted residual structure where the shortcut connections are between the thin bottleneck layers. The intermediate expansion layer uses lightweight depthwise convolutions to filter features as a source of non-linearity. Additionally, we find that it is important to remove non-linearities in the narrow layers in order to maintain representational power. We demonstrate that this improves performance and provide an intuition that led to this design. Finally, our approach allows decoupling of the input/output domains from the expressiveness of the transformation, which provides a convenient framework for further analysis. We measure our performance on ImageNet [1] classification, COCO object detection [2], VOC image segmentation [3]. We evaluate the trade-offs between accuracy, and number of operations measured by multiply-adds (MAdd), as well as actual latency, and the number of parameters.},
+  eventtitle = {2018 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
+  file = {/home/zenon/Zotero/storage/EA4GZCUU/Sandler et al. - 2018 - MobileNetV2 Inverted Residuals and Linear Bottlen.pdf;/home/zenon/Zotero/storage/XLW9SUZ9/8578572.html}
 }
 
 @inproceedings{sears2007,
@@ -1287,19 +1335,6 @@
   file = {/home/zenon/Zotero/storage/5LSEHN2T/Zeiler and Fergus - 2014 - Visualizing and Understanding Convolutional Networ.pdf}
 }
 
-@online{zheng2019,
-  title = {Distance-{{IoU Loss}}: {{Faster}} and {{Better Learning}} for {{Bounding Box Regression}}},
-  shorttitle = {Distance-{{IoU Loss}}},
-  author = {Zheng, Zhaohui and Wang, Ping and Liu, Wei and Li, Jinze and Ye, Rongguang and Ren, Dongwei},
-  date = {2019-11-19},
-  eprint = {1911.08287},
-  eprinttype = {arxiv},
-  doi = {10.48550/arXiv.1911.08287},
-  issue = {arXiv:1911.08287},
-  keywords = {Computer Science - Computer Vision and Pattern Recognition},
-  file = {/home/zenon/Zotero/storage/A7KFIFE2/Zheng et al. - 2019 - Distance-IoU Loss Faster and Better Learning for .pdf}
-}
-
 @online{zheng2019a,
   title = {Distance-{{IoU Loss}}: {{Faster}} and {{Better Learning}} for {{Bounding Box Regression}}},
   shorttitle = {Distance-{{IoU Loss}}},
@@ -1355,10 +1390,19 @@
   keywords = {Early maize,Feature extraction,Gradient boosting decision tree,Image segmentation,Water stress}
 }
 
-@online{zotero-142,
-  title = {Pattern {{Recognition}} and {{Machine Learning}} - {{Google Books}}},
-  url = {https://www.google.at/books/edition/Pattern_Recognition_and_Machine_Learning/kOXDtAEACAAJ?hl=de&bshm=rimc/1},
-  urldate = {2023-10-01}
+@article{zhuang2021,
+  title = {A {{Comprehensive Survey}} on {{Transfer Learning}}},
+  author = {Zhuang, Fuzhen and Qi, Zhiyuan and Duan, Keyu and Xi, Dongbo and Zhu, Yongchun and Zhu, Hengshu and Xiong, Hui and He, Qing},
+  date = {2021-01},
+  journaltitle = {Proceedings of the IEEE},
+  volume = {109},
+  number = {1},
+  pages = {43--76},
+  issn = {1558-2256},
+  doi = {10.1109/JPROC.2020.3004555},
+  abstract = {Transfer learning aims at improving the performance of target learners on target domains by transferring the knowledge contained in different but related source domains. In this way, the dependence on a large number of target-domain data can be reduced for constructing target learners. Due to the wide application prospects, transfer learning has become a popular and promising area in machine learning. Although there are already some valuable and impressive surveys on transfer learning, these surveys introduce approaches in a relatively isolated way and lack the recent advances in transfer learning. Due to the rapid expansion of the transfer learning area, it is both necessary and challenging to comprehensively review the relevant studies. This survey attempts to connect and systematize the existing transfer learning research studies, as well as to summarize and interpret the mechanisms and the strategies of transfer learning in a comprehensive way, which may help readers have a better understanding of the current research status and ideas. Unlike previous surveys, this survey article reviews more than 40 representative transfer learning approaches, especially homogeneous transfer learning approaches, from the perspectives of data and model. The applications of transfer learning are also briefly introduced. In order to show the performance of different transfer learning models, over 20 representative transfer learning models are used for experiments. The models are performed on three different data sets, that is, Amazon Reviews, Reuters-21578, and Office-31, and the experimental results demonstrate the importance of selecting appropriate transfer learning models for different applications in practice.},
+  eventtitle = {Proceedings of the {{IEEE}}},
+  file = {/home/zenon/Zotero/storage/8L5G3WFK/Zhuang et al. - 2021 - A Comprehensive Survey on Transfer Learning.pdf;/home/zenon/Zotero/storage/CQS64R8H/9134370.html}
 }
 
 @online{zotero-143,
@@ -1366,18 +1410,6 @@
   url = {https://www.google.at/books/edition/Pattern_Recognition_and_Machine_Learning/qWPwnQEACAAJ?hl=de&bshm=rimc/1},
   urldate = {2023-10-01},
   file = {/home/zenon/Zotero/storage/CLHDBTJ2/qWPwnQEACAAJ.html}
-}
-
-@online{zotero-204,
-  title = {Feature {{Pyramid Networks}} for {{Object Detection}} | {{IEEE Conference Publication}} | {{IEEE Xplore}}},
-  url = {https://ieeexplore.ieee.org/document/8099589},
-  urldate = {2023-10-27}
-}
-
-@online{zotero-219,
-  title = {Scalable {{Object Detection Using Deep Neural Networks}} | {{IEEE Conference Publication}} | {{IEEE Xplore}}},
-  url = {https://ieeexplore.ieee.org/document/6909673},
-  urldate = {2023-10-29}
 }
 
 @article{zou2023,
