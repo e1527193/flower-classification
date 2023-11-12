@@ -1613,12 +1613,69 @@ top-1 accuracy of 75.2\% and 67.4\% respectively.
 \section{Transfer Learning}
 \label{sec:background-transfer-learning}
 
-Give a definition of transfer learning and explain how it is
-done. Compare fine-tuning just the last layers vs. propagating changes
-through the whole network. What are advantages to transfer learning?
-Are there any disadvantages?
+Transfer learning refers to the application of a learning algorithm to
+a target domain by utilizing knowledge already learned from a
+different source domain \cite{zhuang2021}. The learned representations
+from the source domain are thus \emph{transferred} to solve a related
+problem in another domain. Transfer learning works because
+semantically meaningful information an algorithm has learned from a
+(large) data set is often meaningful in other contexts as well, even
+though the \emph{new problem} is not exactly the same problem for
+which the original model had been trained for. An analogy to
+day-to-day life as humans can be drawn with sports. Intuitively,
+skills learned during soccer such as ball control, improved endurance
+and strategic thinking are often also useful in other ball
+sports. Someone who is adept at certain kinds of sports will likely be
+able to pick up similar types much faster.
 
-Estimated 2 pages for this section.
+In mathematical terms, \textcite{pan2010} define transfer learning as:
+
+\begin{quote}{\cite[p.1347]{pan2010}}
+  Given a source domain $\mathcal{D}_{S}$ and learning task
+  $\mathcal{T}_{S}$, a target domain $\mathcal{D}_{T}$ and learning task
+  $\mathcal{T}_{T}$, transfer learning aims to help improve the learning of the
+  target predictive function $f_{T}(\cdot)$ in $\mathcal{D}_{T}$ using the knowledge
+  in $\mathcal{D}_{S}$ and $\mathcal{T}_{S}$, where $\mathcal{D}_{S}\neq\mathcal{D}_{T}$, or $\mathcal{T}_{S}\neq\mathcal{T}_{T}$.
+\end{quote}
+
+In the machine learning world, collecting and labeling data for
+training a model is often time consuming, expensive and sometimes not
+possible. Deep learning based models especially require substantial
+amounts of data to be able to robustly classify images or solve other
+tasks. Semi-supervised or unsupervised (see
+section~\ref{sec:theory-ml}) learning approaches can partially
+mitigate this problem, but having accurate ground truth data is
+usually a requirement nonetheless. Through the publication of large
+labeled data sets such as via the \glspl{ilsvrc}, a basis for
+(pre-)training exists from which the model can be optimized for
+downstream tasks.
+
+Transfer learning is not a panacea, however. Care has to be taken to
+only use models which have been pretrained in a source domain which is
+similar to the target domain in terms of feature space. While this may
+seem to be an easy task, it is often not known in advance if transfer
+learning is the correct approach. Furthermore, choosing whether to
+only remove the fully-connected layers at the end of a pretrained
+model or to fine-tune all parameters introduces at least one
+additional hyperparameter. These decisions have to be made by
+comparing the source domain with the target domain, how much data in
+the target domain is available, how much computational resources are
+available and observing which layers are responsible for which
+features. Since earlier layers usually contain low-level and later
+layers high-level information, resetting the weights of the last few
+layers or replacing them with different ones entirely is also an
+option.
+
+To summarize, while transfer learning is an effective tool and is
+likely a major factor in the proliferation of deep learning based
+models, not all domains are suited for it. The additional decisions
+which have to be made as a result of using transfer learning can
+introduce more complexity than would otherwise be necessary for a
+particular problem. It does, however, allow researchers to get started
+quickly and to iterate faster because popular network architectures
+pretrained on Imagenet are integrated into the major machine learning
+frameworks. Transfer learning is used extensively in this work to
+train a classifier as well as an object detection model.
 
 \section{Hyperparameter Optimization}
 \label{sec:background-hypopt}
