@@ -1661,14 +1661,124 @@ train a classifier as well as an object detection model.
 \section{Hyperparameter Optimization}
 \label{sec:background-hypopt}
 
-Give a definition of hyperparameter optimization, why it is done and
-which improvements can be expected. Mention the possible approaches
-(grid search, random search, bayesian optimization, gradient-based
-optimization, evolutionary optimization) and discuss the used ones
-(random search (classifier) and evolutionary optimization (object
-detector) in detail.
+While a network is learning, the parameters of its layers are
+updated. These parameters are \emph{learnable} in the sense that
+changing them should bring the model closer to solving a
+problem. Updating these parameters happens during the
+learning/training phase. Hyperparameters, on the other hand, are not
+included in the learning process because they are fixed before the
+model starts to train. They are fixed because hyperparameters concern
+the structure, architecture and learning parameters of the model and
+without having those in place, a model cannot start training.
 
-Estimated 3 pages for this section.
+Model designers have to carefully define values for a wide range of
+hyperparameters. Which hyperparameters have to be set is determined by
+the type of model which is being used. A \gls{svm}, for example, has a
+penalty parameter $C$ which indicates to the network how lenient it
+should be when misclassifying training examples. The type of kernel to
+use is also a hyperparameter for any \gls{svm} and can only be
+answered by looking at the distribution of the underlying data. In
+neural networks the range of hyperparameters is even greater because
+every part of the network architecture such as how many layers to
+stack, which layers to stack, which kernel sizes to use in each
+\gls{cnn} layer and which activation function(s) to use in-between the
+layers is a parameter which can be altered. Finding the best
+combination of some or all of the available hyperparameters is called
+\emph{hyperparameter tuning}.
+
+Hyperparameter tuning can be and is often done manually by researchers
+where they select values which \emph{have been known to work
+well}. This approach—while it works to some extent—is not optimal
+because adhering to \emph{best practice} precludes parameter
+configurations which would be closer to optimality for a given data
+set. Furthermore, manual tuning requires a deep understanding of the
+model itself and how each parameter influences it. Biases present in a
+researcher's understanding are detrimental to finding optimal
+hyperparameters and the amount of possible combinations can quickly
+get intractable. Instead, automated methods to search the
+hyperparameter space offer an unbiased and more efficient approach to
+hyperparameter tuning. This type of algorithmic search is called
+\emph{hyperparameter optimization}.
+
+\subsection{Grid Search}
+\label{ssec:grid-search}
+
+There are multiple possible strategies to opt for when optimizing
+hyperparameters. The straightforward approach is to do grid search. In
+grid search, all hyperparameters are discretized and all possible
+combinations mapped to a search space. The search space is then
+sampled for configurations at evenly spaced points and the resulting
+vectors of hyperparameter values are evaluated. For example, if a
+model has seven hyperparameters and three of those can take on a
+continuous value, these three variables have to be discretized. In
+practical terms this means that the model engineer chooses suitable
+discrete values for said hyperparameters. Once all hyperparameters are
+discrete, all possible combinations of the hyperparameters are
+evaluated. If each of the seven hyperparameters has three discrete
+values, the number of possible combinations is
+
+\begin{equation}
+  \label{eq:hypopt-nums}
+  3\cdot3\cdot3\cdot3\cdot3\cdot3\cdot3 = 3^{7} = 2187.
+\end{equation}
+
+For this example, evaluating $2187$ possible combinations can already
+be intractable depending on the time required for each run. Further,
+grid search requires that the resolution of the grid is determined
+beforehand. If the points on the grid (combinations) are spaced too
+far apart, the chance of finding a global optimum is lower than if the
+grid is dense. However, a dense grid results in a higher number of
+possible combinations and thus more time is required for an exhaustive
+search. Additionally, grid search suffers from the \emph{curse of
+dimensionality} because the number of evaluations scales exponentially
+with the number of hyperparameters.
+
+\subsection{Random Search}
+\label{ssec:hypopt-random-search}
+
+Random search \cite{pinto2009} is an alternative to grid search which
+often provides configurations which are similar or better in the same
+amount of time than ones obtained with grid search
+\cite{bergstra2012}. Random search performs especially well in
+high-dimensional environments because the hyperparameter response
+surface is often of \emph{low effective dimensionality}
+\cite{bergstra2012}. That is, a low number of hyperparameters
+disproportionately affects the performance of the resulting model and
+the rest has a negligible effect. We use random search in this work to
+improve the hyperparameters of our classification model.
+
+\subsection{Evolution Strategies}
+\label{ssec:hypopt-evo}
+
+Evolution strategies follow a population-based model where the search
+strategy starts from initial random configurations and evolves the
+hyperparameters through \emph{mutation} and \emph{crossover}. Mutation
+randomly changes the value of a hyperparameter and crossover creates a
+new configuration by mixing the values of two
+configurations. Hyperparameter optimization with evolutionary
+strategies roughly goes through the following stages
+\cite{bischl2023}.
+
+\begin{enumerate}
+\item Set the hyperparameters to random initial values and create a
+  starting population of configurations.
+\item Evaluate each configuration.
+\item Rank all configurations according to a fitness function.
+\item The best-performing configurations are selected as
+  \emph{parents}.
+\item Child configurations are created from the parent configurations
+  by mutation and crossover.
+\item Evaluate the child configurations.
+\item Go to step three and repeat the process until a termination
+  condition is reached.
+\end{enumerate}
+
+This strategy is more efficient than grid search or random search, but
+requires a substantial amount of iterations for good solutions and can
+thus be too expensive for hyperparameter optimization
+\cite{bischl2023}. We use an evolution strategy based on a genetic
+algorithm in this work to optimize the hyperparameters of our object
+detection model.
 
 \section{Related Work}
 \label{sec:related-work}
