@@ -183,7 +183,7 @@ learning.
 Large-scale as well as small local farmers are able to survey their
 fields and gardens with drones or stationary cameras to determine soil
 and plant condition as well as when to water or
-fertilize~\cite{ramos-giraldo2020}. Machine learning models play an
+fertilize \cite{ramos-giraldo2020}. Machine learning models play an
 important role in that process because they allow automated
 decision-making in real time. While machine learning has been used in
 large-scale agriculture, it is also a valuable tool for household
@@ -199,11 +199,11 @@ are numerous. First, gathering data in the field requires a network of
 sensors which are linked to a central server for processing. Since
 communication between sensors is difficult without proper
 infrastructure, there is a high demand for processing the data on the
-sensor itself~\cite{mcenroe2022}. Second, differences in local soil,
+sensor itself \cite{mcenroe2022}. Second, differences in local soil,
 plant and weather conditions require models to be optimized for these
 diverse inputs. Centrally trained models often lose the nuances
 present in the data because they have to provide actionable
-information for a larger area~\cite{awad2019}. Third, specialized
+information for a larger area \cite{awad2019}. Third, specialized
 methods such as hyper- or multispectral imaging in the field provide
 fine-grained information about the object of interest but come with
 substantial upfront costs and are of limited interest for gardeners.
@@ -224,7 +224,7 @@ plants in the field of view and then to determine if the plants need
 water or not. The model should be suitable for edge devices equipped
 with a \gls{tpu} or \gls{gpu} but with otherwise limited processing
 capabilities. Examples of such systems include Google's Coral
-development board and the Nvidia Jetson series of~\glspl{sbc}. The
+development board and the Nvidia Jetson series of \glspl{sbc}. The
 model should make use of state-of-the-art algorithms from either
 classical machine learning or deep learning. The literature review
 will yield an appropriate machine learning method. Furthermore, the
@@ -325,19 +325,19 @@ further insights about the type of models which are commonly used.
 
 In order to find and select appropriate datasets to train the models
 on, we will survey the existing big datasets for classes we can
-use. Datasets such as the \gls{coco}~\cite{lin2015} and
-\gls{voc}~\cite{everingham2010} contain the highly relevant class
+use. Datasets such as the \gls{coco} \cite{lin2015} and
+\gls{voc} \cite{everingham2010} contain the highly relevant class
 \emph{Potted Plant}. By extracting only these classes from multiple
 datasets and concatenating them together, it is possible to create one
 unified dataset which only contains the classes necessary for training
 the model.
 
 The training of the models will happen in an environment where more
-computational resources are available than what the~\gls{sbc}
-offers. We will deploy the final model with the~\gls{api} to
-the~\gls{sbc} after training and optimization. Furthermore, training
-will happen in tandem with a continuous evaluation process. After
-every iteration of the model, an evaluation run against the test set
+computational resources are available than what the \gls{sbc}
+offers. We will deploy the final model with the \gls{api} to the
+\gls{sbc} after training and optimization. Furthermore, training will
+happen in tandem with a continuous evaluation process. After every
+iteration of the model, an evaluation run against the test set
 determines if there has been an improvement in performance. The
 results of the evaluation feed back into the parameter selection at
 the beginning of each training phase. Small changes to the training
@@ -357,7 +357,7 @@ has been met, and—if not—give reasons for the rejection of all or part
 of the hypotheses.
 
 Overall, the development of our application follows an evolutionary
-pototyping process~\cite{davis1992,sears2007}. Instead of producing a
+prototyping process \cite{davis1992,sears2007}. Instead of producing a
 full-fledged product from the start, development happens iteratively
 in phases. The main phases and their order for the prototype at hand
 are: model selection, implementation, and evaluation. The results of
@@ -404,7 +404,7 @@ results of the testing phases as well as the performance of the
 aggregate model. Futhermore, the results are compared with the
 expectations and it is discussed whether they are explainable in the
 context of the task at hand as well as benchmark results from other
-datasets (\gls{coco}~\cite{lin2015}). Chapter~\ref{chap:conclusion}
+datasets (\gls{coco} \cite{lin2015}). Chapter~\ref{chap:conclusion}
 concludes the thesis with a summary and an outlook on possible
 improvements and further research questions.
 
@@ -685,8 +685,8 @@ network and is, therefore, not suitable for complex intra-data
 relationships. A major downside to using the Heaviside step function
 is that it is not differentiable at $x = 0$ and has a $0$ derivative
 elsewhere. These properties make it unsuitable for use with gradient
-descent during back-propagation (section
-\ref{ssec:theory-back-propagation}).
+descent during backpropagation
+(section~\ref{ssec:theory-backprop}).
 
 \subsubsection{Sigmoid}
 \label{sssec:theory-sigmoid}
@@ -852,28 +852,28 @@ there is the case of binary random variables, i.e. only two classes to
 classify exist, the measure is called binary
 cross-entropy. Cross-entropy loss is known to outperform \gls{mse} for
 classification tasks and allows the model to be trained
-faster~\cite{simard2003}.
+faster \cite{simard2003}.
 
-\subsection{Back-Propagation}
-\label{ssec:theory-back-propagation}
+\subsection{Backpropagation}
+\label{ssec:theory-backprop}
 
 So far, information only flows forward through the network whenever a
 prediction for a particular input should be made. In order for a
 neural network to learn, information about the computed loss has to
 flow backward through the network. Only then can the weights at the
 individual neurons be updated. This type of information flow is termed
-\emph{back-propagation} \cite{rumelhart1986}. Back-propagation
-computes the gradient of a loss function with respect to the weights
-of a network for an input-output pair. The algorithm computes the
-gradient iteratively starting from the last layer and works its way
-backward through the network until it reaches the first layer.
+\emph{backpropagation} \cite{rumelhart1986}. Backpropagation computes
+the gradient of a loss function with respect to the weights of a
+network for an input-output pair. The algorithm computes the gradient
+iteratively starting from the last layer and works its way backward
+through the network until it reaches the first layer.
 
-Strictly speaking, back-propagation only computes the gradient, but
+Strictly speaking, backpropagation only computes the gradient, but
 does not determine how the gradient is used to learn the new
-weights. Once the back-propagation algorithm has computed the
-gradient, that gradient is passed to an algorithm which finds a local
-minimum of it. This step is usually performed by some variant of
-gradient descent \cite{cauchy1847}.
+weights. Once the backpropagation algorithm has computed the gradient,
+that gradient is passed to an algorithm which finds a local minimum of
+it. This step is usually performed by some variant of gradient descent
+\cite{cauchy1847}.
 
 \section{Object Detection}
 \label{sec:background-detection}
@@ -900,7 +900,7 @@ time.
 \label{sssec:obj-viola-jones}
 
 The first milestone was the face detector by
-~\textcite{viola2001,viola2001} which is able to perform face
+\textcite{viola2001,viola2001} which is able to perform face
 recognition on $384$ by $288$ pixel (grayscale) images with
 \qty{15}{fps} on a \qty{700}{\MHz} Intel Pentium III processor. The
 authors use an integral image representation where every pixel is the
@@ -909,7 +909,7 @@ representation allows them to quickly and efficiently calculate
 Haar-like features.
 
 The Haar-like features are passed to a modified AdaBoost
-algorithm~\cite{freund1995} which only selects the (presumably) most
+algorithm \cite{freund1995} which only selects the (presumably) most
 important features. At the end there is a cascading stage of
 classifiers where regions are only considered further if they are
 promising. Every additional classifier adds complexity, but once a
@@ -921,7 +921,7 @@ achieves comparable results to the state of the art in 2001.
 \subsubsection{HOG Detector}
 \label{sssec:obj-hog}
 
-The \gls{hog}~\cite{dalal2005} is a feature descriptor used in
+The \gls{hog} \cite{dalal2005} is a feature descriptor used in
 computer vision and image processing to detect objects in images. It
 is a detector which detects shape like other methods such as
 \gls{sift} \cite{lowe1999}. The idea is to use the distribution of
@@ -940,14 +940,14 @@ with images of 64 by 128 pixels and make sure that the image contains
 a margin of 16 pixels around the person. Decreasing the border by
 either enlarging the person or reducing the overall image size results
 in worse performance. Unfortunately, their method is far from being
-able to process images in real time—a 320 by 240 image takes roughly a
-second to process.
+able to process images in real time—a $320$ by $240$ image takes
+roughly a second to process.
 
 \subsubsection{Deformable Part-Based Model}
 \label{sssec:obj-dpm}
 
-\glspl{dpm}~\cite{felzenszwalb2008a} were the winners of the \gls{voc}
-challenge in the years 2007, 2008 and 2009. The method is heavily
+\glspl{dpm} \cite{felzenszwalb2008a} were the winners of the \gls{voc}
+challenge in the years 2007, 2008, and 2009. The method is heavily
 based on the previously discussed \gls{hog} since it also uses
 \gls{hog} descriptors internally. The authors addition is the idea of
 learning how to decompose objects during training and
@@ -1008,25 +1008,25 @@ often not as efficient as one-stage detectors.
 
 \textcite{girshick2014} were the first to propose using feature
 representations of \glspl{cnn} for object detection. Their approach
-consists of generating around 2000 region proposals and passing these
-on to a \gls{cnn} for feature extraction. The fixed-length feature
-vector is used as input for a linear \gls{svm} which classifies the
-region. They name their method R-\gls{cnn}, where the R stands for
-region.
+consists of generating around $2000$ region proposals and passing
+these on to a \gls{cnn} for feature extraction. The fixed-length
+feature vector is used as input for a linear \gls{svm} which
+classifies the region. They name their method R-\gls{cnn}, where the R
+stands for region.
 
 R-\gls{cnn} uses selective search to generate region proposals
 \cite{uijlings2013}.The authors use selective search's \emph{fast
-mode} to generate the 2000 proposals and warp (i.e. aspect ratios are
-not retained) each proposal into the image dimensions required by the
-\gls{cnn}. The \gls{cnn}, which matches the architecture of AlexNet
-\cite{krizhevsky2012}, generates a $4096$-dimensional feature vector
-and each feature vector is scored by a linear \gls{svm} for each
-class. Scored regions are selected/discarded by comparing each region
-to other regions within the same class and rejecting them if there
-exists another region with a higher score and greater \gls{iou} than a
-threshold. The linear \gls{svm} classifiers are trained to only label
-a region as positive if the overlap, as measured by \gls{iou}, is
-above $0.3$.
+mode} to generate the $2000$ proposals and warp (i.e. aspect ratios
+are not retained) each proposal into the image dimensions required by
+the \gls{cnn}. The \gls{cnn}, which matches the architecture of
+AlexNet \cite{krizhevsky2012}, generates a $4096$-dimensional feature
+vector and each feature vector is scored by a linear \gls{svm} for
+each class. Scored regions are selected/discarded by comparing each
+region to other regions within the same class and rejecting them if
+there exists another region with a higher score and greater \gls{iou}
+than a threshold. The linear \gls{svm} classifiers are trained to only
+label a region as positive if the overlap, as measured by \gls{iou},
+is above $0.3$.
 
 While the approach of generating region proposals is not new, using a
 \gls{cnn} purely for feature extraction is. Unfortunately, R-\gls{cnn}
@@ -1132,15 +1132,15 @@ on all levels. \glspl{fpn} are an important building block of many
 state-of-the-art object detectors.
 
 A \gls{fpn} first computes the feature pyramid bottom-up with a
-scaling step of 2. The lower levels capture less semantic information
+scaling step of two. The lower levels capture less semantic information
 than the higher levels, but include more spatial information due to
 the higher granularity. In a second step, the \gls{fpn} upsamples the
 higher levels such that the dimensions of two consecutive layers are
 the same. The upsampled top layer is merged with the layer beneath it
-via element-wise addition and convolved with a $1\times 1$ convolutional
-layer to reduce channel dimensions and to smooth out potential
-artifacts introduced during the upsampling step. The results of that
-operation constitute the new \emph{top layer} and the process
+via element-wise addition and convolved with a one by one
+convolutional layer to reduce channel dimensions and to smooth out
+potential artifacts introduced during the upsampling step. The results
+of that operation constitute the new \emph{top layer} and the process
 continues with the layer below it until the finest resolution feature
 map is generated. In this way, the features of the different layers at
 different scales are fused to obtain a feature map with high semantic
@@ -1216,7 +1216,7 @@ detect smaller and denser objects as well.
 
 The authors report results on \gls{voc} 2007 for their \gls{ssd}300
 and \gls{ssd}512 model varieties. The number refers to the size of the
-input images. \gls{ssd}300 outperforms Fast R-\gls{cnn} by 1.1
+input images. \gls{ssd}300 outperforms Fast R-\gls{cnn} by $1.1$
 percentage points (\gls{map} 66.9\% vs 68\%). \gls{ssd}512 outperforms
 Faster R-\gls{cnn} by 1.7\% \gls{map}. If trained on the \gls{voc}
 2007, 2012 and \gls{coco} train sets, \gls{ssd}512 achieves a
@@ -1343,7 +1343,7 @@ The idea of automatic generation of feature maps via \glspl{ann} gave
 rise to \glspl{cnn}. Early \glspl{cnn} \cite{lecun1989} were mostly
 discarded for practical applications because they require much more
 data during training than traditional methods and also more processing
-power during inference. Passing $224\times 224$ pixel images to a
+power during inference. Passing $224$ by $224$ pixel images to a
 \gls{cnn}, as is common today, was simply not feasible if one wanted a
 reasonable inference time. With the development of \glspl{gpu} and
 supporting software such as the \gls{cuda} toolkit, it was possible to
@@ -1367,24 +1367,24 @@ function. The error function with which the weights are updated is
 
 The architecture of LeNet-5 is composed of two convolutional layers,
 two pooling layers and a dense block of three fully-connected
-layers. The input image is a grayscale image of 32 by 32 pixels. The
-first convolutional layer generates six feature maps, each with a
-scale of 28 by 28 pixels. Each feature map is fed to a pooling layer
-which effectively downsamples the image by a factor of two. By
-aggregating each two by two area in the feature map via averaging, the
-authors are more likely to obtain relative (to each other) instead of
-absolute positions of the features. To make up for the loss in spatial
-resolution, the following convolutional layer increases the amount of
-feature maps to 16 which aims to increase the richness of the learned
-representations. Another pooling layer follows which reduces the size
-of each of the 16 feature maps to five by five pixels. A dense block
-of three fully-connected layers of 120, 84 and 10 neurons respectively
-serves as the actual classifier in the network. The last layer uses
-the euclidean \gls{rbf} to compute the class an image belongs to (0-9
-digits).
+layers. The input image is a grayscale image of $32$ by $32$
+pixels. The first convolutional layer generates six feature maps, each
+with a scale of $28$ by $28$ pixels. Each feature map is fed to a
+pooling layer which effectively downsamples the image by a factor of
+two. By aggregating each two by two area in the feature map via
+averaging, the authors are more likely to obtain relative (to each
+other) instead of absolute positions of the features. To make up for
+the loss in spatial resolution, the following convolutional layer
+increases the amount of feature maps to $16$ which aims to increase
+the richness of the learned representations. Another pooling layer
+follows which reduces the size of each of the $16$ feature maps to
+five by five pixels. A dense block of three fully-connected layers of
+120, 84 and 10 neurons respectively serves as the actual classifier in
+the network. The last layer uses the euclidean \gls{rbf} to compute
+the class an image belongs to (0-9 digits).
 
 The performance of LeNet-5 was measured on the \gls{mnist} database
-which consists of 70.000 labeled images of handwritten digits. The
+which consists of $70000$ labeled images of handwritten digits. The
 \gls{mse} on the test set is 0.95\%. This result is impressive
 considering that character recognition with a \gls{cnn} had not been
 done before. However, standard machine learning methods of the time,
@@ -1453,7 +1453,7 @@ second layers of the feature maps present in AlexNet. They identify
 multiple problems with their structure such as aliasing artifacts and
 a mix of low and high frequency information without any mid
 frequencies. These results indicate that the filter size in AlexNet is
-too large at 11 by 11 and the authors reduce it to seven by
+too large at $11$ by $11$ and the authors reduce it to seven by
 seven. Additionally, they modify the original stride of four to
 two. These two changes result in an improvement in the top-5 error
 rate of 1.6\% over their own replicated AlexNet result of 18.1\%.
@@ -1461,7 +1461,7 @@ rate of 1.6\% over their own replicated AlexNet result of 18.1\%.
 \subsubsection{GoogLeNet}
 \label{sssec:theory-googlenet}
 
-GoogLeNet, also known as Inception-v1, was proposed by
+GoogLeNet, also known as Inception v1, was proposed by
 \textcite{szegedy2015} to increase the depth of the network without
 introducing too much additional complexity. Since the relevant parts
 of an image can often be of different sizes, but kernels within
@@ -1504,15 +1504,15 @@ non-linearities by having two \glspl{relu} instead of only one. The
 authors provide five different networks with increasing number of
 parameters based on these principles. The smallest network has a depth
 of eight convolutional layers and three fully-connected layers for the
-head (11 in total). The largest network has 16 convolutional and three
-fully-connected layers (19 in total). The fully-connected layers are
-the same for each architecture, only the layout of the convolutional
-layers varies.
+head ($11$ in total). The largest network has $16$ convolutional and
+three fully-connected layers ($19$ in total). The fully-connected
+layers are the same for each architecture, only the layout of the
+convolutional layers varies.
 
-The deepest network with 19 layers achieves a top-5 error rate on
+The deepest network with $19$ layers achieves a top-5 error rate on
 \gls{ilsvrc} 2014 of 9\%. If trained with different image scales in
 the range of $S \in [256, 512]$, the same network achieves a top-5 error
-rate of 8\% (test set at scale 256). By combining their two largest
+rate of 8\% (test set at scale $256$). By combining their two largest
 architectures and multi-crop as well as dense evaluation, they achieve
 an ensemble top-5 error rate of 6.8\%, while their best single network
 with multi-crop and dense evaluation results in 7\%, thus beating the
@@ -1522,8 +1522,8 @@ section~\ref{sssec:theory-googlenet}) by 0.9\%.
 \subsubsection{ResNet}
 \label{sssec:theory-resnet}
 
-The 22-layer structure of GoogLeNet \cite{szegedy2015} and the
-19-layer structure of VGGNet \cite{simonyan2015} showed that
+The $22$-layer structure of GoogLeNet \cite{szegedy2015} and the
+$19$-layer structure of VGGNet \cite{simonyan2015} showed that
 \emph{going deeper} is beneficial for achieving better classification
 performance. However, the authors of VGGNet already note that stacking
 even more layers does not lead to better performance because the model
@@ -1706,13 +1706,13 @@ Estimated 3 pages for this section.
 
 The literature on machine learning in agriculture is broadly divided
 into four main areas:~livestock management, soil management, water
-management, and crop management~\cite{benos2021}. Of those four, water
+management, and crop management \cite{benos2021}. Of those four, water
 management only makes up about 10\% of all surveyed papers during the
 years 2018--2020. This highlights the potential for research in this
 area to have a high real-world impact.
 
 \textcite{su2020} used traditional feature extraction and
-pre-processing techniques to train various machine learning models for
+preprocessing techniques to train various machine learning models for
 classifying water stress for a wheat field. They took top-down images
 of the field using an \gls{uav}, segmented wheat pixels from
 background pixels and constructed features based on spectral
@@ -1742,47 +1742,49 @@ their results do not transfer well to the other seasons under survey
 \textcite{zhuang2017} showed that water stress in maize can be
 detected early on and, therefore, still provide actionable information
 before the plants succumb to drought. They installed a camera which
-took $640\times480$ pixel RGB images every two hours. A simple linear
-classifier (SVM) segmented the image into foreground and background
-using the green color channel. The authors constructed a
-fourteen-dimensional feature space consisting of color and texture
-features. A gradient boosted decision tree (GBDT) model classified the
-images into water stressed and non-stressed and achieved an accuracy
-of $\qty{90.39}{\percent}$. Remarkably, the classification was not
+took $640$ by $480$ pixel RGB images every two hours. A simple linear
+classifier (\gls{svm}) segmented the image into foreground and
+background using the green color channel. The authors constructed a
+$14$-dimensional feature space consisting of color and texture
+features. A \gls{gbdt} model classified the images into water stressed
+and non-stressed and achieved an accuracy of
+$\qty{90.39}{\percent}$. Remarkably, the classification was not
 significantly impacted by illumination changes throughout the day.
 
-\textcite{an2019} used the ResNet50 model as a basis for transfer
-learning and achieved high classification scores (ca. 95\%) on
-maize. Their model was fed with $640\times480$ pixel images of maize
-from three different viewpoints and across three different growth
-phases. The images were converted to grayscale which turned out to
-slightly lower classification accuracy. Their results also highlight
-the superiority of deep convolutional neural networks (DCNNs) compared
-to manual feature extraction and gradient boosted decision trees
-(GBDTs).
+\textcite{an2019} used the ResNet50 model (see
+section~\ref{sssec:theory-resnet}) as a basis for transfer learning and
+achieved high classification scores (ca. 95\%) on maize. Their model
+was fed with $640$ by $480$ pixel images of maize from three different
+viewpoints and across three different growth phases. The images were
+converted to grayscale which turned out to slightly lower
+classification accuracy. Their results also highlight the superiority
+of \glspl{dcnn} compared to manual feature extraction and
+\glspl{gbdt}.
 
 \textcite{chandel2021} investigated deep learning models in depth by
-comparing three well-known CNNs. The models under scrutiny were
-AlexNet, GoogLeNet, and Inception V3. Each model was trained with a
-dataset containing images of maize, okra, and soybean at different
-stages of growth and under stress and no stress. The researchers did
-not include an object detection step before image classification and
-compiled a fairly small dataset of 1200 images. Of the three models,
-GoogLeNet beat the other two with a sizable lead at a classification
-accuracy of >94\% for all three types of crop. The authors attribute
-its success to its inherently deeper structure and application of
-multiple convolutional layers at different stages. Unfortunately, all
-of the images were taken at the same $\ang{45}\pm\ang{5}$ angle and it
-stands to reason that the models would perform significantly worse on
-images taken under different conditions.
+comparing three well-known \glspl{cnn}. The models under scrutiny were
+AlexNet (see section~\ref{sssec:theory-alexnet}), GoogLeNet (see
+section~\ref{sssec:theory-googlenet}), and Inception v3. Each model
+was trained with a dataset containing images of maize, okra, and
+soybean at different stages of growth and under stress and no
+stress. The researchers did not include an object detection step
+before image classification and compiled a fairly small dataset of
+$1200$ images. Of the three models, GoogLeNet beat the other two with
+a sizable lead at a classification accuracy of >94\% for all three
+types of crop. The authors attribute its success to its inherently
+deeper structure and application of multiple convolutional layers at
+different stages. Unfortunately, all of the images were taken at the
+same $\ang{45}\pm\ang{5}$ angle and it stands to reason that the models
+would perform significantly worse on images taken under different
+conditions.
 
 \textcite{ramos-giraldo2020} detected water stress in soybean and corn
-crops with a pretrained model based on DenseNet-121. Low-cost cameras
-deployed in the field provided the training data over a 70-day
-period. They achieved a classification accuracy for the degree of
-wilting of 88\%.
+crops with a pretrained model based on DenseNet-121 (see
+section~\ref{sssec:theory-densenet}). Low-cost cameras deployed in the
+field provided the training data over a $70$-day period. They achieved
+a classification accuracy for the degree of wilting of 88\%.
 
-In a later study, the same authors~\cite{ramos-giraldo2020a} deployed
+In a later study, the same authors \cite{ramos-giraldo2020a} deployed
 their machine learning model in the field to test it for production
 use. They installed multiple Raspberry Pis with attached Raspberry Pi
 Cameras which took images in $\qty{30}{\minute}$ intervals. The
@@ -1797,27 +1799,26 @@ classification scores on corn and soybean with a low-cost setup.
 \textcite{azimi2020} demonstrate the efficacy of deep learning models
 versus classical machine learning models on chickpea plants. The
 authors created their own dataset in a laboratory setting for stressed
-and non-stressed plants. They acquired 8000 images at eight different
-angles in total. For the classical machine learning models, they
-extracted feature vectors using scale-invariant feature transform
-(SIFT) and histogram of oriented gradients (HOG). The features are fed
-into three classical machine learning models: support vector machine
-(SVM), k-nearest neighbors (KNN), and a decision tree (DT) using the
-classification and regression (CART) algorithm. On the deep learning
-side, they used their own CNN architecture and the pre-trained
-ResNet-18 model. The accuracy scores for the classical models was in
-the range of $\qty{60}{\percent}$ to $\qty{73}{\percent}$ with the SVM
-outperforming the two others. The CNN achieved higher scores at
-$\qty{72}{\percent}$ to $\qty{78}{\percent}$ and ResNet-18 achieved
-the highest scores at $\qty{82}{\percent}$ to
-$\qty{86}{\percent}$. The results clearly show the superiority of deep
-learning over classical machine learning. A downside of their approach
-lies in the collection of the images. The background in all images was
-uniformly white and the plants were prominently placed in the
-center. It should, therefore, not be assumed that the same
-classification scores can be achieved on plants in the field with
-messy and noisy backgrounds as well as illumination changes and so
-forth.
+and non-stressed plants. They acquired $8000$ images at eight
+different angles in total. For the classical machine learning models,
+they extracted feature vectors using \gls{sift} and \gls{hog}. The
+features are fed into three classical machine learning models:
+\gls{svm}, \gls{k-nn}, and a \gls{dt} using the \gls{cart}
+algorithm. On the deep learning side, they used their own \gls{cnn}
+architecture and the pretrained ResNet-18 (see
+section~\ref{sssec:theory-resnet}) model. The accuracy scores for the
+classical models was in the range of $\qty{60}{\percent}$ to
+$\qty{73}{\percent}$ with the \gls{svm} outperforming the two
+others. The \gls{cnn} achieved higher scores at $\qty{72}{\percent}$
+to $\qty{78}{\percent}$ and ResNet-18 achieved the highest scores at
+$\qty{82}{\percent}$ to $\qty{86}{\percent}$. The results clearly show
+the superiority of deep learning over classical machine learning. A
+downside of their approach lies in the collection of the images. The
+background in all images was uniformly white and the plants were
+prominently placed in the center. It should, therefore, not be assumed
+that the same classification scores can be achieved on plants in the
+field with messy and noisy backgrounds as well as illumination changes
+and so forth.
 
 A significant problem in the detection of water stress is posed by the
 evolution of indicators across time. Since physiological features such
@@ -2189,27 +2190,28 @@ validation and testing, respectively.
 Of the 91479 images around 10\% were used for the test phase. These
 images contain a total of 12238 ground truth
 labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
-harmonic mean of both (F1-score). The results indicate that the model
-errs on the side of sensitivity because recall is higher than
-precision. Although some detections are not labeled as plants in the
-dataset, if there is a labeled plant in the ground truth data, the
-chance is high that it will be detected. This behavior is in line with
-how the model's detections are handled in practice. The detections are
-drawn on the original image and the user is able to check the bounding
-boxes visually. If there are wrong detections, the user can ignore
-them and focus on the relevant ones instead. A higher recall will thus
-serve the user's needs better than a high precision.
+harmonic mean of both ($\mathrm{F}_1$-score). The results indicate
+that the model errs on the side of sensitivity because recall is
+higher than precision. Although some detections are not labeled as
+plants in the dataset, if there is a labeled plant in the ground truth
+data, the chance is high that it will be detected. This behavior is in
+line with how the model's detections are handled in practice. The
+detections are drawn on the original image and the user is able to
+check the bounding boxes visually. If there are wrong detections, the
+user can ignore them and focus on the relevant ones instead. A higher
+recall will thus serve the user's needs better than a high precision.
 
 \begin{table}[h]
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  Precision &    Recall &  F1-score &  Support \\
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
     \midrule
     Plant        &   0.547571 &  0.737866 &  0.628633 &  12238.0 \\
     \bottomrule
   \end{tabular}
-  \caption{Precision, recall and F1-score for the object detection model.}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the object
+    detection model.}
   \label{tab:yolo-metrics}
 \end{table}
 
@@ -2330,26 +2332,26 @@ increase again after epoch 27.
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  Precision &    Recall &  F1-score &  Support \\
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
     \midrule
     Plant        &   0.633358 &  0.702811 &  0.666279 &  12238.0 \\
     \bottomrule
   \end{tabular}
-  \caption{Precision, recall and F1-score for the optimized object
-    detection model.}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the
+    optimized object detection model.}
   \label{tab:yolo-metrics-hyp}
 \end{table}
 
 Turning to the evaluation of the optimized model on the test dataset,
 table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
-F1-score for the optimized model. Comparing these metrics with the
-non-optimized version from table~\ref{tab:yolo-metrics}, precision is
-significantly higher by more than 8.5\%. Recall, however, is 3.5\%
-lower. The F1-score is higher by more than 3.7\% which indicates that
-the optimized model is better overall despite the lower recall. We
-feel that the lower recall value is a suitable trade off for the
-substantially higher precision considering that the non-optimized
-model's precision is quite low at 0.55.
+$\mathrm{F}_1$-score for the optimized model. Comparing these metrics
+with the non-optimized version from table~\ref{tab:yolo-metrics},
+precision is significantly higher by more than 8.5\%. Recall, however,
+is 3.5\% lower. The $\mathrm{F}_1$-score is higher by more than 3.7\%
+which indicates that the optimized model is better overall despite the
+lower recall. We feel that the lower recall value is a suitable trade
+off for the substantially higher precision considering that the
+non-optimized model's precision is quite low at 0.55.
 
 The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
 optimized model show that the model draws looser bounding boxes than
@@ -2438,7 +2440,7 @@ The random search was run for 138 iterations which equates to a 75\%
 probability that the best solution lies within 1\% of the theoretical
 maximum~\eqref{eq:opt-prob}. Figure~\ref{fig:classifier-hyp-results}
 shows three of the eight parameters and their impact on a high
-F1-score. \gls{sgd} has less variation in its results than
+$\mathrm{F}_1$-score. \gls{sgd} has less variation in its results than
 Adam~\cite{kingma2017} and manages to provide eight out of the ten
 best results. The number of epochs to train for was chosen based on
 the observation that almost all configurations converge well before
@@ -2456,17 +2458,17 @@ figure~\ref{fig:classifier-training-metrics}.
   \includegraphics{graphics/classifier-hyp-metrics.pdf}
   \caption[Classifier hyper-parameter optimization results.]{This
     figure shows three of the eight hyper-parameters and their
-    performance measured by the F1-score during 138
+    performance measured by the $\mathrm{F}_1$-score during 138
     trials. Differently colored markers show the batch size with
     darker colors representing a larger batch size. The type of marker
     (circle or cross) shows which optimizer was used. The x-axis shows
     the learning rate on a logarithmic scale. In general, a learning
     rate between 0.003 and 0.01 results in more robust and better
-    F1-scores. Larger batch sizes more often lead to better
-    performance as well. As for the type of optimizer, \gls{sgd}
-    produced the best iteration with an F1-score of 0.9783. Adam tends
-    to require more customization of its parameters than \gls{sgd} to
-    achieve good results.}
+    $\mathrm{F}_1$-scores. Larger batch sizes more often lead to
+    better performance as well. As for the type of optimizer,
+    \gls{sgd} produced the best iteration with an $\mathrm{F}_1$-score
+    of 0.9783. Adam tends to require more customization of its
+    parameters than \gls{sgd} to achieve good results.}
   \label{fig:classifier-hyp-results}
 \end{figure}
 
@@ -2477,14 +2479,15 @@ chance due to a coincidentally advantageous train/test split, we
 perform stratified $10$-fold cross validation on the dataset. Each
 fold contains 90\% training and 10\% test data and was trained for 25
 epochs. Figure~\ref{fig:classifier-hyp-roc} shows the performance of
-the epoch with the highest F1-score of each fold as measured against
-the test split. The mean \gls{roc} curve provides a robust metric for
-a classifier's performance because it averages out the variability of
-the evaluation. Each fold manages to achieve at least an \gls{auc} of
-0.94, while the best fold reaches 0.98. The mean \gls{roc} has an
-\gls{auc} of 0.96 with a standard deviation of 0.02. These results
-indicate that the model is accurately predicting the correct class and
-is robust against variations in the training set.
+the epoch with the highest $\mathrm{F}_1$-score of each fold as
+measured against the test split. The mean \gls{roc} curve provides a
+robust metric for a classifier's performance because it averages out
+the variability of the evaluation. Each fold manages to achieve at
+least an \gls{auc} of 0.94, while the best fold reaches 0.98. The mean
+\gls{roc} has an \gls{auc} of 0.96 with a standard deviation of
+0.02. These results indicate that the model is accurately predicting
+the correct class and is robust against variations in the training
+set.
 
 \begin{table}
   \centering
@@ -2508,47 +2511,49 @@ is robust against variations in the training set.
   \includegraphics{graphics/classifier-hyp-folds-roc.pdf}
   \caption[Mean \gls{roc} and variability of hyper-parameter-optimized
   model.]{This plot shows the \gls{roc} curve for the epoch with the
-    highest F1-score of each fold as well as the \gls{auc}. To get a
-    less variable performance metric of the classifier, the mean
-    \gls{roc} curve is shown as a thick line and the variability is
-    shown in gray. The overall mean \gls{auc} is 0.96 with a standard
-    deviation of 0.02. The best-performing fold reaches an \gls{auc}
-    of 0.99 and the worst an \gls{auc} of 0.94. The black dashed line
-    indicates the performance of a classifier which picks classes at
-    random ($\mathrm{\gls{auc}} = 0.5$). The shapes of the \gls{roc}
-    curves show that the classifier performs well and is robust
-    against variations in the training set.}
+    highest $\mathrm{F}_1$-score of each fold as well as the
+    \gls{auc}. To get a less variable performance metric of the
+    classifier, the mean \gls{roc} curve is shown as a thick line and
+    the variability is shown in gray. The overall mean \gls{auc} is
+    0.96 with a standard deviation of 0.02. The best-performing fold
+    reaches an \gls{auc} of 0.99 and the worst an \gls{auc} of
+    0.94. The black dashed line indicates the performance of a
+    classifier which picks classes at random
+    ($\mathrm{\gls{auc}} = 0.5$). The shapes of the \gls{roc} curves
+    show that the classifier performs well and is robust against
+    variations in the training set.}
   \label{fig:classifier-hyp-roc}
 \end{figure}
 
 The classifier shows good performance so far, but care has to be taken
-to not overfit the model to the training set. Comparing the F1-score
-during training with the F1-score during testing gives insight into
-when the model tries to increase its performance during training at
-the expense of generalizability. Figure~\ref{fig:classifier-hyp-folds}
-shows the F1-scores of each epoch and fold. The classifier converges
+to not overfit the model to the training set. Comparing the
+$\mathrm{F}_1$-score during training with the $\mathrm{F}_1$-score
+during testing gives insight into when the model tries to increase its
+performance during training at the expense of
+generalizability. Figure~\ref{fig:classifier-hyp-folds} shows the
+$\mathrm{F}_1$-scores of each epoch and fold. The classifier converges
 quickly to 1 for the training set at which point it experiences a
 slight drop in generalizability. Training the model for at most five
 epochs is sufficient because there are generally no improvements
 afterwards. The best-performing epoch for each fold is between the
 second and fourth epoch which is just before the model achieves an
-F1-score of 1 on the training set.
+$\mathrm{F}_1$-score of 1 on the training set.
 
 \begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{graphics/classifier-hyp-folds-f1.pdf}
-  \caption[F1-score of stratified $10$-fold cross validation.]{These
-    plots show the F1-score during training as well as testing for
-    each of the folds. The classifier converges to 1 by the third
-    epoch during the training phase, which might indicate
-    overfitting. However, the performance during testing increases
-    until epoch three in most cases and then stabilizes at
-    approximately 2-3\% lower than the best epoch. We believe that the
-    third, or in some cases fourth, epoch is detrimental to
-    performance and results in overfitting, because the model achieves
-    an F1-score of 1 for the training set, but that gain does not
-    transfer to the test set. Early stopping during training
-    alleviates this problem.}
+  \caption[$\mathrm{F}_1$-score of stratified $10$-fold cross
+  validation.]{These plots show the $\mathrm{F}_1$-score during
+    training as well as testing for each of the folds. The classifier
+    converges to 1 by the third epoch during the training phase, which
+    might indicate overfitting. However, the performance during
+    testing increases until epoch three in most cases and then
+    stabilizes at approximately 2-3\% lower than the best epoch. We
+    believe that the third, or in some cases fourth, epoch is
+    detrimental to performance and results in overfitting, because the
+    model achieves an $\mathrm{F}_1$-score of 1 for the training set,
+    but that gain does not transfer to the test set. Early stopping
+    during training alleviates this problem.}
   \label{fig:classifier-hyp-folds}
 \end{figure}
 
@@ -2655,7 +2660,7 @@ bounding boxes of healthy plants and 494 of stressed plants.
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  precision &  recall &  f1-score &  support \\
+    {} &  precision &  recall &  $\mathrm{F}_{1}$-score &  support \\
     \midrule
     Healthy      &      0.665 &   0.554 &     0.604 &    766 \\
     Stressed     &      0.639 &   0.502 &     0.562 &    494 \\
@@ -2664,15 +2669,17 @@ bounding boxes of healthy plants and 494 of stressed plants.
     weighted avg &      0.655 &   0.533 &     0.588 &   1260 \\
     \bottomrule
   \end{tabular}
-  \caption{Precision, recall and F1-score for the aggregate model.}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the
+    aggregate model.}
   \label{tab:model-metrics}
 \end{table}
 
-Table~\ref{tab:model-metrics} shows precision, recall and the F1-score
-for both classes \emph{Healthy} and \emph{Stressed}. Precision is
-higher than recall for both classes and the F1-score is at
-0.59. Unfortunately, these values do not take the accuracy of bounding
-boxes into account and thus have only limited expressive power.
+Table~\ref{tab:model-metrics} shows precision, recall and the
+$\mathrm{F}_1$-score for both classes \emph{Healthy} and
+\emph{Stressed}. Precision is higher than recall for both classes and
+the $\mathrm{F}_1$-score is at 0.59. Unfortunately, these values do
+not take the accuracy of bounding boxes into account and thus have
+only limited expressive power.
 
 Figure~\ref{fig:aggregate-ap} shows the precision and recall curves
 for both classes at different \gls{iou} thresholds. The left plot
@@ -2716,7 +2723,7 @@ section~\ref{ssec:aggregate-model}.
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  precision &  recall &  f1-score &  support \\
+    {} &  precision &  recall &  $\mathrm{F}_{1}$-score &  support \\
     \midrule
     Healthy      &      0.711 &   0.555 &     0.623 &    766 \\
     Stressed     &      0.570 &   0.623 &     0.596 &    494 \\
@@ -2725,22 +2732,23 @@ section~\ref{ssec:aggregate-model}.
     weighted avg &      0.656 &   0.582 &     0.612 &   1260 \\
     \bottomrule
   \end{tabular}
-  \caption{Precision, recall and F1-score for the optimized aggregate
-    model.}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the
+    optimized aggregate model.}
   \label{tab:model-metrics-hyp}
 \end{table}
 
-Table~\ref{tab:model-metrics-hyp} shows precision, recall and F1-score
-for the optimized model on the same test dataset of 640 images. All of
-the metrics are better for the optimized model. In particular,
-precision for the healthy class could be improved significantly while
-recall remains at the same level. This results in a better F1-score
-for the healthy class. Precision for the stressed class is lower with
-the optimized model, but recall is significantly higher (0.502
-vs. 0.623). The higher recall results in a 3\% gain for the F1-score
-in the stressed class. Overall, precision is the same but recall has
+Table~\ref{tab:model-metrics-hyp} shows precision, recall and
+$\mathrm{F}_1$-score for the optimized model on the same test dataset
+of 640 images. All of the metrics are better for the optimized
+model. In particular, precision for the healthy class could be
+improved significantly while recall remains at the same level. This
+results in a better $\mathrm{F}_1$-score for the healthy
+class. Precision for the stressed class is lower with the optimized
+model, but recall is significantly higher (0.502 vs. 0.623). The
+higher recall results in a 3\% gain for the $\mathrm{F}_1$-score in
+the stressed class. Overall, precision is the same but recall has
 improved significantly, which also results in a noticeable improvement
-for the average F1-score across both classes.
+for the average $\mathrm{F}_1$-score across both classes.
 
 \begin{figure}
   \centering
