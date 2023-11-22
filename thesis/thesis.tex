@@ -118,6 +118,17 @@ Challenge}
 \newacronym{cuda}{CUDA}{Compute Unified Device Architecture}
 \newacronym{rbf}{RBF}{Radial Basis Function}
 \newacronym{mnist}{MNIST}{Modified National Institute of Standards and Technology}
+\newacronym{aps-c}{APS-C}{Advanced Photo System type-C}
+\newacronym{gcc}{GCC}{Green Canopy Cover}
+\newacronym{gbdt}{GBDT}{Gradient Boosted Decision Tree}
+\newacronym{dcnn}{DCNN}{Deep Convolutional Neural Networks}
+\newacronym{k-nn}{k-NN}{k-Nearest Neighbors}
+\newacronym{dt}{DT}{Decision Tree}
+\newacronym{cart}{CART}{Classification and Regression Tree}
+\newacronym{cnn-lstm}{CNN-LSTM}{CNN Long Short-Term Memory Network}
+\newacronym{se}{SE}{Squeeze-Excitation}
+\newacronym{bn}{BN}{Batch Normalization}
+\newacronym{uav}{UAV}{Unmanned Aerial Vehicle}
 
 \begin{document}
 
@@ -162,10 +173,10 @@ fields during the last few years. Large-scale distributed computing
 and advances in hardware manufacturing have allowed machine learning
 models to become more sophisticated and complex. Multi-billion
 parameter deep learning models show best-in-class performance in
-Natural Language Processing (NLP)~\cite{brown2020}, fast object
-detection~\cite{bochkovskiy2020} and various classification
-tasks~\cite{zhong2022,ariss2022}. Agriculture is one of the areas
-which profits substantially from the automation possible with machine
+\gls{nlp} \cite{brown2020}, fast object detection
+\cite{bochkovskiy2020} and various classification tasks
+\cite{zhong2022,ariss2022}. Agriculture is one of the areas which
+profits substantially from the automation possible with machine
 learning.
 
 Large-scale as well as small local farmers are able to survey their
@@ -290,7 +301,7 @@ The methodological approach consists of the following steps:
   with the datasets curated in the previous step.
 \item \textbf{Optimization}: The selected models will be optimized
   with respect to their parameters.
-\item \textbf{Deployment to SBC}: The software prototype will be
+\item \textbf{Deployment to \gls{sbc}}: The software prototype will be
   deployed to the single-board computer.
 \item \textbf{Evaluation}: The models will be evaluated extensively
   and compared to other state-of-the-art systems. During evaluation,
@@ -1546,9 +1557,9 @@ The authors construct their network from multiple dense blocks which
 are connected via a batch normalization layer, a one by one
 convolutional layer and a two by two pooling layer to reduce the
 spatial resolution for the next dense block. Each dense block consists
-of a batch normalization layer, a \gls{relu} layer and a three by
-three convolutional layer. In order to keep the number of feature maps
-low, the authors introduce a \emph{growth rate} $k$ as a
+of a \gls{bn} layer, a \gls{relu} layer and a three by three
+convolutional layer. In order to keep the number of feature maps low,
+the authors introduce a \emph{growth rate} $k$ as a
 hyperparameter. The growth rate can be as low as $k=4$ and still allow
 the network to learn highly relevant representations.
 
@@ -1702,30 +1713,30 @@ area to have a high real-world impact.
 \textcite{su2020} used traditional feature extraction and
 pre-processing techniques to train various machine learning models for
 classifying water stress for a wheat field. They took top-down images
-of the field using an unmanned aerial vehicle (UAV), segmented wheat
-pixels from background pixels and constructed features based on
-spectral intensities and color indices. The features are fed into a
-support vector machine (SVM) with a Gaussian kernel and optimized
-using Bayesian optimization. Their results of 92.8\% accuracy show
-that classical machine learning approaches can offer high
-classification scores if meaningful features are chosen. One
-disadvantage is that feature extraction is often a tedious task
-involving trial and error. Advantages are the small dataset and the
-short training time ($\qty{3}{\second}$) required to obtain a good
-result.
+of the field using an \gls{uav}, segmented wheat pixels from
+background pixels and constructed features based on spectral
+intensities and color indices. The features are fed into a \gls{svm}
+with a Gaussian kernel and optimized using Bayesian
+optimization. Their results of 92.8\% accuracy show that classical
+machine learning approaches can offer high classification scores if
+meaningful features are chosen. One disadvantage is that feature
+extraction is often a tedious task involving trial and error (see
+section~\ref{ssec:class-traditional}). Advantages are the small data
+set and the short training time (\qty{3}{\s}) required to obtain a
+good result.
 
 Similarly, \textcite{lopez-garcia2022} investigated the potential for
-UAVs to determine water stress for vineyards using RGB and
-multispectral imaging. The measurements of the UAV were taken at
-$\qty{80}{\meter}$ with a common off-the-shelf APS-C sensor. At the
-same time, stem water measurements were taken with a pressure chamber
-to be able to evaluate the performance of an artificial neural network
-(ANN) against the ground truth. The RGB images were used to calculate
-the green canopy cover (GCC) which was also fed to the model as
-input. The model achieves a high determination coefficient $R^{2}$ of
-$0.98$ for the 2018 season on RGB data with a relative error of
-$RE = \qty{10.84}{\percent}$. However, their results do not transfer
-well to the other seasons under survey (2019 and 2020).
+\glspl{uav} to determine water stress for vineyards using RGB and
+multispectral imaging. The measurements of the \gls{uav} were taken at
+$\qty{80}{\meter}$ with a common off-the-shelf \gls{aps-c} sensor. At
+the same time, stem water measurements were taken with a pressure
+chamber to be able to evaluate the performance of an \gls{ann} against
+the ground truth. The RGB images were used to calculate the \gls{gcc}
+which was also fed to the model as input. The model achieves a high
+determination coefficient $R^{2}$ of $0.98$ for the 2018 season on RGB
+data with a relative error of $RE = \qty{10.84}{\percent}$. However,
+their results do not transfer well to the other seasons under survey
+(2019 and 2020).
 
 \textcite{zhuang2017} showed that water stress in maize can be
 detected early on and, therefore, still provide actionable information
@@ -1811,10 +1822,9 @@ A significant problem in the detection of water stress is posed by the
 evolution of indicators across time. Since physiological features such
 as leaf wilting progress as time passes, the additional time domain
 has to be taken into account. To make use of these spatiotemporal
-patterns, \textcite{azimi2021} propose the application of a CNN-long
-short-term memory (CNN-LSTM) architecture. The model was trained on
-chickpea plants and achieves a robust classification accuracy of
->97\%.
+patterns, \textcite{azimi2021} propose the application of a
+\gls{cnn-lstm} architecture. The model was trained on chickpea plants
+and achieves a robust classification accuracy of >97\%.
 
 All of the previously mentioned studies solely focus on either one
 specific type of plant or on a small number of them. Furthermore, the
