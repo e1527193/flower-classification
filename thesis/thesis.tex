@@ -411,31 +411,18 @@ improvements and further research questions.
 \chapter{Theoretical Background}
 \label{chap:background}
 
-Describe the contents of this chapter.
-
-\begin{itemize}
-\item Introduction to Object Detection, short ``history'' of methods,
-  region-based vs. single-shot, YOLOv7 structure and successive
-  improvements of previous versions. (8 pages)
-\item Introduction to Image Classification, short ``history'' of
-  methods, CNNs, problems with deeper network structures (vanishing
-  gradients, computational cost), methods to alleviate these problems
-  (alternative activation functions, normalization, residual
-  connections, different kernel sizes). (10 pages)
-\item Introduction into transfer learning, why do it and how can one
-  do it? Compare fine-tuning just the last layers vs. fine-tuning all
-  of them. What are the advantages/disadvantages of transfer learning?
-  (2 pages)
-\item Introduction to hyperparameter optimization. Which methods exist
-  and what are their advantages/disadvantages? Discuss the ones used
-  in this thesis in detail (random search and evolutionary
-  optimization). (3 pages)
-\item Related Work. Add more approaches and cross-reference the used
-  networks with the theoretical sections on object detection and image
-  classification. (6 pages)
-\end{itemize}
-
-Estimated 25 pages for this chapter.
+This chapter is split into five parts. First, we introduce general
+machine learning concepts (section~\ref{sec:theory-ml}). Second, we
+provide a survey of object detection methods from early
+\emph{traditional methods} to one-stage and two-stage deep learning
+based methods (section~\ref{sec:background-detection}). Third, we go
+into detail about image classification in general and which approaches
+have been published in the literature
+(section~\ref{sec:background-classification}). Fourth, we give a short
+explanation of transfer learning and its advantages and disadvantages
+(section~\ref{sec:background-transfer-learning}). The chapter
+concludes with a section on hyperparameter optimization
+(section~\ref{sec:background-hypopt}).
 
 \section{Machine Learning}
 \label{sec:theory-ml}
@@ -1259,21 +1246,6 @@ at a speed of around \qty{11}{fp\s} on the \gls{coco} data set.
 
 \section{Image Classification}
 \label{sec:background-classification}
-
-Give a definition of image classification and briefly mention the way
-in which classification was done before the advent of CNNs. Introduce
-CNNs, their overall design, and why a kernel-based approach allows
-two-dimensional data such as images to be efficiently processed. Give
-an introduction to SOTA classifiers before ResNet (AlexNet, VGGnet
-Inception/GoogLeNet), the prevailing opinion of \emph{going deeper}
-(stacking more layers) and the limit of said approach
-(\emph{Degradation Problem}) due to \emph{Vanishing
-Gradients}. Explain ways to deal with the vanishing gradients problem
-by using different activation functions other than Sigmoid (ReLU and
-leaky ReLU) as well as normalization techniques and residual
-connections. 
-
-Estimated 8 pages for this section.
 
 Image classification, in contrast to object detection, is a slightly
 easier task because there is no requirement to localize objects in the
