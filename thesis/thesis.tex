@@ -1904,6 +1904,42 @@ that the same classification scores can be achieved on plants in the
 field with messy and noisy backgrounds as well as illumination changes
 and so forth.
 
+\textcite{venal2019} combine a standard \gls{cnn} architecture with a
+\gls{svm} for classification. The \gls{cnn} acts as a feature
+extractor and instead of using the last fully-connected layers of an
+off-the-shelf \gls{cnn}, they replace them with a \gls{svm}. They use
+this classifier to determine which biotic or abiotic stresses soybeans
+suffer from. Their data set consists of $65184$ $64$ by $64$ RGB
+images of which around $40000$ were used for training and $6000$ for
+testing. All images show a close-up of a soybean leaf. Their \gls{cnn}
+architecture makes use of three inception modules (see
+section~\ref{sssec:theory-googlenet}) with \gls{se} blocks and
+\gls{bn} layers in-between. Their model achieves an average
+$\mathrm{F}_1$-score of 97\% and an average accuracy of 97.11\% on the
+test set. Overall, the hybrid structure of their model is promising,
+but it is not clear why only using the \gls{cnn} as a feature
+extractor provides better results than using it also for
+classification.
+
+\textcite{aversano2022} perform water stress classification on images
+of tomato crops obtained with a \gls{uav}. Their data set consists of
+$6600$ thermal and $6600$ optimal images which have been segmented
+using spectral clustering. They use two VGG-19 networks (see
+section~\ref{sssec:theory-vggnet}) which extract features from the
+thermal (network one) and optical (network two) images. Both feature
+extractors are merged together via a fully-connected and softmax layer
+to predict one of three classes: water excess, well-watered and water
+deficit. The authors select three hyperparameters (image resolution,
+optimization algorithm and batch size) and optimize them for
+accuracy. The best classifier works with a resolution of
+\qty{512}{px}, \gls{sgd} and a batch size of $32$. This configuration
+achieves an accuracy of 80.5\% and an $\mathrm{F}_1$-score of 79.4\%
+on the validation set. To test whether the optical or thermal images
+are more relevant for classification, the authors conduct an ablation
+study. The results show that the network with the optical images alone
+achieves an $\mathrm{F}_1$-score of 74\% while only using the thermal
+images gives an $\mathrm{F}_1$-score of 62\%.
+
 A significant problem in the detection of water stress is posed by the
 evolution of indicators across time. Since physiological features such
 as leaf wilting progress as time passes, the additional time domain
