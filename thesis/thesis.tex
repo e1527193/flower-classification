@@ -1962,9 +1962,6 @@ from them.
 \label{chap:design}
 
 \begin{enumerate}
-\item Expand on the requirements of the prototype from what is stated
-  in the motivation and problem statement. (Two-stage approach, small
-  device, camera attached, outputs via REST API)
 \item Describe the architecture of the prototype (two-stage approach
   and how it is implemented with an object detector and
   classifier). How the individual stages are connected (object
@@ -1983,16 +1980,35 @@ Estimated 10 pages for this chapter.
 \section{Requirements}
 \label{sec:requirements}
 
-Briefly mention the requirements for the prototype:
+The basic requirements for the prototype have been introduced in
+section~\ref{sec:motivation} and stem from the research questions
+defined in the same section. The aim of this work is to detect
+household plants, classify them into water-stressed or healthy, and to
+continuously publish the results via a \gls{rest} \gls{api}. To this
+end, a portable \gls{sbc} such as the Nvidia Jetson Nano stores the
+trained models locally and uses them for inference on images which are
+periodically taken with an attached camera.
 
-\begin{enumerate}
-\item Detect household potted plants and outdoor plants.
-\item Classify plants into stressed and healthy.
-\item Camera attached to device.
-\item Deploy models to device and perform inference on it.
-\end{enumerate}
+The prototype is thus required to be running the models on its own
+without help from a central server or other computational
+resource. However, because the results are published via a \gls{rest}
+service, internet access is necessary to be able to retrieve the
+predictions.
 
-Estimated 1 page for this section.
+Other functional requirements are that the inference on the device for
+both models does not take too long (i.e. not longer than a few seconds
+per image). Even though plants are not known to grow extremely rapidly
+from one minute to the next, keeping the inference time low results in
+a more resource efficient prototype. As such, it is possible to run
+the device off of a battery which completes the self-contained nature
+of the prototype.
+
+From an evaluation perspective, the models are required to attain a
+reasonable level of accuracy. It is difficult to determine said level
+beforehand, but considering the task as well as general object
+detection and classification benchmarks such as \gls{coco}
+\cite{lin2015}, we expect a \gls{map} of around 40\% and precision and
+recall values of 70\%.
 
 \section{Design}
 \label{sec:design}
