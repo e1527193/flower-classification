@@ -26,6 +26,7 @@
 \usepackage{siunitx}
 \usepackage{float}
 \usepackage{csquotes}
+\usepackage{dsfont}
 
 \addbibresource{references.bib}
 
@@ -1456,7 +1457,7 @@ two auxiliary classifiers which help retain the gradient during
 backpropagation. The auxiliary classifiers are only used during
 training. The authors submitted multiple model versions to the 2004
 \gls{ilsvrc} and their ensemble prediction model consisting of 7
-GoogleNet's achieved a top-5 error rate of 6.67\%, which resulted in
+GoogleNets achieved a top-5 error rate of 6.67\%, which resulted in
 first place.
 
 \subsubsection{VGGNet}
@@ -2097,6 +2098,90 @@ YOLOv4~\cite{bochkovskiy2020}).
 
 Estimated 2 pages for this section.
 
+The \gls{yolo} family of object detection models started in 2015 when
+\cite{redmon2016} published the first version. Since then there have
+been up to 16 updated versions depending on how one counts. The
+original \gls{yolo} model marked a shift from two-stage detectors to
+one-stage detectors as is evident in its name. Two-stage detectors
+(see section~\ref{ssec:theory-two-stage}) rely on a proposal
+generation step and then subsequent rejection or approval of each
+proposal to detect objects. Generating proposals, however, is an
+expensive procedure which limits the amount of object detections per
+second. \gls{yolo} dispenses with the extra proposal generation step
+and instead provides a unified \emph{one-stage} detection approach.
+
+The first version of \gls{yolo} \cite{redmon2016} framed object
+detection as a single regression problem which allows the model to
+directly infer bounding boxes with class probabilities from image
+pixels. This approach has the added benefit that \gls{yolo} sees an
+entire image at once, allowing it to capture more contextual
+information than with sliding window or region proposal
+methods. However, \gls{yolo} still divides an image into regions which
+are called \emph{grid cells}, but this is just a simple operation and
+does not rely on external algorithms such as selective search
+\cite{uijlings2013}. The number of bounding box proposals within
+\gls{yolo} is much lower than with selective search as well ($98$
+versus $2000$ per image).
+
+The architecture of \gls{yolo} is similar to GoogleNet (see
+section~\ref{sssec:theory-googlenet}), but the authors do not use
+inception modules directly. The network contains $24$ convolutional
+layers in total where most three by three layers are fed a reduced
+output from a one by one layer. This approach reduces complexity
+substantially---as has been demonstrated with GoogleNet. Every block of
+convolutional layers is followed by a two by two maxpool layer for
+downsampling. The model expects an input image of size $448$ by $448$
+pixels, but has been pretrained on ImageNet with half that resolution
+(i.e. $224$ by $224$ pixels). After the convolutional layers, the
+authors add two fully-connected layers to produce an output of size
+$7 \times 7 \times 30$. This output tensor is chosen because the \gls{voc} data
+set has $20$ classes $C$ and each grid cell produces two bounding
+boxes $B$ where each bounding box is described by $x$, $y$, $w$, $h$
+and the confidence. With a grid size of $S = 7$, the output is thus
+$S \times S \times (B \cdot 5 + C) = 7 \times 7 \times 30$.
+
+Each grid cell is responsible for a detected object if the object's
+center coordinates $(x,y)$ fall within the bounds of the
+cell. Furthermore, every cell can only predict \emph{one} object which
+leads to problems with images of dense objects. In that case, a finer
+grid size is needed. The $w$ and $h$ of a bounding box is relative to
+the image as a whole which allows the bounding box to span more than
+one grid cell.
+
+Since the authors frame object detection as a regression problem of
+bounding box coordinates (center point $(x,y)$, width $w$, and height
+$h$), object probabilities per box, and class probabilities, they
+develop a loss function which is a sum of five parts. The first part
+describes the regression for the bounding box center coordinates (sum
+of squared differences), the second part the width and height of the
+box, the third part the confidence of there being an object in a box,
+the fourth part the confidence if there is no actual object in the
+box, and the fifth part the individual class probabilities (see
+equation~\ref{eq:yolo-loss}). The two constants
+$\lambda_{\mathrm{coord}}$ and $\lambda_{\mathrm{noobj}}$ are weighting factors
+which increase the loss from bounding box coordinate predictions and
+decrease the loss from confidence predictions for boxes without
+objects. These are set to $\lambda_{\mathrm{coord}} = 5$ and
+$\lambda_{{\mathrm{noobj}}} = 0.5$.
+
+\begin{multline}
+  \label{eq:yolo-loss}
+  \lambda_{\mathrm{coord}}\sum_{i=0}^{S^{2}}\sum_{j=0}^{B}\mathds{1}_{ij}^{\mathrm{obj}}\biggl[ (x_{i} - \hat{x}_{i})^{2} + (y_{i} - \hat{y}_{i})^{2} \biggr] \\
+  + \lambda_{\mathrm{coord}}\sum_{i=0}^{S^{2}}\sum_{j=0}^{B}\mathds{1}_{ij}^{\mathrm{obj}}\biggl[ \biggl(\sqrt{w_{i}} - \sqrt{\hat{w}_{i}}\biggr)^{2} \biggr] \\
+  + \sum_{i=0}^{S^{2}}\sum_{j=0}^{B}\mathds{1}_{ij}^{\mathrm{obj}}\biggl[ C_{i} - \hat{C}_{i} \biggr]^{2} \\
+  + \lambda_{\mathrm{noobj}}\sum_{i=0}^{S^{2}}\sum_{j=0}^{B}\mathds{1}_{ij}^{\mathrm{noobj}}\biggl[ C_{i} - \hat{C}_{i} \biggr]^{2} \\
+  + \sum_{i=0}^{S^{2}}\mathds{1}_{i}^{\mathrm{obj}}\sum_{c\in\mathrm{classes}}\biggl[ p_{i(c)} - \hat{p}_{i(c)} \biggr]^{2}
+\end{multline}
+
+The original \gls{yolo} model has a few limitations. It only predicts
+one class per bounding box and can only accommodate two bounding boxes
+per grid cell. \gls{yolo} thus has problems detecting small and dense
+objects. The most severe problem, however, is the localization
+accuracy. The loss function treats errors in small bounding boxes
+similarly to errors in big bounding boxes even though small errors
+have a higher impact on small bounding boxes than big ones. This
+results in a more lenient loss function for \glspl{iou} of small
+bounding boxes and, therefore, worse localization.
 \subsection{ResNet}
 \label{sec:methods-classification}
 
