@@ -2182,6 +2182,29 @@ similarly to errors in big bounding boxes even though small errors
 have a higher impact on small bounding boxes than big ones. This
 results in a more lenient loss function for \glspl{iou} of small
 bounding boxes and, therefore, worse localization.
+
+\subsubsection{\gls{yolo}v2}
+\label{sssec:yolov2}
+
+\gls{yolo}v2 \cite{redmon2017} incorporates multiple improvements such
+as \gls{bn} layers, higher resolution inputs, a fully-convolutional
+architecture, anchor boxes, dimension priors, and multi-scale
+training. Of particular interest is the use of anchor boxes to
+localize bounding boxes. Instead of regressing arbitrary bounding box
+sizes, \gls{yolo}v2 predicts the bounding box offsets from a set of
+predefined boxes which are called \emph{anchor boxes}. The authors
+note that finding a good set of prior anchor boxes by hand is
+error-prone and suggest finding them via $k$-means clustering
+(dimension priors). They select five anchor boxes per grid cell which
+still results in high recall, but does not introduce too much
+complexity.
+
+These additional details result in an improved \gls{map} of 78.6\% on
+the \gls{voc} 2007 data set compared to 63.4\% of the previous
+\gls{yolo} version. \gls{yolo}v2 still maintains a fast detection rate
+at \qty{40}{fps} (\gls{map} 78.6\%) and up to \qty{91}{fps} (\gls{map}
+69\%).
+
 \subsection{ResNet}
 \label{sec:methods-classification}
 
