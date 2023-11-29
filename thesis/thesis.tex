@@ -132,6 +132,14 @@ Challenge}
 \newacronym{bn}{BN}{Batch Normalization}
 \newacronym{uav}{UAV}{Unmanned Aerial Vehicle}
 \newacronym{csi}{CSI}{Camera Serial Interface}
+\newacronym{nms}{NMS}{Non Maximum Suppression}
+\newacronym{sam}{SAM}{Spatial Attention Module}
+\newacronym{panet}{PANet}{Path Aggregation Network}
+\newacronym{ciou}{CIoU}{Complete Intersection over Union}
+\newacronym{siou}{SIoU}{Scylla Intersection over Union}
+\newacronym{giou}{GIoU}{Generalized Intersection over Union}
+\newacronym{elan}{ELAN}{Efficient Layer Aggregation Network}
+\newacronym{eelan}{E-ELAN}{Extended Efficient Layer Aggregation Network}
 
 \begin{document}
 
@@ -2084,19 +2092,17 @@ models.
 \section{Selected Methods}
 \label{sec:selected-methods}
 
-Estimated 7 pages for this section.
+In the following sections we will go into detail about the two
+selected architectures for our prototype. The object detector we
+chose---\gls{yolo}v7---is part of a larger family of models which all
+function similarly, but have undergone substantial changes from
+version to version. In order to understand the used model, we trace
+the improvements to the \gls{yolo} family from version one to version
+seven. For the classification stage, we have opted for a ResNet
+architecture which is also described in detail.
 
 \subsection{You Only Look Once}
 \label{sec:methods-detection}
-
-Describe the inner workings of the YOLOv7 model structure and contrast
-it with previous versions as well as other object detectors. What has
-changed and how did these improvements manifest themselves? Reference
-the original paper~\cite{wang2022} and papers of previous versions of
-the same model (YOLOv5~\cite{jocher2022},
-YOLOv4~\cite{bochkovskiy2020}).
-
-Estimated 2 pages for this section.
 
 The \gls{yolo} family of object detection models started in 2015 when
 \cite{redmon2016} published the first version. Since then there have
@@ -2205,15 +2211,129 @@ the \gls{voc} 2007 data set compared to 63.4\% of the previous
 at \qty{40}{fps} (\gls{map} 78.6\%) and up to \qty{91}{fps} (\gls{map}
 69\%).
 
+\subsubsection{\gls{yolo}v3}
+\label{sssec:yolov3}
+
+\gls{yolo}v3 \cite{redmon2018} provided additional updates to the
+\gls{yolo}v2 model. To be competitive with the deeper network
+structures of state-of-the-art models at the time, the authors
+introduce a deeper feature extractor called Darknet-53. It makes use
+of the residual connections popularized by ResNet \cite{he2016} (see
+section~\ref{sssec:theory-resnet}). Darknet-53 is more accurate than
+Darknet-19 and compares to ResNet-101, but can process more images per
+second (\qty{78}{fps} versus \qty{53}{fps}). The activation function
+throughout the network is still leaky \gls{relu}, as in earlier
+versions.
+
+\gls{yolo}v3 uses multi-scale predictions to achieve better detection
+ratios across object sizes. Inspired by \glspl{fpn} (see
+section~\ref{sssec:theory-fpn}), \gls{yolo}v3 uses predictions at
+different scales from the feature extractor and combines them to form
+a final prediction. Combining the features from multiple scales is
+often done in the \emph{neck} of the object detection architecture.
+
+Around the time of the publication of \gls{yolo}v3, researchers
+started to use the terminology \emph{backbone}, \emph{neck} and
+\emph{head} to describe the architecture of object detection
+models. The feature extractor (Darknet-53 in this case) is the
+\emph{backbone} and provides the feature maps which are aggregated in
+the \emph{neck} and passed to the \emph{head} which outputs the final
+predictions. In some cases there are additional postprocessing steps
+in the head such as \gls{nms} to eliminate duplicate or suboptimal
+detections.
+
+While \gls{yolo}v2 had problems detecting small objects, \gls{yolo}v3
+performs much better on them (\gls{ap} of 18.3\% versus 5\% on
+\gls{coco}). The authors note, however, that the new model sometimes
+has comparatively worse results with larger objects. The reasons for
+this behavior are unknown. Additionally, \gls{yolo}v3 is still lagging
+behind other detectors when it comes to accurately localizing
+objects. The \gls{coco} evaluation metric was changed from the
+previous \gls{ap}$_{0.5}$ to the \gls{map} between $0.5$ to $0.95$
+which penalizes detectors which do not achieve close to perfect
+\gls{iou} scores. This change highlights \gls{yolo}v3's weakness in
+that area.
+
+\subsubsection{\gls{yolo}v4}
+\label{sssec:yolov4}
+
+Keeping in line with the aim of carefully balancing accuracy and speed
+of detection, \textcite{bochkovskiy2020} publish the fourth version of
+\gls{yolo}. The authors investigate the use of what they term
+\emph{bag of freebies}---methods which increase training time while
+increasing inference accuracy without sacrificing inference speed. A
+prominent example of such methods is data augmentation (see
+section~\ref{sec:methods-augmentation}). Specifically, the authors
+propose to use mosaic augmentation which lowers the need for large
+mini-batch sizes. They also use new features such as weighted residual
+connections \cite{shen2016}, a modified \gls{sam} \cite{woo2018}, a
+modified \gls{panet} \cite{liu2018} for the neck, \gls{ciou} loss
+\cite{zheng2020} for the detector and the Mish activation function
+\cite{misra2020}.
+
+Taken together, these additional improvements yield a \gls{map} of
+43.5\% on the \gls{coco} test set while maintaining a speed of above
+\qty{30}{fps} on modern \glspl{gpu}. \gls{yolo}v4 was the first
+version which provided results on all scales (S, M, L) that were
+better than almost all other detectors at the time without sacrificing
+speed.
+
+\subsubsection{\gls{yolo}v5}
+\label{sssec:yolov5}
+
+The author of \gls{yolo}v5 \cite{jocher2020} ported the code from
+\gls{yolo}v4 from the Darknet framework to PyTorch which facilitated
+better interoperability with other Python utilities. New in this
+version is the pretraining algorithm called AutoAnchor which adjusts
+the anchor boxes based on the data set at hand. This version also
+implements a genetic algorithm for hyperparameter optimization (see
+section~\ref{ssec:hypopt-evo}) which is used in our work as well.
+
+Version 5 comes in multiple architectures of various complexity. The
+smallest---and therefore fastest---version is called \gls{yolo}v5n where
+the \emph{n} stands for \emph{nano}. Additional versions with
+increasing parameters are \gls{yolo}v5s (small), \gls{yolo}v5m
+(medium), \gls{yolo}v5l (large), and \gls{yolo}v5x (extra large). The
+smaller models are intended to be used in resource constrained
+environments such as edge devices, but come with a cost in
+accuracy. Conversely, the larger models are for tasks where high
+accuracy is paramount and enough computational resources are
+available. The \gls{yolo}v5x model achieves a \gls{map} of 50.7\% on
+the \gls{coco} test data set.
+
+\subsubsection{\gls{yolo}v6}
+\label{sssec:yolov6}
+
+The authors of \gls{yolo}v6 \cite{li2022a} use a new backbone based on
+RepVGG \cite{ding2021} which they call EfficientRep. They also use
+different losses for classification (Varifocal loss \cite{zhang2021})
+and bounding box regression (\gls{siou}
+\cite{gevorgyan2022}/\gls{giou} \cite{rezatofighi2019}). \gls{yolo}v6
+is made available in eight scaled version of which the largest
+achieves a \gls{map} of 57.2\% on the \gls{coco} test set.
+
+\subsubsection{\gls{yolo}v7}
+\label{sssec:yolov7}
+
+At the time of implementation of our own plant detector, \gls{yolo}v7
+\cite{wang2022b} was the newest version within the \gls{yolo}
+family. Similarly to \gls{yolo}v4, it introduces more trainable bag of
+freebies which do not impact inference time. The improvements include
+the use of \glspl{eelan} (based on \glspl{elan} \cite{wang2022a}),
+joint depth and width model scaling techniques, reparameterization on
+module level, and an auxiliary head---similarly to GoogleNet (see
+section~\ref{sssec:theory-googlenet})---which assists during
+training. The model does not use a pretrained backbone, it is instead
+trained from scratch on the \gls{coco} data set. These changes result
+in much smaller model sizes compared to \gls{yolo}v4 and a \gls{map}
+of 56.8\% with a detection speed of over \qty{30}{fps}.
+
+We use \gls{yolo}v7 in our own work during the plant detection stage
+because it was the fastest and most accurate object detector at the
+time of implementation.
+
 \subsection{ResNet}
 \label{sec:methods-classification}
-
-Introduce the approach of the \emph{ResNet} networks which implement
-residual connections to allow deeper layers. Describe the inner
-workings of the ResNet model structure. Reference the original
-paper~\cite{he2016}.
-
-Estimated 2 pages for this section.
 
 Early research \cite{bengio1994,glorot2010} already demonstrated that
 the vanishing/exploding gradient problem with standard gradient
@@ -3099,8 +3219,8 @@ Estimated 1 page for this section
 \listoftables % Starred version, i.e., \listoftables*, removes the toc entry.
 
 % Use an optional list of algorithms.
-\listofalgorithms
-\addcontentsline{toc}{chapter}{List of Algorithms}
+% \listofalgorithms
+% \addcontentsline{toc}{chapter}{List of Algorithms}
 
 % Add an index.
 \printindex
@@ -3116,19 +3236,5 @@ Estimated 1 page for this section
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
-%%% TeX-master: t
 %%% TeX-master: t
 %%% End:
