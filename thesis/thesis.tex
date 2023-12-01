@@ -1971,16 +1971,10 @@ from them.
 \chapter{Prototype Design}
 \label{chap:design}
 
-\begin{enumerate}
-\item Closely examine the used models (YOLOv7 and ResNet) regarding
-  their structure as well as unique features. Additionally, list the
-  augmentations which were done during training of the object
-  detector. Finally, elaborate on the process of hyperparameter
-  optimization (train/val structure, metrics, genetic evolution and
-  random search).
-\end{enumerate}
-
-Estimated 10 pages for this chapter.
+The following sections establish the requirements as well as the
+general design philosophy of the prototype. We will then go into
+detail about the selected model architectures and data augmentations
+which are applied during training.
 
 \section{Requirements}
 \label{sec:requirements}
@@ -2350,7 +2344,7 @@ weight updates which can stop the learning process entirely.
 
 There are multiple potential solutions to the vanishing gradient
 problem. Different weight initialization schemes
-\cite{glorot2010,sussillo2015} as well as batch normalization layers
+\cite{glorot2010,sussillo2015} as well as \gls{bn} layers
 \cite{ioffe2015} can help mitigate the problem. The most effective
 solution yet, however, was proposed as \emph{residual connections} by
 \textcite{he2016}. Instead of connecting each layer only to the
@@ -2364,37 +2358,88 @@ figure~\ref{fig:residual-connection}).
   \includegraphics[width=0.35\textwidth]{graphics/residual-connection/res.pdf}
   \caption[Residual connection]{Residual connections: information from
     previous layers flows into subsequent layers before the activation
-    function is applied. The symbol $\bigoplus$ represents simple
-    element-wise addition. Figure redrawn from \textcite{he2016}.}
+    function is applied. The shortcut connection provides a path for
+    information to \emph{skip} multiple layers. These connections are
+    parameter-free because of the identity mapping. The symbol
+    $\bigoplus$ represents simple element-wise addition. Figure
+    redrawn from \textcite{he2016}.}
   \label{fig:residual-connection}
 \end{figure}
 
+\textcite{he2016} develop a new architecture called \emph{ResNet}
+based on VGGNet (see section~\ref{sssec:theory-vggnet}) which includes
+residual connections after every second convolutional layer. The
+filter sizes in their approach are smaller than in VGGNet which
+results in much fewer trainable parameters overall. Since residual
+connections do not add additional parameters and are relatively easy
+to add to existing network structures, the authors compare four
+versions of their architecture: one with $18$ and the other with $34$
+layers, each with (ResNet) and without (plain ResNet) residual
+connections. Curiously, the $34$-layer \emph{plain} network performs
+worse on ImageNet classification than the $18$-layer plain
+network. Once residual connections are used, however, the $34$-layer
+network outperforms the $18$-layer version by $2.85$ percentage points
+on the top-1 error metric of ImageNet.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.3\textwidth]{graphics/bottleneck/bottleneck.pdf}
+  \caption[Bottleneck building block]{A bottleneck building block used
+    in the ResNet-50, ResNet-101 and ResNet-152 architectures. The one
+    by one convolutions serve as a reduction and then inflation of
+    dimensions. The dimension reduction results in lower input and
+    output dimensions for the three by three layer and thus improves
+    training time. Figure redrawn from \textcite{he2016} with our own
+    small changes.}
+  \label{fig:residual-connection}
+\end{figure}
+
+We use the ResNet-50 model developed by \textcite{he2016} pretrained
+on ImageNet in our own work. The $50$-layer model uses
+\emph{bottleneck building blocks} instead of the two three by three
+convolutional layers which lie in-between the residual connections of
+the smaller ResNet-18 and ResNet-34 models. We chose this model
+because it provides a suitable trade off between model complexity and
+inference time.
 
 \subsection{Data Augmentation}
 \label{sec:methods-augmentation}
 
-Go over the data augmentation methods which are used during training
-for the object detector:
-\begin{itemize}
-\item HSV-hue
-\item HSV-saturation
-\item HSV-value
-\item translation
-\item scaling
-\item inversion (left-right)
-\item mosaic
-\end{itemize}
+Data augmentation is an essential part of every training process
+throughout machine learning. By \emph{perturbing} already existing
+data with transformations, model engineers achieve an artificial
+enlargement of the data set which allows the machine learning model to
+learn more robust features. It can also reduce overfitting for smaller
+data sets. In the object detection world, special augmentations such
+as \emph{mosaic} help with edge cases which might crop up during
+inference. For example, by combining four or more images of the
+training set into one the model better learns to draw bounding boxes
+around objects which are cut off and at the edges of the individual
+images. Since we use data augmentation extensively during the training
+phases, we will list a small selection of them.
 
-Estimated 1 page for this section.
+\begin{description}
+\item[HSV-hue] Randomly change the hue of the color channels.
+\item[HSV-saturation] Randomly change the saturation of the color
+  channels.
+\item[HSV-value] Randomly change the value of the color channels.
+\item[Translation] Randomly \emph{translate}, that is, move the image
+  by a specified amount of pixels.
+\item[Scaling] Randomly scale the image up and down by a factor.
+\item[Rotation] Randomly rotate the image.
+\item[Inversion] Randomly flip the image along the $x$ or the
+  $y$-axis.
+\item[Mosaic] Combine multiple images into one in a mosaic
+  arrangement.
+\item[Mixup] Create a linear combination of multiple images.
+\end{description}
 
-\subsection{Hyperparameter Optimization}
-\label{sec:methods-hypopt}
-
-Go into detail about the process used to optimize the detection and
-classification models, what the training set looks like and how a
-best-performing model was selected on the basis of the metrics.
-
-Estimated 2 pages for this section.
+These augmentations can either be defined to happen with a fixed value
+and a specified probability or they can be applied to all images, but
+the value is not fixed. For example, one can specify a range for the
+degree of rotation and every image is rotated by a random value within
+that range. Or these two options are combined to rotate an image by a
+random value within a range with a specified probability.
 
 \chapter{Prototype Implementation}
 \label{chap:implementation}
