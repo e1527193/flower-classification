@@ -1598,7 +1598,7 @@ computational cost of between eight to nine times. MobileNet v2
 \emph{squeeze and excitation layers} among other improvements. These
 concepts led to better classification accuracy at the same or smaller
 model size. The authors evaluate a large and a small variant of
-MobileNet v3 on Imagenet on single-core phone processors and achieve a
+MobileNet v3 on ImageNet on single-core phone processors and achieve a
 top-1 accuracy of 75.2\% and 67.4\% respectively.
 
 \section{Transfer Learning}
@@ -1664,7 +1664,7 @@ which have to be made as a result of using transfer learning can
 introduce more complexity than would otherwise be necessary for a
 particular problem. It does, however, allow researchers to get started
 quickly and to iterate faster because popular network architectures
-pretrained on Imagenet are integrated into the major machine learning
+pretrained on ImageNet are integrated into the major machine learning
 frameworks. Transfer learning is used extensively in this work to
 train a classifier as well as an object detection model.
 
@@ -2300,7 +2300,7 @@ the \gls{coco} test data set.
 
 The authors of \gls{yolo}v6 \cite{li2022a} use a new backbone based on
 RepVGG \cite{ding2021} which they call EfficientRep. They also use
-different losses for classification (Varifocal loss \cite{zhang2021})
+different losses for classification (varifocal loss \cite{zhang2021})
 and bounding box regression (\gls{siou}
 \cite{gevorgyan2022}/\gls{giou} \cite{rezatofighi2019}). \gls{yolo}v6
 is made available in eight scaled version of which the largest
@@ -2310,7 +2310,7 @@ achieves a \gls{map} of 57.2\% on the \gls{coco} test set.
 \label{sssec:yolov7}
 
 At the time of implementation of our own plant detector, \gls{yolo}v7
-\cite{wang2022b} was the newest version within the \gls{yolo}
+\cite{wang2022} was the newest version within the \gls{yolo}
 family. Similarly to \gls{yolo}v4, it introduces more trainable bag of
 freebies which do not impact inference time. The improvements include
 the use of \glspl{eelan} (based on \glspl{elan} \cite{wang2022a}),
@@ -2444,31 +2444,79 @@ random value within a range with a specified probability.
 \chapter{Prototype Implementation}
 \label{chap:implementation}
 
+In this chapter we describe the implementation of the prototype. Part
+of the implementation is how the two models were trained and with
+which data sets, how the models are deployed to the \gls{sbc}, and how
+they were optimized.
+
 \section{Object Detection}
 \label{sec:development-detection}
 
-Describe how the object detection model was trained and what the
-training set looks like. Include a section on hyperparameter
-optimization and go into detail about how the detector was optimized.
+As mentioned before, our approach is split into a detection and a
+classification stage. The object detector detects all plants in an
+image during the first stage and passes the cutouts on to the
+classifier. In this section, we describe what the data set the object
+detector was trained with looks like, what the results of the training
+phase are and how the model was optimized with respect to its
+hyperparameters.
 
-The object detection model was trained for 300 epochs on 79204 images
-with 284130 ground truth labels. The weights from the best-performing
-epoch were saved. The model's fitness for each epoch is calculated as
-the weighted average of \textsf{mAP}@0.5 and \textsf{mAP}@0.5:0.95:
+\subsection{Data Set}
+\label{ssec:obj-train-dataset}
+
+The object detection model has to correctly detect plants in various
+locations, different lighting conditions, and in partially occluded
+settings. Fortunately, there are many data sets available which
+contain a large amount of classes and samples of common everyday
+objects. Most of these data sets contain at least one class about
+plants and multiple related classes such as \emph{houseplant} and
+\emph{potted plant} can be merged together to form a single
+\emph{plant} class which exhibits a great variety of samples. One such
+data set which includes the aforementioned classes is the \gls{oid}
+\cite{kuznetsova2020,krasin2017}.
+
+The \gls{oid} has been published in multiple versions starting in 2016
+with version one. The most recent iteration is version seven which has
+been released in October 2022. We use version six of the data set in
+our own work which contains \num{9011219} training, \num{41620}
+validation, and \num{125436} testing images. The data set provides
+image-level labels, bounding boxes, object segmentations, visual
+relationships, and localized narratives on those images. For our own
+work, we are only interested in the labeled bounding boxes of all
+images which belong to the classes \emph{Houseplant} and \emph{Plant}
+with their respective class identifiers \texttt{/m/03fp41} and
+\texttt{/m/05s2s}. These images have been extracted from the data set
+and arranged in the directory structure which \gls{yolo}v7
+requires. The bounding boxes themselves are collapsed into one single
+label \emph{Plant} and converted to the \gls{yolo}v7 label format. In
+total, there are \num{79204} images with \num{284130} bounding boxes
+in the training set. \gls{yolo}v7 continuously validates the training
+progress after every epoch on a validation set of \num{3091} images
+with \num{4092} bounding boxes.
+
+\subsection{Training Phase}
+\label{ssec:obj-training-phase}
+
+We use the smallest \gls{yolo}v7 model which has \num{36.9e6}
+parameters \cite{wang2022} and has been pretrained on the \gls{coco}
+data set \cite{lin2015} with an input size of \num{640} by \num{640}
+pixels. The object detection model was then fine-tuned for \num{300}
+epochs on the training set. The weights from the best-performing epoch
+were saved. The model's fitness for each epoch is calculated as the
+weighted average of \gls{map}@0.5 and \gls{map}@0.5:0.95:
 
 \begin{equation}
   \label{eq:fitness}
-  f_{epoch} = 0.1 \cdot \mathsf{mAP}@0.5 + 0.9 \cdot \mathsf{mAP}@0.5\mathrm{:}0.95
+  f_{epoch} = 0.1 \cdot \mathrm{\gls{map}}@0.5 + 0.9 \cdot \mathrm{\gls{map}}@0.5\mathrm{:}0.95
 \end{equation}
 
 Figure~\ref{fig:fitness} shows the model's fitness over the training
-period of 300 epochs. The gray vertical line indicates the maximum
-fitness of 0.61 at epoch 133. The weights of that epoch were frozen to
-be the final model parameters. Since the fitness metric assigns the
-\textsf{mAP} at the higher range the overwhelming weight, the
-\textsf{mAP}@0.5 starts to decrease after epoch 30, but the
-\textsf{mAP}@0.5:0.95 picks up the slack until the maximum fitness at
-epoch 133. This is an indication that the model achieves good
+period of \num{300} epochs. The gray vertical line indicates the
+maximum fitness of \num{0.61} at epoch \num{133}. The weights of that
+epoch were frozen to be the final model parameters. Since the fitness
+metric assigns the \gls{map} at the higher range the overwhelming
+weight, the \gls{map}@0.5 starts to decrease after epoch \num{30}, but
+the \gls{map}@0.5:0.95 picks up the slack until the maximum fitness at
+epoch \num{133}. This is an indication that the model achieves good
 performance early on and continues to gain higher confidence values
 until performance deteriorates due to overfitting.
 
@@ -2477,8 +2525,8 @@ until performance deteriorates due to overfitting.
   \includegraphics{graphics/model_fitness.pdf}
   \caption[Object detection fitness per epoch.]{Object detection model
     fitness for each epoch calculated as in
-    equation~\ref{eq:fitness}. The vertical gray line at 133 marks the
-    epoch with the highest fitness.}
+    equation~\ref{eq:fitness}. The vertical gray line at \num{133}
+    marks the epoch with the highest fitness.}
   \label{fig:fitness}
 \end{figure}
 
@@ -2489,11 +2537,11 @@ starts to decrease from the beginning, while recall experiences a
 barely noticeable increase. Taken together with the box and object
 loss from figure~\ref{fig:box-obj-loss}, we speculate that the
 pre-trained model already generalizes well to plant detection because
-one of the categories in the COCO~\cite{lin2015} dataset is
+one of the categories in the \gls{coco} \cite{lin2015} dataset is
 \emph{potted plant}. Any further training solely impacts the
 confidence of detection, but does not lead to higher detection
 rates. This conclusion is supported by the increasing
-\textsf{mAP}@0.5:0.95 until epoch 133.
+\gls{map}@0.5:0.95 until epoch \num{133}.
 
 \begin{figure}
   \centering
@@ -2524,226 +2572,67 @@ the bounding boxes become tighter around objects of interest. With
 increasing training time, however, the object loss increases,
 indicating that less and less plants are present in the predicted
 bounding boxes. It is likely that overfitting is a cause for the
-increasing object loss from epoch 40 onward. Since the best weights as
-measured by fitness are found at epoch 133 and the object loss
-accelerates from that point, epoch 133 is probably the correct cutoff
-before overfitting occurs.
+increasing object loss from epoch \num{40} onward. Since the best
+weights as measured by fitness are found at epoch \num{133} and the
+object loss accelerates from that point, epoch \num{133} is arguably
+the correct cutoff before overfitting occurs.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/val_box_obj_loss.pdf}
   \caption[Object detection box and object loss.]{Box and object loss
-    measured against the validation set of 3091 images and 4092 ground
-    truth labels. The class loss is omitted because there is only one
-    class in the dataset and the loss is therefore always zero.}
+    measured against the validation set of \num{3091} images and
+    \num{4092} ground truth labels. The class loss is omitted because
+    there is only one class in the dataset and the loss is therefore
+    always zero.}
   \label{fig:box-obj-loss}
 \end{figure}
 
-Estimated 2 pages for this section.
-
-\section{Classification}
-\label{sec:development-classification}
-
-Describe how the classification model was trained and what the
-training set looks like. Include a subsection hyperparameter
-optimization and go into detail about how the classifier was
-optimized.
-
-The dataset was split 85/15 into training and validation sets. The
-images in the training set were augmented with a random crop to arrive
-at the expected image dimensions of 224 pixels. Additionally, the
-training images were modified with a random horizontal flip to
-increase the variation in the set and to train a rotation invariant
-classifier. All images, regardless of their membership in the training
-or validation set, were normalized with the mean and standard
-deviation of the ImageNet~\cite{deng2009} dataset, which the original
-\gls{resnet} model was pre-trained with. Training was done for 50
-epochs and the best-performing model as measured by validation
-accuracy was selected as the final version.
-
-Figure~\ref{fig:classifier-training-metrics} shows accuracy and loss
-on the training and validation sets. There is a clear upwards trend
-until epoch 20 when validation accuracy and loss stabilize at around
-0.84 and 0.3, respectively. The quick convergence and resistance to
-overfitting can be attributed to the model already having robust
-feature extraction capabilities.
-
-\begin{figure}
-  \centering
-  \includegraphics{graphics/classifier-metrics.pdf}
-  \caption[Classifier accuracy and loss during training.]{Accuracy and
-    loss during training of the classifier. The model converges
-    quickly, but additional epochs do not cause validation loss to
-    increase, which would indicate overfitting. The maximum validation
-    accuracy of 0.9118 is achieved at epoch 27.}
-  \label{fig:classifier-training-metrics}
-\end{figure}
-
-Estimated 2 pages for this section.
-
-\section{Deployment}
-
-Describe the Jetson Nano, how the model is deployed to the device and
-how it reports its results (REST API).
-
-Estimated 2 pages for this section.
-
-\chapter{Evaluation}
-\label{chap:evaluation}
-
-The following sections contain a detailed evaluation of the model in
-various scenarios. First, we present metrics from the training phases
-of the constituent models. Second, we employ methods from the field of
-\gls{xai} such as \gls{grad-cam} to get a better understanding of the
-models' abstractions. Finally, we turn to the models' aggregate
-performance on the test set.
-
-\section{Methodology}
-\label{sec:methodology}
-
-Go over the evaluation methodology by explaining the test datasets,
-where they come from, and how they're structured. Explain how the
-testing phase was done and which metrics are employed to compare the
-models to the SOTA.
-
-Estimated 2 pages for this section.
-
-\section{Results}
-\label{sec:results}
-
-Systematically go over the results from the testing phase(s), show the
-plots and metrics, and explain what they contain. 
-
-Estimated 4 pages for this section.
-
-\subsection{Object Detection}
-\label{ssec:yolo-eval}
-
-The following parapraph should probably go into
-section~\ref{sec:development-detection}.
-
-The object detection model was pre-trained on the COCO~\cite{lin2015}
-dataset and fine-tuned with data from the \gls{oid}
-\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
-dataset contains considerably more classes and samples than would be
-feasibly trainable on a small cluster of \glspl{gpu}, only images from
-the two classes \emph{Plant} and \emph{Houseplant} have been
-downloaded. The samples from the Houseplant class are merged into the
-Plant class because the distinction between the two is not necessary
-for our model. Furthermore, the \gls{oid} contains not only bounding
-box annotations for object detection tasks, but also instance
-segmentations, classification labels and more. These are not needed
-for our purposes and are omitted as well. In total, the dataset
-consists of 91479 images with a roughly 85/5/10 split for training,
-validation and testing, respectively.
-
-\subsubsection{Test Phase}
-\label{sssec:yolo-test}
-
-Of the 91479 images around 10\% were used for the test phase. These
-images contain a total of 12238 ground truth
-labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
-harmonic mean of both ($\mathrm{F}_1$-score). The results indicate
-that the model errs on the side of sensitivity because recall is
-higher than precision. Although some detections are not labeled as
-plants in the dataset, if there is a labeled plant in the ground truth
-data, the chance is high that it will be detected. This behavior is in
-line with how the model's detections are handled in practice. The
-detections are drawn on the original image and the user is able to
-check the bounding boxes visually. If there are wrong detections, the
-user can ignore them and focus on the relevant ones instead. A higher
-recall will thus serve the user's needs better than a high precision.
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lrrrr}
-    \toprule
-    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
-    \midrule
-    Plant        &   0.547571 &  0.737866 &  0.628633 &  12238.0 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Precision, recall and $\mathrm{F}_1$-score for the object
-    detection model.}
-  \label{tab:yolo-metrics}
-\end{table}
-
-Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
-thresholds of 0.5 and 0.95. Predicted bounding boxes with an \gls{iou}
-of less than 0.5 are not taken into account for the precision and
-recall values of table~\ref{tab:yolo-metrics}. The lower the detection
-threshold, the more plants are detected. Conversely, a higher
-detection threshold leaves potential plants undetected. The
-precision-recall curves confirm this behavior because the area under
-the curve for the threshold of 0.5 is higher than for the threshold of
-0.95 ($0.66$ versus $0.41$). These values are combined in COCO's
-\cite{lin2015} main evaluation metric which is the \gls{ap} averaged
-across the \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps. This
-value is then averaged across all classes and called \gls{map}. The
-object detection model achieves a state-of-the-art \gls{map} of 0.5727
-for the \emph{Plant} class.
-
-\begin{figure}
-  \centering
-  \includegraphics{graphics/APpt5-pt95.pdf}
-  \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
-    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
-    specific threshold is defined as the area under the
-    precision-recall curve of that threshold. The \gls{map} across
-    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
-    \textsf{mAP}@0.5:0.95 is 0.5727.}
-  \label{fig:yolo-ap}
-\end{figure}
-
-\subsubsection{Hyperparameter Optimization}
-\label{sssec:yolo-hyp-opt}
-
-This section should be moved to the hyperparameter optimization
-section in the development chapter
-(section~\ref{sec:development-detection}).
+\subsection{Hyperparameter Optimization}
+\label{ssec:obj-hypopt}
 
 To further improve the object detection performance, we perform
-hyper-parameter optimization using a genetic algorithm. Evolution of
-the hyper-parameters starts from the initial 30 default values
-provided by the authors of YOLO. Of those 30 values, 26 are allowed to
-mutate. During each generation, there is an 80\% chance that a
-mutation occurs with a variance of 0.04. To determine which generation
-should be the parent of the new mutation, all previous generations are
-ordered by fitness in decreasing order. At most five top generations
-are selected and one of them is chosen at random. Better generations
-have a higher chance of being selected as the selection is weighted by
-fitness. The parameters of that chosen generation are then mutated
-with the aforementioned probability and variance. Each generation is
-trained for three epochs and the fitness of the best epoch is
-recorded.
+hyperparameter optimization using a genetic algorithm. Evolution of
+the hyperparameters starts from the initial \num{30} default values
+provided by the authors of \gls{yolo}. Of those \num{30} values,
+\num{26} are allowed to mutate. During each generation, there is an
+80\% chance that a mutation occurs with a variance of \num{0.04}. To
+determine which generation should be the parent of the new mutation,
+all previous generations are ordered by fitness in decreasing
+order. At most five top generations are selected and one of them is
+chosen at random. Better generations have a higher chance of being
+selected as the selection is weighted by fitness. The parameters of
+that chosen generation are then mutated with the aforementioned
+probability and variance. Each generation is trained for three epochs
+and the fitness of the best epoch is recorded.
 
-In total, we ran 87 iterations of which the 34\textsuperscript{th}
-generation provides the best fitness of 0.6076. Due to time
-constraints, it was not possible to train each generation for more
-epochs or to run more iterations in total. We assume that the
-performance of the first few epochs is a reasonable proxy for model
-performance overall. The optimized version of the object detection
-model is then trained for 70 epochs using the parameters of the
-34\textsuperscript{th} generation.
+In total, we ran \num{87} iterations of which the
+\num{34}\textsuperscript{th} generation provides the best fitness of
+\num{0.6076}. Due to time constraints, it was not possible to train
+each generation for more epochs or to run more iterations in total. We
+assume that the performance of the first few epochs is a reasonable
+proxy for model performance overall. The optimized version of the
+object detection model is then trained for \num{70} epochs using the
+parameters of the \num{34}\textsuperscript{th} generation.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/model_fitness_final.pdf}
   \caption[Optimized object detection fitness per epoch.]{Object
     detection model fitness for each epoch calculated as in
-    equation~\ref{eq:fitness}. The vertical gray line at 27 marks the
-    epoch with the highest fitness of 0.6172.}
+    equation~\ref{eq:fitness}. The vertical gray line at \num{27}
+    marks the epoch with the highest fitness of \num{0.6172}.}
   \label{fig:hyp-opt-fitness}
 \end{figure}
 
 Figure~\ref{fig:hyp-opt-fitness} shows the model's fitness during
-training for each epoch. After the highest fitness of 0.6172 at epoch
-27, the performance quickly declines and shows that further training
-would likely not yield improved results. The model converges to its
-highest fitness much earlier than the non-optimized version, which
-indicates that the adjusted parameters provide a better starting point
-in general. Furthermore, the maximum fitness is 0.74\% higher than in
-the non-optimized version.
+training for each epoch. After the highest fitness of \num{0.6172} at
+epoch \num{27}, the performance quickly declines and shows that
+further training would likely not yield improved results. The model
+converges to its highest fitness much earlier than the non-optimized
+version, which indicates that the adjusted parameters provide a better
+starting point in general. Furthermore, the maximum fitness is 0.74
+percentage points higher than in the non-optimized version.
 
 \begin{figure}
   \centering
@@ -2751,7 +2640,7 @@ the non-optimized version.
   \caption[Hyper-parameter optimized object detection precision and
   recall during training.]{Overall precision and recall during
     training for each epoch of the optimized model. The vertical gray
-    line at 27 marks the epoch with the highest fitness.}
+    line at \num{27} marks the epoch with the highest fitness.}
   \label{fig:hyp-opt-prec-rec}
 \end{figure}
 
@@ -2766,9 +2655,9 @@ non-optimized version and recall hovers at the same levels.
   \includegraphics{graphics/val_box_obj_loss_final.pdf}
   \caption[Hyper-parameter optimized object detection box and object
   loss.]{Box and object loss measured against the validation set of
-    3091 images and 4092 ground truth labels. The class loss is
-    omitted because there is only one class in the dataset and the
-    loss is therefore always zero.}
+    \num{3091} images and \num{4092} ground truth labels. The class
+    loss is omitted because there is only one class in the dataset and
+    the loss is therefore always zero.}
   \label{fig:hyp-opt-box-obj-loss}
 \end{figure}
 
@@ -2777,96 +2666,84 @@ figure~\ref{fig:hyp-opt-box-obj-loss}. Both losses start from a lower
 level which suggests that the initial optimized parameters allow the
 model to converge quicker. The object loss exhibits a similar slope to
 the non-optimized model in figure~\ref{fig:box-obj-loss}. The vertical
-gray line again marks epoch 27 with the highest fitness. The box loss
-reaches its lower limit at that point and the object loss starts to
-increase again after epoch 27.
+gray line again marks epoch \num{27} with the highest fitness. The box
+loss reaches its lower limit at that point and the object loss starts
+to increase again after epoch \num{27}.
 
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lrrrr}
-    \toprule
-    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
-    \midrule
-    Plant        &   0.633358 &  0.702811 &  0.666279 &  12238.0 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Precision, recall and $\mathrm{F}_1$-score for the
-    optimized object detection model.}
-  \label{tab:yolo-metrics-hyp}
-\end{table}
+\section{Classification}
+\label{sec:development-classification}
 
-Turning to the evaluation of the optimized model on the test dataset,
-table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
-$\mathrm{F}_1$-score for the optimized model. Comparing these metrics
-with the non-optimized version from table~\ref{tab:yolo-metrics},
-precision is significantly higher by more than 8.5\%. Recall, however,
-is 3.5\% lower. The $\mathrm{F}_1$-score is higher by more than 3.7\%
-which indicates that the optimized model is better overall despite the
-lower recall. We feel that the lower recall value is a suitable trade
-off for the substantially higher precision considering that the
-non-optimized model's precision is quite low at 0.55.
+The second stage of our approach consists of the classification model
+which determines whether the plant in question is water-stressed or
+not. The classifier receives the cutouts for each plant from stage one
+(object detection). We chose a \gls{resnet}-50 model (see
+section~\ref{sec:methods-classification}) which has been pretrained on
+ImageNet. We chose the \gls{resnet} architecture due to its popularity
+and ease of implementation as well as its consistently high
+performance on various classification tasks. While its classification
+speed in comparison with networks optimized for mobile and edge
+devices (e.g. MobileNet) is significantly lower, the deeper structure
+and the additional parameters are necessary for the fairly complex
+task at hand. Furthermore, the generous time budget for object
+detection \emph{and} classification allows for more accurate results
+at the expense of speed. The \num{50} layer architecture
+(\gls{resnet}-50) is adequate for our use case. In the following
+sections we describe the data set the classifier was trained on, the
+metrics of the training phase and how the performance of the model was
+further improved with hyperparameter optimization.
 
-The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
-optimized model show that the model draws looser bounding boxes than
-the optimized model. The \gls{ap} for both \gls{iou} thresholds of 0.5
-and 0.95 is lower indicating worse performance. It is likely that more
-iterations during evolution would help increase the \gls{ap} values as
-well. Even though the precision and recall values from
-table~\ref{tab:yolo-metrics-hyp} are better, the \textsf{mAP}@0.5:0.95
-is lower by 1.8\%.
+\subsection{Data Set}
+\label{ssec:class-train-dataset}
+
+The data set we used for training the classifier consists of \num{452}
+images of healthy and \num{452} stressed plants. 
+
+%% TODO: write about data set
+
+The dataset was split 85/15 into training and validation sets. The
+images in the training set were augmented with a random crop to arrive
+at the expected image dimensions of \num{224} pixels. Additionally,
+the training images were modified with a random horizontal flip to
+increase the variation in the set and to train a rotation invariant
+classifier. All images, regardless of their membership in the training
+or validation set, were normalized with the mean and standard
+deviation of the ImageNet \cite{deng2009} dataset, which the original
+\gls{resnet}-50 model was pretrained with. Training was done for
+\num{50} epochs and the best-performing model as measured by
+validation accuracy was selected as the final version.
+
+Figure~\ref{fig:classifier-training-metrics} shows accuracy and loss
+on the training and validation sets. There is a clear upwards trend
+until epoch \num{20} when validation accuracy and loss stabilize at
+around \num{0.84} and \num{0.3}, respectively. The quick convergence
+and resistance to overfitting can be attributed to the model already
+having robust feature extraction capabilities.
 
 \begin{figure}
   \centering
-  \includegraphics{graphics/APpt5-pt95-final.pdf}
-  \caption[Hyper-parameter optimized object detection AP@0.5 and
-  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
-    and 0.95. The \gls{ap} of a specific threshold is defined as the
-    area under the precision-recall curve of that threshold. The
-    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
-    steps \textsf{mAP}@0.5:0.95 is 0.5546.}
-  \label{fig:yolo-ap-hyp}
+  \includegraphics{graphics/classifier-metrics.pdf}
+  \caption[Classifier accuracy and loss during training.]{Accuracy and
+    loss during training of the classifier. The model converges
+    quickly, but additional epochs do not cause validation loss to
+    increase, which would indicate overfitting. The maximum validation
+    accuracy of \num{0.9118} is achieved at epoch \num{27}.}
+  \label{fig:classifier-training-metrics}
 \end{figure}
 
-\subsection{Classification}
-\label{ssec:classifier-eval}
-
-The classifier receives cutouts from the object detection model and
-determines whether the image shows a stressed plant or not. To achieve
-this goal, we trained a \gls{resnet} \cite{he2016} on a dataset of 452
-images of healthy and 452 stressed plants. We chose the \gls{resnet}
-architecture due to its popularity and ease of implementation as well
-as its consistently high performance on various classification
-tasks. While its classification speed in comparison with networks
-optimized for mobile and edge devices (e.g. MobileNet) is
-significantly lower, the deeper structure and the additional
-parameters are necessary for the fairly complex task at
-hand. Furthermore, the generous time budget for object detection
-\emph{and} classification allows for more accurate results at the
-expense of speed. The architecture allows for multiple different
-structures, depending on the amount of layers. The smallest one has 18
-and the largest 152 layers with 34, 50 and 101 in-between. The larger
-networks have better accuracy in general, but come with trade-offs
-regarding training and inference time as well as required space. The
-50 layer architecture (\gls{resnet}50) is adequate for our use case.
-
-\subsubsection{Hyperparameter Optimization}
-\label{sssec:classifier-hyp-opt}
-
-This section should be moved to the hyperparameter optimization
-section in the development chapter
-(section~\ref{sec:development-classification}).
+\subsection{Hyperparameter Optimization}
+\label{ssec:class-hypopt}
 
 In order to improve the aforementioned accuracy values, we perform
-hyper-parameter optimization across a wide range of
-parameters. Table~\ref{tab:classifier-hyps} lists the hyper-parameters
+hyperparameter optimization across a wide range of
+parameters. Table~\ref{tab:classifier-hyps} lists the hyperparameters
 and their possible values. Since the number of all combinations of
-values is 11520 and each combination is trained for 10 epochs with a
-training time of approximately six minutes per combination, exhausting
-the search space would take 48 days. Due to time limitations, we have
-chosen to not search exhaustively but to pick random combinations
-instead. Random search works surprisingly well---especially compared to
-grid search---in a number of domains, one of which is hyper-parameter
-optimization~\cite{bergstra2012}.
+values is \num{11520} and each combination is trained for \num{10}
+epochs with a training time of approximately six minutes per
+combination, exhausting the search space would take \num{48} days. Due
+to time limitations, we have chosen to not search exhaustively but to
+pick random combinations instead. Random search works surprisingly
+well---especially compared to grid search---in a number of domains, one of
+which is hyperparameter optimization \cite{bergstra2012}.
 
 \begin{table}[h]
   \centering
@@ -3009,6 +2886,186 @@ $\mathrm{F}_1$-score of 1 on the training set.
     during training alleviates this problem.}
   \label{fig:classifier-hyp-folds}
 \end{figure}
+
+\section{Deployment}
+
+Describe the Jetson Nano, how the model is deployed to the device and
+how it reports its results (REST API).
+
+Estimated 2 pages for this section.
+
+\chapter{Evaluation}
+\label{chap:evaluation}
+
+The following sections contain a detailed evaluation of the model in
+various scenarios. First, we present metrics from the training phases
+of the constituent models. Second, we employ methods from the field of
+\gls{xai} such as \gls{grad-cam} to get a better understanding of the
+models' abstractions. Finally, we turn to the models' aggregate
+performance on the test set.
+
+\section{Methodology}
+\label{sec:methodology}
+
+Go over the evaluation methodology by explaining the test datasets,
+where they come from, and how they're structured. Explain how the
+testing phase was done and which metrics are employed to compare the
+models to the SOTA.
+
+Estimated 2 pages for this section.
+
+\section{Results}
+\label{sec:results}
+
+Systematically go over the results from the testing phase(s), show the
+plots and metrics, and explain what they contain. 
+
+Estimated 4 pages for this section.
+
+\subsection{Object Detection}
+\label{ssec:yolo-eval}
+
+The following parapraph should probably go into
+section~\ref{sec:development-detection}.
+
+The object detection model was pre-trained on the COCO~\cite{lin2015}
+dataset and fine-tuned with data from the \gls{oid}
+\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
+dataset contains considerably more classes and samples than would be
+feasibly trainable on a small cluster of \glspl{gpu}, only images from
+the two classes \emph{Plant} and \emph{Houseplant} have been
+downloaded. The samples from the Houseplant class are merged into the
+Plant class because the distinction between the two is not necessary
+for our model. Furthermore, the \gls{oid} contains not only bounding
+box annotations for object detection tasks, but also instance
+segmentations, classification labels and more. These are not needed
+for our purposes and are omitted as well. In total, the dataset
+consists of 91479 images with a roughly 85/5/10 split for training,
+validation and testing, respectively.
+
+\subsubsection{Test Phase}
+\label{sssec:yolo-test}
+
+Of the 91479 images around 10\% were used for the test phase. These
+images contain a total of 12238 ground truth
+labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
+harmonic mean of both ($\mathrm{F}_1$-score). The results indicate
+that the model errs on the side of sensitivity because recall is
+higher than precision. Although some detections are not labeled as
+plants in the dataset, if there is a labeled plant in the ground truth
+data, the chance is high that it will be detected. This behavior is in
+line with how the model's detections are handled in practice. The
+detections are drawn on the original image and the user is able to
+check the bounding boxes visually. If there are wrong detections, the
+user can ignore them and focus on the relevant ones instead. A higher
+recall will thus serve the user's needs better than a high precision.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
+    \midrule
+    Plant        &   0.547571 &  0.737866 &  0.628633 &  12238.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the object
+    detection model.}
+  \label{tab:yolo-metrics}
+\end{table}
+
+Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
+thresholds of 0.5 and 0.95. Predicted bounding boxes with an \gls{iou}
+of less than 0.5 are not taken into account for the precision and
+recall values of table~\ref{tab:yolo-metrics}. The lower the detection
+threshold, the more plants are detected. Conversely, a higher
+detection threshold leaves potential plants undetected. The
+precision-recall curves confirm this behavior because the area under
+the curve for the threshold of 0.5 is higher than for the threshold of
+0.95 ($0.66$ versus $0.41$). These values are combined in COCO's
+\cite{lin2015} main evaluation metric which is the \gls{ap} averaged
+across the \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps. This
+value is then averaged across all classes and called \gls{map}. The
+object detection model achieves a state-of-the-art \gls{map} of 0.5727
+for the \emph{Plant} class.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APpt5-pt95.pdf}
+  \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
+    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
+    specific threshold is defined as the area under the
+    precision-recall curve of that threshold. The \gls{map} across
+    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
+    \textsf{mAP}@0.5:0.95 is 0.5727.}
+  \label{fig:yolo-ap}
+\end{figure}
+
+\subsubsection{Hyperparameter Optimization}
+\label{sssec:yolo-hyp-opt}
+
+This section should be moved to the hyperparameter optimization
+section in the development chapter
+(section~\ref{sec:development-detection}).
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
+    \midrule
+    Plant        &   0.633358 &  0.702811 &  0.666279 &  12238.0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the
+    optimized object detection model.}
+  \label{tab:yolo-metrics-hyp}
+\end{table}
+
+Turning to the evaluation of the optimized model on the test dataset,
+table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
+$\mathrm{F}_1$-score for the optimized model. Comparing these metrics
+with the non-optimized version from table~\ref{tab:yolo-metrics},
+precision is significantly higher by more than 8.5\%. Recall, however,
+is 3.5\% lower. The $\mathrm{F}_1$-score is higher by more than 3.7\%
+which indicates that the optimized model is better overall despite the
+lower recall. We feel that the lower recall value is a suitable trade
+off for the substantially higher precision considering that the
+non-optimized model's precision is quite low at 0.55.
+
+The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
+optimized model show that the model draws looser bounding boxes than
+the optimized model. The \gls{ap} for both \gls{iou} thresholds of 0.5
+and 0.95 is lower indicating worse performance. It is likely that more
+iterations during evolution would help increase the \gls{ap} values as
+well. Even though the precision and recall values from
+table~\ref{tab:yolo-metrics-hyp} are better, the \textsf{mAP}@0.5:0.95
+is lower by 1.8\%.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APpt5-pt95-final.pdf}
+  \caption[Hyper-parameter optimized object detection AP@0.5 and
+  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
+    and 0.95. The \gls{ap} of a specific threshold is defined as the
+    area under the precision-recall curve of that threshold. The
+    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
+    steps \textsf{mAP}@0.5:0.95 is 0.5546.}
+  \label{fig:yolo-ap-hyp}
+\end{figure}
+
+\subsection{Classification}
+\label{ssec:classifier-eval}
+
+
+\subsubsection{Hyperparameter Optimization}
+\label{sssec:classifier-hyp-opt}
+
+This section should be moved to the hyperparameter optimization
+section in the development chapter
+(section~\ref{sec:development-classification}).
+
 
 
 \subsubsection{Class Activation Maps}
