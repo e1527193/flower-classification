@@ -140,6 +140,7 @@ Challenge}
 \newacronym{giou}{GIoU}{Generalized Intersection over Union}
 \newacronym{elan}{ELAN}{Efficient Layer Aggregation Network}
 \newacronym{eelan}{E-ELAN}{Extended Efficient Layer Aggregation Network}
+\newacronym{onnx}{ONNX}{Open Neural Network Exchange}
 
 \begin{document}
 
@@ -1038,7 +1039,7 @@ methods. Furthermore, R-\gls{cnn} crushes \glspl{dpm} on the \gls{voc}
 2007 challenge with a \gls{map} of 58.5\% \cite{girshick2014} versus
 33.7\% (\gls{dpm}-v5 \cite{girshick,felzenszwalb2010}). This was
 enough to spark renewed interest in \glspl{cnn} and—with better
-availability of large data sets and \gls{gpu} processing
+availability of large datasets and \gls{gpu} processing
 capabilities—opened the way for further research in that direction.
 
 \subsubsection{SPP-net}
@@ -1225,7 +1226,7 @@ is at \qty{46}{fps} which, although lower than Fast \gls{yolo}'s
 \label{sssec:theory-retinanet}
 
 One-stage detectors before 2017 always trailed the accuracy of top
-two-stage detectors on common and difficult benchmark data sets such
+two-stage detectors on common and difficult benchmark datasets such
 as \gls{coco}. \textcite{lin2017b} investigated what the culprit for
 the lower accuracy scores could be and found that the severe class
 imbalance between foreground and background instances is the
@@ -1251,7 +1252,7 @@ different levels in the feature pyramid. Attached to the backbone are
 two subnetworks which classify anchor boxes and regress them to the
 ground truth boxes. The results are that the RetinaNet-101-500 version
 (with an input size of \qty{500}{px}) achieves a \gls{map} of 34.4\%
-at a speed of around \qty{11}{fp\s} on the \gls{coco} data set.
+at a speed of around \qty{11}{fp\s} on the \gls{coco} dataset.
 
 \section{Image Classification}
 \label{sec:background-classification}
@@ -1372,7 +1373,7 @@ done before. However, standard machine learning methods of the time,
 such as manual feature engineering and \glspl{svm}, achieved a similar
 error rate, even though they are much more memory-intensive. LeNet-5
 was conceived to take advantage of the (then) large \gls{mnist}
-database. Since there were not many data sets available at the time,
+database. Since there were not many datasets available at the time,
 especially with more samples than in the \gls{mnist} database,
 \glspl{cnn} were not widely used even after their viability had been
 demonstrated by \textcite{lecun1998}. Only in 2012
@@ -1448,7 +1449,7 @@ introducing too much additional complexity. Since the relevant parts
 of an image can often be of different sizes, but kernels within
 convolutional layers are fixed, there is a mismatch between what can
 realistically be detected by the layers and what is present in the
-data set. Therefore, the authors propose to perform multiple
+dataset. Therefore, the authors propose to perform multiple
 convolutions with different kernel sizes and concatenating them
 together before sending the result to the next layer. Unfortunately,
 three by three and five by five kernel sizes within a convolutional
@@ -1610,7 +1611,7 @@ different source domain \cite{zhuang2021}. The learned representations
 from the source domain are thus \emph{transferred} to solve a related
 problem in another domain. Transfer learning works because
 semantically meaningful information an algorithm has learned from a
-(large) data set is often meaningful in other contexts as well, even
+(large) dataset is often meaningful in other contexts as well, even
 though the \emph{new problem} is not exactly the same problem for
 which the original model had been trained for. An analogy to
 day-to-day life as humans can be drawn with sports. Intuitively,
@@ -1637,7 +1638,7 @@ tasks. Semi-supervised or unsupervised (see
 section~\ref{sec:theory-ml}) learning approaches can partially
 mitigate this problem, but having accurate ground truth data is
 usually a requirement nonetheless. Through the publication of large
-labeled data sets such as via the \glspl{ilsvrc}, a basis for
+labeled datasets such as via the \glspl{ilsvrc}, a basis for
 (pre-)training exists from which the model can be optimized for
 downstream tasks.
 
@@ -1919,7 +1920,7 @@ and so forth.
 extractor and instead of using the last fully-connected layers of an
 off-the-shelf \gls{cnn}, they replace them with a \gls{svm}. They use
 this classifier to determine which biotic or abiotic stresses soybeans
-suffer from. Their data set consists of $65184$ $64$ by $64$ RGB
+suffer from. Their dataset consists of $65184$ $64$ by $64$ RGB
 images of which around $40000$ were used for training and $6000$ for
 testing. All images show a close-up of a soybean leaf. Their \gls{cnn}
 architecture makes use of three Inception modules (see
@@ -1932,7 +1933,7 @@ extractor provides better results than using it also for
 classification.
 
 \textcite{aversano2022} perform water stress classification on images
-of tomato crops obtained with a \gls{uav}. Their data set consists of
+of tomato crops obtained with a \gls{uav}. Their dataset consists of
 $6600$ thermal and $6600$ optimal images which have been segmented
 using spectral clustering. They use two VGG-19 networks (see
 section~\ref{sssec:theory-vggnet}) which extract features from the
@@ -2057,27 +2058,27 @@ to a second model---the classifier.
 While most object detection models could be trained to determine the
 difference between water-stressed and healthy, the reason for this
 two-stage design lies in the availability of data. To our knowledge,
-there are no sufficiently large enough data sets available which
+there are no sufficiently large enough datasets available which
 contain labeling information for water-stressed and healthy. Instead,
-most data sets only classify common objects such as plane, person,
+most datasets only classify common objects such as plane, person,
 car, bicycle, and so forth (e.g. \gls{coco} \cite{lin2015}). However,
 the classes \emph{plant} and \emph{houseplant} are present in most
-data sets and provide the basis for our object detection model. The
-size of these data sets allows us to train the object detection model
+datasets and provide the basis for our object detection model. The
+size of these datasets allows us to train the object detection model
 with a large number of samples which would have been unfeasible to
 label on our own. The classifier is then trained with a smaller data
 set which only comprises individual plants and their associated
 classification (\emph{stressed} or \emph{healthy}).
 
-Both data sets (object detection and classification) only allow us to
-train and validate each model separately. A third data set is needed
+Both datasets (object detection and classification) only allow us to
+train and validate each model separately. A third dataset is needed
 to evaluate the detection/classification pipeline as a whole. To this
-end, we construct our own data set where all plants per image are
+end, we construct our own dataset where all plants per image are
 labeled with bounding boxes as well as the classes \emph{stressed} or
-\emph{healthy}. This data set is small in comparison to the one with
+\emph{healthy}. This dataset is small in comparison to the one with
 which the object detection model is trained, but suffices because it
 is only used for evaluation. Labeling each sample in the evaluation
-data set manually is still a laborious task which is why each image is
+dataset manually is still a laborious task which is why each image is
 \emph{preannotated} by the already existing object detection and
 classification model. The task of labeling thus becomes a task of
 manually correcting the annotations which have been generated by the
@@ -2200,7 +2201,7 @@ still results in high recall, but does not introduce too much
 complexity.
 
 These additional details result in an improved \gls{map} of 78.6\% on
-the \gls{voc} 2007 data set compared to 63.4\% of the previous
+the \gls{voc} 2007 dataset compared to 63.4\% of the previous
 \gls{yolo} version. \gls{yolo}v2 still maintains a fast detection rate
 at \qty{40}{fps} (\gls{map} 78.6\%) and up to \qty{91}{fps} (\gls{map}
 69\%).
@@ -2279,7 +2280,7 @@ The author of \gls{yolo}v5 \cite{jocher2020} ported the code from
 \gls{yolo}v4 from the Darknet framework to PyTorch which facilitated
 better interoperability with other Python utilities. New in this
 version is the pretraining algorithm called AutoAnchor which adjusts
-the anchor boxes based on the data set at hand. This version also
+the anchor boxes based on the dataset at hand. This version also
 implements a genetic algorithm for hyperparameter optimization (see
 section~\ref{ssec:hypopt-evo}) which is used in our work as well.
 
@@ -2293,7 +2294,7 @@ environments such as edge devices, but come with a cost in
 accuracy. Conversely, the larger models are for tasks where high
 accuracy is paramount and enough computational resources are
 available. The \gls{yolo}v5x model achieves a \gls{map} of 50.7\% on
-the \gls{coco} test data set.
+the \gls{coco} test dataset.
 
 \subsubsection{\gls{yolo}v6}
 \label{sssec:yolov6}
@@ -2318,7 +2319,7 @@ joint depth and width model scaling techniques, reparameterization on
 module level, and an auxiliary head---similarly to GoogleNet (see
 section~\ref{sssec:theory-googlenet})---which assists during
 training. The model does not use a pretrained backbone, it is instead
-trained from scratch on the \gls{coco} data set. These changes result
+trained from scratch on the \gls{coco} dataset. These changes result
 in much smaller model sizes compared to \gls{yolo}v4 and a \gls{map}
 of 56.8\% with a detection speed of over \qty{30}{fps}.
 
@@ -2408,9 +2409,9 @@ inference time.
 Data augmentation is an essential part of every training process
 throughout machine learning. By \emph{perturbing} already existing
 data with transformations, model engineers achieve an artificial
-enlargement of the data set which allows the machine learning model to
+enlargement of the dataset which allows the machine learning model to
 learn more robust features. It can also reduce overfitting for smaller
-data sets. In the object detection world, special augmentations such
+datasets. In the object detection world, special augmentations such
 as \emph{mosaic} help with edge cases which might crop up during
 inference. For example, by combining four or more images of the
 training set into one the model better learns to draw bounding boxes
@@ -2446,7 +2447,7 @@ random value within a range with a specified probability.
 
 In this chapter we describe the implementation of the prototype. Part
 of the implementation is how the two models were trained and with
-which data sets, how the models are deployed to the \gls{sbc}, and how
+which datasets, how the models are deployed to the \gls{sbc}, and how
 they were optimized.
 
 \section{Object Detection}
@@ -2455,36 +2456,36 @@ they were optimized.
 As mentioned before, our approach is split into a detection and a
 classification stage. The object detector detects all plants in an
 image during the first stage and passes the cutouts on to the
-classifier. In this section, we describe what the data set the object
+classifier. In this section, we describe what the dataset the object
 detector was trained with looks like, what the results of the training
 phase are and how the model was optimized with respect to its
 hyperparameters.
 
-\subsection{Data Set}
+\subsection{Dataset}
 \label{ssec:obj-train-dataset}
 
 The object detection model has to correctly detect plants in various
 locations, different lighting conditions, and in partially occluded
-settings. Fortunately, there are many data sets available which
+settings. Fortunately, there are many datasets available which
 contain a large amount of classes and samples of common everyday
-objects. Most of these data sets contain at least one class about
+objects. Most of these datasets contain at least one class about
 plants and multiple related classes such as \emph{houseplant} and
 \emph{potted plant} can be merged together to form a single
 \emph{plant} class which exhibits a great variety of samples. One such
-data set which includes the aforementioned classes is the \gls{oid}
+dataset which includes the aforementioned classes is the \gls{oid}
 \cite{kuznetsova2020,krasin2017}.
 
 The \gls{oid} has been published in multiple versions starting in 2016
 with version one. The most recent iteration is version seven which has
-been released in October 2022. We use version six of the data set in
+been released in October 2022. We use version six of the dataset in
 our own work which contains \num{9011219} training, \num{41620}
-validation, and \num{125436} testing images. The data set provides
+validation, and \num{125436} testing images. The dataset provides
 image-level labels, bounding boxes, object segmentations, visual
 relationships, and localized narratives on those images. For our own
 work, we are only interested in the labeled bounding boxes of all
 images which belong to the classes \emph{Houseplant} and \emph{Plant}
 with their respective class identifiers \texttt{/m/03fp41} and
-\texttt{/m/05s2s}. These images have been extracted from the data set
+\texttt{/m/05s2s}. These images have been extracted from the dataset
 and arranged in the directory structure which \gls{yolo}v7
 requires. The bounding boxes themselves are collapsed into one single
 label \emph{Plant} and converted to the \gls{yolo}v7 label format. In
@@ -2498,7 +2499,7 @@ with \num{4092} bounding boxes.
 
 We use the smallest \gls{yolo}v7 model which has \num{36.9e6}
 parameters \cite{wang2022} and has been pretrained on the \gls{coco}
-data set \cite{lin2015} with an input size of \num{640} by \num{640}
+dataset \cite{lin2015} with an input size of \num{640} by \num{640}
 pixels. The object detection model was then fine-tuned for \num{300}
 epochs on the training set. The weights from the best-performing epoch
 were saved. The model's fitness for each epoch is calculated as the
@@ -2688,17 +2689,20 @@ task at hand. Furthermore, the generous time budget for object
 detection \emph{and} classification allows for more accurate results
 at the expense of speed. The \num{50} layer architecture
 (\gls{resnet}-50) is adequate for our use case. In the following
-sections we describe the data set the classifier was trained on, the
+sections we describe the dataset the classifier was trained on, the
 metrics of the training phase and how the performance of the model was
 further improved with hyperparameter optimization.
 
-\subsection{Data Set}
+\subsection{Dataset}
 \label{ssec:class-train-dataset}
 
-The data set we used for training the classifier consists of \num{452}
-images of healthy and \num{452} stressed plants. 
-
-%% TODO: write about data set
+The dataset we used for training the classifier consists of \num{452}
+images of healthy and \num{452} stressed plants. It has been made
+public on Kaggle
+Datasets\footnote{\url{https://www.kaggle.com/datasets}} under the
+name \emph{Healthy and Wilted Houseplant Images} \cite{chan2020}. The
+images in the dataset were collected from Google Images and labeled
+accordingly.
 
 The dataset was split 85/15 into training and validation sets. The
 images in the training set were augmented with a random crop to arrive
@@ -2761,17 +2765,18 @@ which is hyperparameter optimization \cite{bergstra2012}.
     eps & 0.00000001, 0.1, 1 \\
     \bottomrule
   \end{tabular}
-  \caption{Hyper-parameters and their possible values during
+  \caption{Hyperparameters and their possible values during
     optimization.}
   \label{tab:classifier-hyps}
 \end{table}
 
-The random search was run for 138 iterations which equates to a 75\%
-probability that the best solution lies within 1\% of the theoretical
+The random search was run for \num{138} iterations which equates to a
+75\% probability that the best solution lies within 1\% of the
+theoretical
 maximum~\eqref{eq:opt-prob}. Figure~\ref{fig:classifier-hyp-results}
 shows three of the eight parameters and their impact on a high
 $\mathrm{F}_1$-score. \gls{sgd} has less variation in its results than
-Adam~\cite{kingma2017} and manages to provide eight out of the ten
+Adam \cite{kingma2017} and manages to provide eight out of the ten
 best results. The number of epochs to train for was chosen based on
 the observation that almost all configurations converge well before
 reaching the tenth epoch. The assumption that a training run with ten
@@ -2786,38 +2791,39 @@ figure~\ref{fig:classifier-training-metrics}.
 \begin{figure}
   \centering
   \includegraphics{graphics/classifier-hyp-metrics.pdf}
-  \caption[Classifier hyper-parameter optimization results.]{This
-    figure shows three of the eight hyper-parameters and their
-    performance measured by the $\mathrm{F}_1$-score during 138
+  \caption[Classifier hyperparameter optimization results.]{This
+    figure shows three of the eight hyperparameters and their
+    performance measured by the $\mathrm{F}_1$-score during \num{138}
     trials. Differently colored markers show the batch size with
     darker colors representing a larger batch size. The type of marker
-    (circle or cross) shows which optimizer was used. The x-axis shows
-    the learning rate on a logarithmic scale. In general, a learning
-    rate between 0.003 and 0.01 results in more robust and better
-    $\mathrm{F}_1$-scores. Larger batch sizes more often lead to
-    better performance as well. As for the type of optimizer,
-    \gls{sgd} produced the best iteration with an $\mathrm{F}_1$-score
-    of 0.9783. Adam tends to require more customization of its
-    parameters than \gls{sgd} to achieve good results.}
+    (circle or cross) shows which optimizer was used. The $x$-axis
+    shows the learning rate on a logarithmic scale. In general, a
+    learning rate between \num{0.003} and \num{0.01} results in more
+    robust and better $\mathrm{F}_1$-scores. Larger batch sizes more
+    often lead to better performance as well. As for the type of
+    optimizer, \gls{sgd} produced the best iteration with an
+    $\mathrm{F}_1$-score of \num{0.9783}. Adam tends to require more
+    customization of its parameters than \gls{sgd} to achieve good
+    results.}
   \label{fig:classifier-hyp-results}
 \end{figure}
 
-Table~\ref{tab:classifier-final-hyps} lists the final hyper-parameters
+Table~\ref{tab:classifier-final-hyps} lists the final hyperparameters
 which were chosen to train the improved model. In order to confirm
 that the model does not suffer from overfitting or is a product of
 chance due to a coincidentally advantageous train/test split, we
 perform stratified $10$-fold cross validation on the dataset. Each
-fold contains 90\% training and 10\% test data and was trained for 25
-epochs. Figure~\ref{fig:classifier-hyp-roc} shows the performance of
-the epoch with the highest $\mathrm{F}_1$-score of each fold as
-measured against the test split. The mean \gls{roc} curve provides a
-robust metric for a classifier's performance because it averages out
-the variability of the evaluation. Each fold manages to achieve at
-least an \gls{auc} of 0.94, while the best fold reaches 0.98. The mean
-\gls{roc} has an \gls{auc} of 0.96 with a standard deviation of
-0.02. These results indicate that the model is accurately predicting
-the correct class and is robust against variations in the training
-set.
+fold contains 90\% training and 10\% test data and was trained for
+\num{25} epochs. Figure~\ref{fig:classifier-hyp-roc} shows the
+performance of the epoch with the highest $\mathrm{F}_1$-score of each
+fold as measured against the test split. The mean \gls{roc} curve
+provides a robust metric for a classifier's performance because it
+averages out the variability of the evaluation. Each fold manages to
+achieve at least an \gls{auc} of \num{0.94}, while the best fold
+reaches \num{0.99}. The mean \gls{roc} has an \gls{auc} of \num{0.96}
+with a standard deviation of \num{0.02}. These results indicate that
+the model is accurately predicting the correct class and is robust
+against variations in the training set.
 
 \begin{table}
   \centering
@@ -2828,8 +2834,8 @@ set.
     \gls{sgd} & 64 & 0.01 & 5\\
     \bottomrule
   \end{tabular}
-  \caption[Hyper-parameters for the optimized classifier.]{Chosen
-    hyper-parameters for the final, improved model. The difference to
+  \caption[Hyperparameters for the optimized classifier.]{Chosen
+    hyperparameters for the final, improved model. The difference to
     the parameters listed in Table~\ref{tab:classifier-hyps} comes as
     a result of choosing \gls{sgd} over Adam. The missing four
     parameters are only required for Adam and not \gls{sgd}.}
@@ -2839,16 +2845,16 @@ set.
 \begin{figure}
   \centering
   \includegraphics{graphics/classifier-hyp-folds-roc.pdf}
-  \caption[Mean \gls{roc} and variability of hyper-parameter-optimized
+  \caption[Mean \gls{roc} and variability of hyperparameter-optimized
   model.]{This plot shows the \gls{roc} curve for the epoch with the
     highest $\mathrm{F}_1$-score of each fold as well as the
     \gls{auc}. To get a less variable performance metric of the
     classifier, the mean \gls{roc} curve is shown as a thick line and
     the variability is shown in gray. The overall mean \gls{auc} is
-    0.96 with a standard deviation of 0.02. The best-performing fold
-    reaches an \gls{auc} of 0.99 and the worst an \gls{auc} of
-    0.94. The black dashed line indicates the performance of a
-    classifier which picks classes at random
+    \num{0.96} with a standard deviation of \num{0.02}. The
+    best-performing fold reaches an \gls{auc} of \num{0.99} and the
+    worst an \gls{auc} of \num{0.94}. The black dashed line indicates
+    the performance of a classifier which picks classes at random
     ($\mathrm{\gls{auc}} = 0.5$). The shapes of the \gls{roc} curves
     show that the classifier performs well and is robust against
     variations in the training set.}
@@ -2862,12 +2868,12 @@ during testing gives insight into when the model tries to increase its
 performance during training at the expense of
 generalizability. Figure~\ref{fig:classifier-hyp-folds} shows the
 $\mathrm{F}_1$-scores of each epoch and fold. The classifier converges
-quickly to 1 for the training set at which point it experiences a
-slight drop in generalizability. Training the model for at most five
+quickly to \num{1} for the training set at which point it experiences
+a slight drop in generalizability. Training the model for at most five
 epochs is sufficient because there are generally no improvements
 afterwards. The best-performing epoch for each fold is between the
 second and fourth epoch which is just before the model achieves an
-$\mathrm{F}_1$-score of 1 on the training set.
+$\mathrm{F}_1$-score of \num{1} on the training set.
 
 \begin{figure}
   \centering
@@ -2875,34 +2881,57 @@ $\mathrm{F}_1$-score of 1 on the training set.
   \caption[$\mathrm{F}_1$-score of stratified $10$-fold cross
   validation.]{These plots show the $\mathrm{F}_1$-score during
     training as well as testing for each of the folds. The classifier
-    converges to 1 by the third epoch during the training phase, which
-    might indicate overfitting. However, the performance during
+    converges to \num{1} by the third epoch during the training phase,
+    which might indicate overfitting. However, the performance during
     testing increases until epoch three in most cases and then
-    stabilizes at approximately 2-3\% lower than the best epoch. We
-    believe that the third, or in some cases fourth, epoch is
-    detrimental to performance and results in overfitting, because the
-    model achieves an $\mathrm{F}_1$-score of 1 for the training set,
-    but that gain does not transfer to the test set. Early stopping
-    during training alleviates this problem.}
+    stabilizes at approximately 2-3 percentage points lower than the
+    best epoch. We believe that the third, or in some cases fourth,
+    epoch is detrimental to performance and results in overfitting,
+    because the model achieves an $\mathrm{F}_1$-score of \num{1} for
+    the training set, but that gain does not transfer to the test
+    set. Early stopping during training alleviates this problem.}
   \label{fig:classifier-hyp-folds}
 \end{figure}
 
 \section{Deployment}
 
-Describe the Jetson Nano, how the model is deployed to the device and
-how it reports its results (REST API).
+After training of the two models (object detector and classifier), we
+export them to the \gls{onnx}\footnote{\url{https://github.com/onnx}}
+format and move the model files to the Nvidia Jetson Nano. On the
+device, a Flask application (\emph{server}) provides a \gls{rest}
+endpoint from which the results of the most recent prediction can be
+queried. The server periodically performs the following steps:
 
-Estimated 2 pages for this section.
+\begin{enumerate}
+\item Call a binary which takes an image and writes it to a file.
+\item Take the image and detect all plants as well as their status
+  using the two models.
+\item Draw the returned bounding boxes onto the original image.
+\item Number each detection from left to right.
+\item Coerce the prediction for each bounding box into a tuple
+  $\langle I, S, T,\Delta T \rangle$.
+\item Store the image with the bounding boxes and an array of all
+  tuples (predictions) in a dictionary.
+\item Wait two minutes.
+\item Go to step one.
+\end{enumerate}
+
+The binary uses the accelerated GStreamer implementation by Nvidia to
+take an image. The tuple $\langle I, S, T,\Delta T \rangle$ consists of the following
+items: $I$ is the number of the bounding box in the image, $S$ the
+current state from one to ten, $T$ the timestamp of the prediction,
+and $\Delta T$ the time since the state $S$ last fell under three. The
+server performs these tasks asynchronously in the background and is
+always ready to respond to requests with the most recent prediction.
 
 \chapter{Evaluation}
 \label{chap:evaluation}
 
 The following sections contain a detailed evaluation of the model in
-various scenarios. First, we present metrics from the training phases
-of the constituent models. Second, we employ methods from the field of
-\gls{xai} such as \gls{grad-cam} to get a better understanding of the
-models' abstractions. Finally, we turn to the models' aggregate
-performance on the test set.
+various scenarios. We employ methods from the field of \gls{xai} such
+as \gls{grad-cam} to get a better understanding of the models'
+abstractions. Finally, we turn to the models' aggregate performance on
+the test set.
 
 \section{Methodology}
 \label{sec:methodology}
