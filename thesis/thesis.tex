@@ -1995,7 +1995,7 @@ resource. However, because the results are published via a \gls{rest}
 service, internet access is necessary to be able to retrieve the
 predictions.
 
-Other functional requirements are that the inference on the device for
+Other technical requirements are that the inference on the device for
 both models does not take too long (i.e. not longer than a few seconds
 per image). Even though plants are not known to grow extremely rapidly
 from one minute to the next, keeping the inference time low results in
@@ -2003,12 +2003,42 @@ a more resource efficient prototype. As such, it is possible to run
 the device off of a battery which completes the self-contained nature
 of the prototype.
 
-From an evaluation perspective, the models are required to attain a
-reasonable level of accuracy. It is difficult to determine said level
-beforehand, but considering the task as well as general object
-detection and classification benchmarks such as \gls{coco}
-\cite{lin2015}, we expect a \gls{map} of around 40\% and precision and
-recall values of 70\%.
+From an evaluation perspective, the models should have high
+specificity and sensitivity. In order to be useful for plant
+water-stress detection, it is necessary to identify as many
+water-stressed plants as possible while keeping the number of false
+positives as low as possible (specificity). If the number of
+water-stressed plants is severely overestimated, downstream watering
+systems could damage the plants by overwatering. Conversely, if the
+number of water-stressed plants is underestimated, some plants are
+likely to die because no water-stress is detected (sensitivity).
+Furthermore, the models are required to attain a reasonable level of
+precision as well as good localization of plants. It is difficult to
+determine said levels beforehand, but considering the task at hand as
+well as general object detection and classification benchmarks such as
+\gls{coco} \cite{lin2015}, we expect a \gls{map} of around 40\% and
+precision and recall values of 70\%.
+
+Other basic model requirements are robust object detection and
+classification as well as good generalizability. The prototype should
+be able to function in different environments where different lighting
+conditions, different backgrounds, and different angles do not have an
+impact on model performance. Where feasible, models should be
+evaluated with cross validation to ensure that the performance of the
+model on the test set is a good indicator of its generalizability. In
+the same vein, models should not overfit or underfit the training data
+which also results in bad generalizability.
+
+During the iterative process of training the models as well as for
+evaluation purposes, the models should be interpretable. Especially
+when there is comparatively little training data available, verifying
+if the model is focusing on the \emph{right} parts of an image gives
+insight into its robustness and generalizability which can increase
+trust. Furthermore, if a model is clearly not focusing on the right
+parts of an image, interpretability can help debug where the problem
+lies. Interpretability is thus an important property of any model so
+that the model engineer is able to steer the training and inference
+process in the right direction.
 
 \section{Design}
 \label{sec:design}
@@ -2741,11 +2771,11 @@ In order to improve the aforementioned accuracy values, we perform
 hyperparameter optimization across a wide range of
 parameters. Table~\ref{tab:classifier-hyps} lists the hyperparameters
 and their possible values. Since the number of all combinations of
-values is \num{11520} and each combination is trained for \num{10}
-epochs with a training time of approximately six minutes per
-combination, exhausting the search space would take \num{48} days. Due
-to time limitations, we have chosen to not search exhaustively but to
-pick random combinations instead. Random search works surprisingly
+values is \num{11520} and each combination is trained for ten epochs
+with a training time of approximately six minutes per combination,
+exhausting the search space would take \num{48} days. Due to time
+limitations, we have chosen to not search exhaustively but to pick
+random combinations instead. Random search works surprisingly
 well---especially compared to grid search---in a number of domains, one of
 which is hyperparameter optimization \cite{bergstra2012}.
 
@@ -2782,7 +2812,9 @@ the observation that almost all configurations converge well before
 reaching the tenth epoch. The assumption that a training run with ten
 epochs provides a good proxy for final performance is supported by the
 quick convergence of validation accuracy and loss in
-figure~\ref{fig:classifier-training-metrics}.
+figure~\ref{fig:classifier-training-metrics}. Table~\ref{tab:classifier-final-hyps}
+lists the final hyperparameters which were chosen to train the
+improved model.
 
 \begin{equation}\label{eq:opt-prob}
   1 - (1 - 0.01)^{138} \approx 0.75
@@ -2808,23 +2840,6 @@ figure~\ref{fig:classifier-training-metrics}.
   \label{fig:classifier-hyp-results}
 \end{figure}
 
-Table~\ref{tab:classifier-final-hyps} lists the final hyperparameters
-which were chosen to train the improved model. In order to confirm
-that the model does not suffer from overfitting or is a product of
-chance due to a coincidentally advantageous train/test split, we
-perform stratified $10$-fold cross validation on the dataset. Each
-fold contains 90\% training and 10\% test data and was trained for
-\num{25} epochs. Figure~\ref{fig:classifier-hyp-roc} shows the
-performance of the epoch with the highest $\mathrm{F}_1$-score of each
-fold as measured against the test split. The mean \gls{roc} curve
-provides a robust metric for a classifier's performance because it
-averages out the variability of the evaluation. Each fold manages to
-achieve at least an \gls{auc} of \num{0.94}, while the best fold
-reaches \num{0.99}. The mean \gls{roc} has an \gls{auc} of \num{0.96}
-with a standard deviation of \num{0.02}. These results indicate that
-the model is accurately predicting the correct class and is robust
-against variations in the training set.
-
 \begin{table}
   \centering
   \begin{tabular}{cccc}
@@ -2841,6 +2856,232 @@ against variations in the training set.
     parameters are only required for Adam and not \gls{sgd}.}
   \label{tab:classifier-final-hyps}
 \end{table}
+
+\section{Deployment}
+
+After training of the two models (object detector and classifier), we
+export them to the \gls{onnx}\footnote{\url{https://github.com/onnx}}
+format and move the model files to the Nvidia Jetson Nano. On the
+device, a Flask application (\emph{server}) provides a \gls{rest}
+endpoint from which the results of the most recent prediction can be
+queried. The server periodically performs the following steps:
+
+\begin{enumerate}
+\item Call a binary which takes an image and writes it to a file.
+\item Take the image and detect all plants as well as their status
+  using the two models.
+\item Draw the returned bounding boxes onto the original image.
+\item Number each detection from left to right.
+\item Coerce the prediction for each bounding box into a tuple
+  $\langle I, S, T,\Delta T \rangle$.
+\item Store the image with the bounding boxes and an array of all
+  tuples (predictions) in a dictionary.
+\item Wait two minutes.
+\item Go to step one.
+\end{enumerate}
+
+The binary uses the accelerated GStreamer implementation by Nvidia to
+take an image. The tuple $\langle I, S, T,\Delta T \rangle$ consists of the following
+items: $I$ is the number of the bounding box in the image, $S$ the
+current state from one to ten, $T$ the timestamp of the prediction,
+and $\Delta T$ the time since the state $S$ last fell under three. The
+server performs these tasks asynchronously in the background and is
+always ready to respond to requests with the most recent prediction.
+
+This chapter detailed the training and deployment of the two models
+used for the plant water-stress detection system—the object detector
+and the classifier. Furthermore, we have specified the \gls{api} which
+publishes the results continuously. We will now turn towards the
+evaluation of the two separate models as well as the aggregate model.
+
+\chapter{Evaluation}
+\label{chap:evaluation}
+
+The following sections contain a detailed evaluation of the model in
+various scenarios. First, we describe the test datasets as well as the
+metrics used for assessing model performance. Second, we present the
+results of the evaluation and analyze the behavior of the classifier
+with \gls{grad-cam}. Finally, we discuss the results with respect to
+the research questions defined in section~\ref{sec:motivation}.
+
+\section{Methodology}
+\label{sec:methodology}
+
+In order to evaluate the object detection model and the classification
+model, we analyze their predictions on test datasets. For the object
+detection model, the test dataset is a 10\% split of the original
+dataset which we describe in section~\ref{ssec:obj-train-dataset}. The
+classifier is evaluated with a \num{10}-fold cross validation from the
+original dataset (see section~\ref{ssec:class-train-dataset}). After
+the evaluation of both models individually, we evaluate the model in
+aggregate on a new dataset. This is necessary because the prototype
+uses the two models as if they were one. The aggregate performance is
+ultimately the most important measure to decide if the prototype is
+able to meet the requirements.
+
+The test set for the aggregate model contains \num{640} images which
+were obtained from a google search using the terms \emph{thirsty
+plant}, \emph{wilted plant} and \emph{stressed plant}. Images which
+clearly show one or multiple plants with some amount of visible stress
+were added to the dataset. Care was taken to include plants with
+various degrees of stress and in various locations and lighting
+conditions. The search not only provided images of stressed plants,
+but also of healthy plants. The dataset is biased towards potted
+plants which are commonly put on display in western
+households. Furthermore, many plants, such as succulents, are sought
+after for home environments because of their ease of maintenance. Due
+to their inclusion in the dataset and how they exhibit water stress,
+the test set contains a wide variety of scenarios.
+
+After collecting the images, the aggregate model was run on them to
+obtain initial bounding boxes and classifications for ground truth
+labeling. Letting the model do the work beforehand and then correcting
+the labels allowed to include more images in the test set because they
+could be labeled more easily. Additionally, going over the detections
+and classifications provided a comprehensive view on how the models
+work and what their weaknesses and strengths are. After the labels
+have been corrected, the ground truth of the test set contains
+\num{766} bounding boxes of healthy plants and \num{494} of stressed
+plants.
+
+\section{Results}
+\label{sec:results}
+
+This section presents the results of the evaluation of the constituent
+models as well as the aggregate model. First, we evaluate the object
+detection model before and after hyperparameter optimization. Second,
+we evaluate the performance of the classifier after hyperparameter
+optimization and present the results of \gls{grad-cam}. Finally, we
+evaluate the aggregate model before and after hyperparameter
+optimization.
+
+\subsection{Object Detection}
+\label{ssec:yolo-eval}
+
+Of the \num{91479} images around 10\% were used for the test
+phase. These images contain a total of \num{12238} ground truth
+labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
+harmonic mean of both ($\mathrm{F}_1$-score). The results indicate
+that the model errs on the side of sensitivity because recall is
+higher than precision. Although some detections are not labeled as
+plants in the dataset, if there is a labeled plant in the ground truth
+data, the chance is high that it will be detected. This behavior is in
+line with how the model's detections are handled in practice. The
+detections are drawn on the original image and the user is able to
+check the bounding boxes visually. If there are wrong detections, the
+user can ignore them and focus on the relevant ones instead. A higher
+recall will thus serve the user's needs better than a high precision.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
+    \midrule
+    Plant        &   \num{0.547571} &  \num{0.737866} &  \num{0.628633} &  \num{12238.0} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the object
+    detection model.}
+  \label{tab:yolo-metrics}
+\end{table}
+
+Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
+thresholds of \num{0.5} and \num{0.95}. Predicted bounding boxes with
+an \gls{iou} of less than \num{0.5} are not taken into account for the
+precision and recall values of table~\ref{tab:yolo-metrics}. The lower
+the detection threshold, the more plants are detected. Conversely, a
+higher detection threshold leaves potential plants undetected. The
+precision-recall curves confirm this behavior because the area under
+the curve for the threshold of \num{0.5} is higher than for the
+threshold of \num{0.95} (\num{0.66} versus \num{0.41}). These values
+are combined in COCO's \cite{lin2015} main evaluation metric which is
+the \gls{ap} averaged across the \gls{iou} thresholds from \num{0.5}
+to \num{0.95} in \num{0.05} steps. This value is then averaged across
+all classes and called \gls{map}. The object detection model achieves
+a state-of-the-art \gls{map} of \num{0.5727} for the \emph{Plant} class.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APpt5-pt95.pdf}
+  \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
+    curves for \gls{iou} thresholds of \num{0.5} and \num{0.95}. The
+    \gls{ap} of a specific threshold is defined as the area under the
+    precision-recall curve of that threshold. The \gls{map} across
+    \gls{iou} thresholds from \num{0.5} to \num{0.95} in \num{0.05}
+    steps \gls{map}@0.5:0.95 is \num{0.5727}.}
+  \label{fig:yolo-ap}
+\end{figure}
+
+\subsubsection{Hyperparameter Optimization}
+\label{sssec:yolo-hyp-opt}
+
+Turning to the evaluation of the optimized model on the test dataset,
+table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
+$\mathrm{F}_1$-score for the optimized model. Comparing these metrics
+with the non-optimized version from table~\ref{tab:yolo-metrics},
+precision is significantly higher by more than \num{8.5} percentage
+points. Recall, however, is \num{3.5} percentage points lower. The
+$\mathrm{F}_1$-score is higher by more than \num{3.7} percentage
+points which indicates that the optimized model is better overall
+despite the lower recall. We argue that the lower recall value is a
+suitable trade off for the substantially higher precision considering
+that the non-optimized model's precision is quite low at \num{0.55}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrrr}
+    \toprule
+    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
+    \midrule
+    Plant        &   \num{0.633358} &  \num{0.702811} &  \num{0.666279} &  \num{12238.0} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and $\mathrm{F}_1$-score for the
+    optimized object detection model.}
+  \label{tab:yolo-metrics-hyp}
+\end{table}
+
+The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
+optimized model show that the model draws looser bounding boxes than
+the optimized model. The \gls{ap} for both \gls{iou} thresholds of
+\num{0.5} and \num{0.95} is lower indicating worse performance. It is
+likely that more iterations during evolution would help increase the
+\gls{ap} values as well. Even though the precision and recall values
+from table~\ref{tab:yolo-metrics-hyp} are better, the
+\gls{map}@0.5:0.95 is lower by \num{1.8} percentage points.
+
+\begin{figure}
+  \centering
+  \includegraphics{graphics/APpt5-pt95-final.pdf}
+  \caption[Hyper-parameter optimized object detection AP@0.5 and
+  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of
+    \num{0.5} and \num{0.95}. The \gls{ap} of a specific threshold is
+    defined as the area under the precision-recall curve of that
+    threshold. The \gls{map} across \gls{iou} thresholds from
+    \num{0.5} to \num{0.95} in \num{0.05} steps \gls{map}@0.5:0.95 is
+    \num{0.5546}.}
+  \label{fig:yolo-ap-hyp}
+\end{figure}
+
+\subsection{Classification}
+\label{ssec:classifier-eval}
+
+In order to confirm that the optimized classification model does not
+suffer from overfitting or is a product of chance due to a
+coincidentally advantageous train/test split, we perform stratified
+$10$-fold cross validation on the dataset. Each fold contains 90\%
+training and 10\% test data and was trained for \num{25}
+epochs. Figure~\ref{fig:classifier-hyp-roc} shows the performance of
+the epoch with the highest $\mathrm{F}_1$-score of each fold as
+measured against the test split. The mean \gls{roc} curve provides a
+robust metric for a classifier's performance because it averages out
+the variability of the evaluation. Each fold manages to achieve at
+least an \gls{auc} of \num{0.94}, while the best fold reaches
+\num{0.99}. The mean \gls{roc} has an \gls{auc} of \num{0.96} with a
+standard deviation of \num{0.02}. These results indicate that the
+model is accurately predicting the correct class and is robust against
+variations in the training set.
 
 \begin{figure}
   \centering
@@ -2893,210 +3134,6 @@ $\mathrm{F}_1$-score of \num{1} on the training set.
   \label{fig:classifier-hyp-folds}
 \end{figure}
 
-\section{Deployment}
-
-After training of the two models (object detector and classifier), we
-export them to the \gls{onnx}\footnote{\url{https://github.com/onnx}}
-format and move the model files to the Nvidia Jetson Nano. On the
-device, a Flask application (\emph{server}) provides a \gls{rest}
-endpoint from which the results of the most recent prediction can be
-queried. The server periodically performs the following steps:
-
-\begin{enumerate}
-\item Call a binary which takes an image and writes it to a file.
-\item Take the image and detect all plants as well as their status
-  using the two models.
-\item Draw the returned bounding boxes onto the original image.
-\item Number each detection from left to right.
-\item Coerce the prediction for each bounding box into a tuple
-  $\langle I, S, T,\Delta T \rangle$.
-\item Store the image with the bounding boxes and an array of all
-  tuples (predictions) in a dictionary.
-\item Wait two minutes.
-\item Go to step one.
-\end{enumerate}
-
-The binary uses the accelerated GStreamer implementation by Nvidia to
-take an image. The tuple $\langle I, S, T,\Delta T \rangle$ consists of the following
-items: $I$ is the number of the bounding box in the image, $S$ the
-current state from one to ten, $T$ the timestamp of the prediction,
-and $\Delta T$ the time since the state $S$ last fell under three. The
-server performs these tasks asynchronously in the background and is
-always ready to respond to requests with the most recent prediction.
-
-\chapter{Evaluation}
-\label{chap:evaluation}
-
-The following sections contain a detailed evaluation of the model in
-various scenarios. We employ methods from the field of \gls{xai} such
-as \gls{grad-cam} to get a better understanding of the models'
-abstractions. Finally, we turn to the models' aggregate performance on
-the test set.
-
-\section{Methodology}
-\label{sec:methodology}
-
-Go over the evaluation methodology by explaining the test datasets,
-where they come from, and how they're structured. Explain how the
-testing phase was done and which metrics are employed to compare the
-models to the SOTA.
-
-Estimated 2 pages for this section.
-
-\section{Results}
-\label{sec:results}
-
-Systematically go over the results from the testing phase(s), show the
-plots and metrics, and explain what they contain. 
-
-Estimated 4 pages for this section.
-
-\subsection{Object Detection}
-\label{ssec:yolo-eval}
-
-The following parapraph should probably go into
-section~\ref{sec:development-detection}.
-
-The object detection model was pre-trained on the COCO~\cite{lin2015}
-dataset and fine-tuned with data from the \gls{oid}
-\cite{kuznetsova2020} in its sixth version. Since the full \gls{oid}
-dataset contains considerably more classes and samples than would be
-feasibly trainable on a small cluster of \glspl{gpu}, only images from
-the two classes \emph{Plant} and \emph{Houseplant} have been
-downloaded. The samples from the Houseplant class are merged into the
-Plant class because the distinction between the two is not necessary
-for our model. Furthermore, the \gls{oid} contains not only bounding
-box annotations for object detection tasks, but also instance
-segmentations, classification labels and more. These are not needed
-for our purposes and are omitted as well. In total, the dataset
-consists of 91479 images with a roughly 85/5/10 split for training,
-validation and testing, respectively.
-
-\subsubsection{Test Phase}
-\label{sssec:yolo-test}
-
-Of the 91479 images around 10\% were used for the test phase. These
-images contain a total of 12238 ground truth
-labels. Table~\ref{tab:yolo-metrics} shows precision, recall and the
-harmonic mean of both ($\mathrm{F}_1$-score). The results indicate
-that the model errs on the side of sensitivity because recall is
-higher than precision. Although some detections are not labeled as
-plants in the dataset, if there is a labeled plant in the ground truth
-data, the chance is high that it will be detected. This behavior is in
-line with how the model's detections are handled in practice. The
-detections are drawn on the original image and the user is able to
-check the bounding boxes visually. If there are wrong detections, the
-user can ignore them and focus on the relevant ones instead. A higher
-recall will thus serve the user's needs better than a high precision.
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lrrrr}
-    \toprule
-    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
-    \midrule
-    Plant        &   0.547571 &  0.737866 &  0.628633 &  12238.0 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Precision, recall and $\mathrm{F}_1$-score for the object
-    detection model.}
-  \label{tab:yolo-metrics}
-\end{table}
-
-Figure~\ref{fig:yolo-ap} shows the \gls{ap} for the \gls{iou}
-thresholds of 0.5 and 0.95. Predicted bounding boxes with an \gls{iou}
-of less than 0.5 are not taken into account for the precision and
-recall values of table~\ref{tab:yolo-metrics}. The lower the detection
-threshold, the more plants are detected. Conversely, a higher
-detection threshold leaves potential plants undetected. The
-precision-recall curves confirm this behavior because the area under
-the curve for the threshold of 0.5 is higher than for the threshold of
-0.95 ($0.66$ versus $0.41$). These values are combined in COCO's
-\cite{lin2015} main evaluation metric which is the \gls{ap} averaged
-across the \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps. This
-value is then averaged across all classes and called \gls{map}. The
-object detection model achieves a state-of-the-art \gls{map} of 0.5727
-for the \emph{Plant} class.
-
-\begin{figure}
-  \centering
-  \includegraphics{graphics/APpt5-pt95.pdf}
-  \caption[Object detection AP@0.5 and AP@0.95.]{Precision-recall
-    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
-    specific threshold is defined as the area under the
-    precision-recall curve of that threshold. The \gls{map} across
-    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
-    \textsf{mAP}@0.5:0.95 is 0.5727.}
-  \label{fig:yolo-ap}
-\end{figure}
-
-\subsubsection{Hyperparameter Optimization}
-\label{sssec:yolo-hyp-opt}
-
-This section should be moved to the hyperparameter optimization
-section in the development chapter
-(section~\ref{sec:development-detection}).
-
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lrrrr}
-    \toprule
-    {} &  Precision &    Recall &  $\mathrm{F}_1$-score &  Support \\
-    \midrule
-    Plant        &   0.633358 &  0.702811 &  0.666279 &  12238.0 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Precision, recall and $\mathrm{F}_1$-score for the
-    optimized object detection model.}
-  \label{tab:yolo-metrics-hyp}
-\end{table}
-
-Turning to the evaluation of the optimized model on the test dataset,
-table~\ref{tab:yolo-metrics-hyp} shows precision, recall and the
-$\mathrm{F}_1$-score for the optimized model. Comparing these metrics
-with the non-optimized version from table~\ref{tab:yolo-metrics},
-precision is significantly higher by more than 8.5\%. Recall, however,
-is 3.5\% lower. The $\mathrm{F}_1$-score is higher by more than 3.7\%
-which indicates that the optimized model is better overall despite the
-lower recall. We feel that the lower recall value is a suitable trade
-off for the substantially higher precision considering that the
-non-optimized model's precision is quite low at 0.55.
-
-The precision-recall curves in figure~\ref{fig:yolo-ap-hyp} for the
-optimized model show that the model draws looser bounding boxes than
-the optimized model. The \gls{ap} for both \gls{iou} thresholds of 0.5
-and 0.95 is lower indicating worse performance. It is likely that more
-iterations during evolution would help increase the \gls{ap} values as
-well. Even though the precision and recall values from
-table~\ref{tab:yolo-metrics-hyp} are better, the \textsf{mAP}@0.5:0.95
-is lower by 1.8\%.
-
-\begin{figure}
-  \centering
-  \includegraphics{graphics/APpt5-pt95-final.pdf}
-  \caption[Hyper-parameter optimized object detection AP@0.5 and
-  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
-    and 0.95. The \gls{ap} of a specific threshold is defined as the
-    area under the precision-recall curve of that threshold. The
-    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
-    steps \textsf{mAP}@0.5:0.95 is 0.5546.}
-  \label{fig:yolo-ap-hyp}
-\end{figure}
-
-\subsection{Classification}
-\label{ssec:classifier-eval}
-
-
-\subsubsection{Hyperparameter Optimization}
-\label{sssec:classifier-hyp-opt}
-
-This section should be moved to the hyperparameter optimization
-section in the development chapter
-(section~\ref{sec:development-classification}).
-
-
-
 \subsubsection{Class Activation Maps}
 \label{sssec:classifier-cam}
 
@@ -3110,7 +3147,7 @@ explain why a decision was made in a certain way. The research field
 of \gls{xai} gained significance during the last few years because of
 the development of new methods to peek inside these black boxes.
 
-One such method, \gls{cam}~\cite{zhou2015}, is a popular tool to
+One such method, \gls{cam} \cite{zhou2015}, is a popular tool to
 produce visual explanations for decisions made by
 \glspl{cnn}. Convolutional layers essentially function as object
 detectors as long as no fully-connected layers perform the
@@ -3120,7 +3157,7 @@ be retained until the last layer and used to generate activation maps
 for the predictions.
 
 A more recent approach to generating a \gls{cam} via gradients is
-proposed by~\textcite{selvaraju2020}. Their \gls{grad-cam} approach
+proposed by \textcite{selvaraju2020}. Their \gls{grad-cam} approach
 works by computing the gradient of the feature maps of the last
 convolutional layer with respect to the specified class. The last
 layer is chosen because the authors find that ``[…]  Grad-CAM maps
@@ -3156,7 +3193,6 @@ of the image during classification.
   \label{fig:classifier-cam}
 \end{figure}
 
-
 \subsection{Aggregate Model}
 \label{ssec:aggregate-model}
 
@@ -3167,31 +3203,6 @@ complete pipeline from gathering detections of potential plants in an
 image and forwarding them to the classifier to obtaining the results
 as either healthy or stressed with their associated confidence scores.
 
-The test set contains 640 images which were obtained from a google
-search using the terms \emph{thirsty plant}, \emph{wilted plant} and
-\emph{stressed plant}. Images which clearly show one or multiple
-plants with some amount of visible stress were added to the
-dataset. Care was taken to include plants with various degrees of
-stress and in various locations and lighting conditions. The search
-not only provided images of stressed plants, but also of healthy
-plants due to articles, which describe how to care for plants, having
-a banner image of healthy plants. The dataset is biased towards potted
-plants which are commonly put on display in western
-households. Furthermore, many plants, such as succulents, are sought
-after for home environments because of their ease of maintenance. Due
-to their inclusion in the dataset and how they exhibit water stress,
-the test set nevertheless contains a wide variety of scenarios.
-
-After collecting the images, the aggregate model was run on them to
-obtain initial bounding boxes and classifications for ground truth
-labeling. Letting the model do the work beforehand and then correcting
-the labels allowed to include more images in the test set because they
-could be labeled more easily. Additionally, going over the detections
-and classifications provided a comprehensive view on how the models
-work and what their weaknesses and strengths are. After the labels
-have been corrected, the ground truth of the test set contains 766
-bounding boxes of healthy plants and 494 of stressed plants.
-
 \subsection{Non-optimized Model}
 \label{ssec:model-non-optimized}
 
@@ -3199,13 +3210,13 @@ bounding boxes of healthy plants and 494 of stressed plants.
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  precision &  recall &  $\mathrm{F}_{1}$-score &  support \\
+    {} &  Precision &  Recall &  $\mathrm{F}_{1}$-score &  Support \\
     \midrule
-    Healthy      &      0.665 &   0.554 &     0.604 &    766 \\
-    Stressed     &      0.639 &   0.502 &     0.562 &    494 \\
-    micro avg    &      0.655 &   0.533 &     0.588 &   1260 \\
-    macro avg    &      0.652 &   0.528 &     0.583 &   1260 \\
-    weighted avg &      0.655 &   0.533 &     0.588 &   1260 \\
+    Healthy      &      \num{0.665} &   \num{0.554} &     \num{0.604} &    \num{766} \\
+    Stressed     &      \num{0.639} &   \num{0.502} &     \num{0.562} &    \num{494} \\
+    Micro Avg    &      \num{0.655} &   \num{0.533} &     \num{0.588} &   \num{1260} \\
+    Macro Avg    &      \num{0.652} &   \num{0.528} &     \num{0.583} &   \num{1260} \\
+    Weighted Avg &      \num{0.655} &   \num{0.533} &     \num{0.588} &   \num{1260} \\
     \bottomrule
   \end{tabular}
   \caption{Precision, recall and $\mathrm{F}_1$-score for the
@@ -3216,33 +3227,34 @@ bounding boxes of healthy plants and 494 of stressed plants.
 Table~\ref{tab:model-metrics} shows precision, recall and the
 $\mathrm{F}_1$-score for both classes \emph{Healthy} and
 \emph{Stressed}. Precision is higher than recall for both classes and
-the $\mathrm{F}_1$-score is at 0.59. Unfortunately, these values do
-not take the accuracy of bounding boxes into account and thus have
+the $\mathrm{F}_1$-score is at \num{0.59}. Unfortunately, these values
+do not take the accuracy of bounding boxes into account and thus have
 only limited expressive power.
 
 Figure~\ref{fig:aggregate-ap} shows the precision and recall curves
 for both classes at different \gls{iou} thresholds. The left plot
-shows the \gls{ap} for each class at the threshold of 0.5 and the
-right one at 0.95. The \gls{map} is 0.3581 and calculated across all
-classes as the median of the \gls{iou} thresholds from 0.5 to 0.95 in
-0.05 steps. The cliffs at around 0.6 (left) and 0.3 (right) happen at
-a detection threshold of 0.5. The classifier's last layer is a softmax
-layer which necessarily transforms the input into a probability of
-showing either a healthy or stressed plant. If the probability of an
-image showing a healthy plant is below 0.5, it is no longer classified
-as healthy but as stressed. The threshold for discriminating the two
-classes lies at the 0.5 value and is therefore the cutoff for either
-class.
+shows the \gls{ap} for each class at the threshold of \num{0.5} and
+the right one at \num{0.95}. The \gls{map} is \num{0.3581} and
+calculated across all classes as the median of the \gls{iou}
+thresholds from \num{0.5} to \num{0.95} in \num{0.05} steps. The
+cliffs at around \num{0.6} (left) and \num{0.3} (right) happen at a
+detection threshold of \num{0.5}. The classifier's last layer is a
+softmax layer which necessarily transforms the input into a
+probability of showing either a healthy or stressed plant. If the
+probability of an image showing a healthy plant is below \num{0.5}, it
+is no longer classified as healthy but as stressed. The threshold for
+discriminating the two classes lies at the \num{0.5} value and is
+therefore the cutoff for either class.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/APmodel-model-optimized-relabeled.pdf}
   \caption[Aggregate model AP@0.5 and AP@0.95.]{Precision-recall
-    curves for \gls{iou} thresholds of 0.5 and 0.95. The \gls{ap} of a
-    specific threshold is defined as the area under the
+    curves for \gls{iou} thresholds of \num{0.5} and \num{0.95}. The
+    \gls{ap} of a specific threshold is defined as the area under the
     precision-recall curve of that threshold. The \gls{map} across
-    \gls{iou} thresholds from 0.5 to 0.95 in 0.05 steps
-    \textsf{mAP}@0.5:0.95 is 0.3581.}
+    \gls{iou} thresholds from \num{0.5} to \num{0.95} in \num{0.05}
+    steps \gls{map}@0.5:0.95 is \num{0.3581}.}
   \label{fig:aggregate-ap}
 \end{figure}
 
@@ -3262,13 +3274,13 @@ section~\ref{ssec:aggregate-model}.
   \centering
   \begin{tabular}{lrrrr}
     \toprule
-    {} &  precision &  recall &  $\mathrm{F}_{1}$-score &  support \\
+    {} &  Precision &  Recall &  $\mathrm{F}_{1}$-score &  Support \\
     \midrule
     Healthy      &      0.711 &   0.555 &     0.623 &    766 \\
     Stressed     &      0.570 &   0.623 &     0.596 &    494 \\
-    micro avg    &      0.644 &   0.582 &     0.611 &   1260 \\
-    macro avg    &      0.641 &   0.589 &     0.609 &   1260 \\
-    weighted avg &      0.656 &   0.582 &     0.612 &   1260 \\
+    Micro Avg    &      0.644 &   0.582 &     0.611 &   1260 \\
+    Macro Avg    &      0.641 &   0.589 &     0.609 &   1260 \\
+    Weighted Avg &      0.656 &   0.582 &     0.612 &   1260 \\
     \bottomrule
   \end{tabular}
   \caption{Precision, recall and $\mathrm{F}_1$-score for the
@@ -3278,49 +3290,74 @@ section~\ref{ssec:aggregate-model}.
 
 Table~\ref{tab:model-metrics-hyp} shows precision, recall and
 $\mathrm{F}_1$-score for the optimized model on the same test dataset
-of 640 images. All of the metrics are better for the optimized
+of \num{640} images. All of the metrics are better for the optimized
 model. In particular, precision for the healthy class could be
 improved significantly while recall remains at the same level. This
 results in a better $\mathrm{F}_1$-score for the healthy
 class. Precision for the stressed class is lower with the optimized
-model, but recall is significantly higher (0.502 vs. 0.623). The
-higher recall results in a 3\% gain for the $\mathrm{F}_1$-score in
-the stressed class. Overall, precision is the same but recall has
-improved significantly, which also results in a noticeable improvement
-for the average $\mathrm{F}_1$-score across both classes.
+model, but recall is significantly higher (\num{0.502}
+vs. \num{0.623}). The higher recall results in a 3 percentage point
+gain for the $\mathrm{F}_1$-score in the stressed class. Overall,
+precision is the same but recall has improved significantly, which
+also results in a noticeable improvement for the average
+$\mathrm{F}_1$-score across both classes.
 
 \begin{figure}
   \centering
   \includegraphics{graphics/APModel-model-original-relabeled.pdf}
   \caption[Optimized aggregate model AP@0.5 and
-  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of 0.5
-    and 0.95. The \gls{ap} of a specific threshold is defined as the
-    area under the precision-recall curve of that threshold. The
-    \gls{map} across \gls{iou} thresholds from 0.5 to 0.95 in 0.05
-    steps \textsf{mAP}@0.5:0.95 is 0.3838.}
+  AP@0.95.]{Precision-recall curves for \gls{iou} thresholds of
+    \num{0.5} and \num{0.95}. The \gls{ap} of a specific threshold is
+    defined as the area under the precision-recall curve of that
+    threshold. The \gls{map} across \gls{iou} thresholds from
+    \num{0.5} to \num{0.95} in \num{0.05} steps \gls{map}@0.5:0.95 is
+    \num{0.3838}.}
   \label{fig:aggregate-ap-hyp}
 \end{figure}
 
 Figure~\ref{fig:aggregate-ap-hyp} confirms the performance increase of
 the optimized model established in
-table~\ref{tab:model-metrics-hyp}. The \textsf{mAP}@0.5 is higher for
+table~\ref{tab:model-metrics-hyp}. The \gls{map}@0.5 is higher for
 both classes, indicating that the model better detects plants in
-general. The \textsf{mAP}@0.95 is slightly lower for the healthy
-class, which means that the confidence for the healthy class is
-slightly lower compared to the non-optimized model. The result is that
-more plants are correctly detected and classified overall, but the
+general. The \gls{map}@0.95 is slightly lower for the healthy class,
+which means that the confidence for the healthy class is slightly
+lower compared to the non-optimized model. The result is that more
+plants are correctly detected and classified overall, but the
 confidence scores tend to be lower with the optimized model. The
-\textsf{mAP}@0.5:0.95 could be improved by about 0.025.
+\gls{map}@0.5:0.95 could be improved by about \num{0.025}.
 
 \section{Discussion}
 \label{sec:discussion}
 
-Pull out discussion parts from current results chapter
-(~\ref{sec:results}) and add a section about achievement of the aim
-of the work discussed in motivation and problem statement section
-(~\ref{sec:methods}).
+Overall, the performance of the individual models is state of the art
+when compared with object detection benchmarks such as the \gls{coco}
+dataset. The \gls{map} of \num{0.5727} for the object detection model
+is in line with most other object detectors. The hyperparameter
+optimization of the object detector, however, raises further
+questions. The \gls{map} of the optimized model is \num{1.8}
+percentage points lower than the non-optimized version. Even though
+precision and recall of the model improved, the bounding boxes are
+worse. We argue that the hyperparameter optimization has to be run for
+more than \num{87} iterations to provide better results. Searching for
+the optimal hyperparameters with genetic methods usually requires many
+more iterations than that because it takes a significant amount of
+time to evolve the parameters \emph{away} from the starting
+conditions.
 
-Estimated 2 pages for this chapter.
+Furthermore, we only train each iteration for three epochs and assume
+that those already provide a good measure of the model's
+performance. It can be seen in figure~\ref{fig:hyp-opt-fitness} that
+the fitness during the first few epochs exhibits some amount of
+variation before it stabilizes. In fact, the fitness of the
+non-optimized object detector (figure~\ref{fig:fitness}) only achieves
+a stable value at epoch \num{50}. An optimized model is often able to
+converge faster which is supported by
+figure~\ref{fig:hyp-opt-fitness}, but even in that case it takes more
+than ten epochs to stabilize the training process.
+
+The optimized classifier
+shows very strong performance in the \num{10}-fold cross validation
+where it achieves a mean \gls{auc} of \num{0.96}.
 
 \chapter{Conclusion}
 \label{chap:conclusion}
