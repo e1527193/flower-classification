@@ -2901,8 +2901,8 @@ The following sections contain a detailed evaluation of the model in
 various scenarios. First, we describe the test datasets as well as the
 metrics used for assessing model performance. Second, we present the
 results of the evaluation and analyze the behavior of the classifier
-with \gls{grad-cam}. Finally, we discuss the results with respect to
-the research questions defined in section~\ref{sec:motivation}.
+with \gls{grad-cam}. Finally, we discuss the results and identify the
+limitations of our approach.
 
 \section{Methodology}
 \label{sec:methodology}
@@ -3296,11 +3296,11 @@ improved significantly while recall remains at the same level. This
 results in a better $\mathrm{F}_1$-score for the healthy
 class. Precision for the stressed class is lower with the optimized
 model, but recall is significantly higher (\num{0.502}
-vs. \num{0.623}). The higher recall results in a 3 percentage point
-gain for the $\mathrm{F}_1$-score in the stressed class. Overall,
-precision is the same but recall has improved significantly, which
-also results in a noticeable improvement for the average
-$\mathrm{F}_1$-score across both classes.
+vs. \num{0.623}). The higher recall results in a three percentage
+point gain for the $\mathrm{F}_1$-score in the stressed
+class. Overall, precision is the same but recall has improved
+significantly, which also results in a noticeable improvement for the
+average $\mathrm{F}_1$-score across both classes.
 
 \begin{figure}
   \centering
@@ -3332,8 +3332,39 @@ confidence scores tend to be lower with the optimized model. The
 Overall, the performance of the individual models is state of the art
 when compared with object detection benchmarks such as the \gls{coco}
 dataset. The \gls{map} of \num{0.5727} for the object detection model
-is in line with most other object detectors. The hyperparameter
-optimization of the object detector, however, raises further
+is in line with most other object detectors. Even though the results
+are reasonably good, we argue that they could be better for the
+purposes of plant detection in the context of this work. The \gls{oid}
+was labeled by humans and thus exhibits characteristics which are not
+optimal for our purposes. The class \emph{plant} does not seem to have
+been defined rigorously. Large patches of grass, for example, are
+labeled with large bounding boxes. Trees are sometimes labeled, but
+only if their size suggests that they could be bushes or similar types
+of plant. Large corn fields are also labeled as plants, but again with
+one large bounding box. If multiple plants are densely packed, the
+annotators often label them as belonging to one plant and thus one
+bounding box. Sometimes the effort has been made to delineate plants
+accurately and sometimes not which results in inconsistent bounding
+boxes. These inconsistencies and peculiarities as well as the always
+present error rate introduced by humans complicate the training
+process of our object detection model.
+
+During a random sampling of labels and predictions of the object
+detection model on the validation set, it became clear that the model
+tries to always correctly label each individual plant when it is faced
+with an image of closely packed plants. For images where one bounding
+box encapsulates all of the plants, the \gls{iou} of the model's
+predictions is too far off from the ground truth which lowers the
+\gls{map} accordingly. Since arguably all datasets will have some
+inconsistencies and errors in their ground truth, model engineers can
+only hope that the sheer amount of data available evens out these
+problems. In our case, the \num{79204} training images with
+\num{284130} bounding boxes might be enough to provide the model with
+a smooth distribution from which to learn from, but unless every
+single label is analyzed and systematically categorized this remains
+speculation.
+
+The hyperparameter optimization of the object detector raises further
 questions. The \gls{map} of the optimized model is \num{1.8}
 percentage points lower than the non-optimized version. Even though
 precision and recall of the model improved, the bounding boxes are
@@ -3342,7 +3373,8 @@ more than \num{87} iterations to provide better results. Searching for
 the optimal hyperparameters with genetic methods usually requires many
 more iterations than that because it takes a significant amount of
 time to evolve the parameters \emph{away} from the starting
-conditions.
+conditions. However, as mentioned before, our time constraints only
+allowed optimization to run for \num{87} iterations.
 
 Furthermore, we only train each iteration for three epochs and assume
 that those already provide a good measure of the model's
@@ -3353,11 +3385,79 @@ non-optimized object detector (figure~\ref{fig:fitness}) only achieves
 a stable value at epoch \num{50}. An optimized model is often able to
 converge faster which is supported by
 figure~\ref{fig:hyp-opt-fitness}, but even in that case it takes more
-than ten epochs to stabilize the training process.
+than ten epochs to stabilize the training process. We argue that three
+epochs are likely not enough to support the hyperparameter
+optimization process. Unfortunately, if the number of epochs per
+iteration is increased by one, the complete number of epochs over all
+iterations increases by the total number of iterations. Every
+additional epoch thus contributes to a significantly longer
+optimization time. For our purposes, \num{87} iterations and three
+epochs per iteration are close to the limit. Further iterations or
+epochs were not feasible within our time budget.
 
-The optimized classifier
-shows very strong performance in the \num{10}-fold cross validation
-where it achieves a mean \gls{auc} of \num{0.96}.
+The optimized classifier shows a strong performance in the
+\num{10}-fold cross validation where it achieves a mean \gls{auc} of
+\num{0.96}. The standard deviation of the \gls{auc} across all folds
+is small enough at \num{0.02} to indicate that the model generalizes
+well to unseen data. We are confident in these results provided that
+the ground truth was labeled correctly. The \gls{cam}
+(figure~\ref{fig:classifier-cam}) constitute another data point in
+support of this conclusion. Despite these points, the results come
+with a caveat. The ground truth was \emph{not} created by an expert in
+botany or related sciences and thus could contain a significant amount
+of errors. Even though we manually verified most of the labels in the
+dataset and agree with the labels, we are also \emph{not} expert
+labelers.
+
+The aggregate model achieves a \gls{map} of \num{0.3581} before and
+\num{0.3838} after optimization. If we look at the common benchmarks
+(\gls{coco}) again where the state of the art achieves \gls{map}
+values of between \num{0.5} and \num{0.58}, we are confident that our
+results are reasonably good. Comparing the \gls{map} values directly
+is not a clear indicator of how good the model is or should be because
+it is an apples to oranges comparison due to the different test
+datasets. Nevertheless, the task of detecting objects and classifying
+them is similar across both datasets and the comparison thus provides
+a rough guideline for the performance of our prototype. We argue that
+the task of classifying the plants into healthy and stressed on top of
+detecting plants is a more difficult task than \emph{just} object
+detection. Additionally to having to discriminate between different
+common objects, our model also has to discriminate between plant
+states which requires further knowledge. The lower \gls{map} values
+are thus attributable to the more difficult task posed by our research
+questions.
+
+We do not know the reason for the better performance of the optimized
+versus the non-optimized aggregate model. Evidently, the optimized
+version should be better, but considering that the optimized object
+detector performs worse in terms of \gls{map}, we would expect to see
+this reflected in the aggregate model as well. It is possible that the
+optimized classifier balances out the worse object detector and even
+provides better results beyond that. Another possibility is that the
+better performance is in large part due to the increased precision and
+recall of the optimized object detector. In fact, these two
+possibilities taken together might explain the optimized model
+results. Nevertheless, we caution against putting too much weight on
+the \num{2.5} percentage point \gls{map} increase because both models
+have been optimized \emph{separately} instead of \emph{in
+aggregate}. By optimizing the models separately to increase the
+accuracy on a new dataset instead of optimizing them in aggregate, we
+do not take the dependence between the two models into account. As an
+example, it could be the case that new, better configurations of both
+models are worse in aggregate than some other option would be. Even
+though both models are \emph{locally} better (w.r.t. their separate
+tasks), they are worse \emph{globally} when taken together to solve
+both tasks in series. A better approach to optimization would be to
+either combine both models into one and only optimize once or to
+introduce a different metric against which both models are optimized.
+
+Apart from these concerns, both models on their own as well as in
+aggregate are a promising first step into plant state
+classification. The results demonstrate that solving the task is
+feasible and that good results can be obtained with off-the-shelf
+object detectors and classifiers. As a consequence, the baseline set
+forth in this work is a starting point for further research in this
+direction.
 
 \chapter{Conclusion}
 \label{chap:conclusion}
