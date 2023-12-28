@@ -1,4 +1,12 @@
 def convert_to_yolo(bbox, width, height):
+    """Transform bounding boxes in xmin, ymin, xmax, ymax format to
+    YOLO format.
+
+    :param bbox: bounding box in xmin, ymin, xmax, ymax format
+    :param width: width of the image
+    :param height: height of the image
+    :returns List[int]: bounding box in YOLO format
+    """
     modified = bbox.copy()
     modified['xmin%'] = round(bbox['xmin'] / width * 100, 2)
     modified['ymin%'] = round(bbox['ymin'] / height * 100, 2)

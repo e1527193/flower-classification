@@ -21,6 +21,8 @@ string video_pipeline(int capture_width, int capture_height, int framerate,
          "appsink";
 }
 
+// Calls nvarguscamerasrc to take a 1s video at maximum resolution,
+// flips the video and then captures one image and writes it to disk.
 int main() {
   int capture_width = 3264;
   int capture_height = 2464;

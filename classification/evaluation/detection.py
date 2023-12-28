@@ -63,7 +63,6 @@ def detect_yolo_only(img_path: str, yolo_path: str):
     :param str yolo_path: path to yolo weights
     :returns: tuple of recent image and dict of bounding boxes and
     their predictions
-
     """
     img = cv2.imread(img_path)
 
@@ -111,13 +110,6 @@ def classify(resnet_path, img):
 
     session.run_with_iobinding(io_binding)
     out = torch.tensor(io_binding.copy_outputs_to_cpu()[0])
-
-    # Do inference
-    # session = onnxruntime.InferenceSession(resnet_path)
-    # outname = [i.name for i in session.get_outputs()]
-    # inname = [i.name for i in session.get_inputs()]
-    # inp = {inname[0]: batch.numpy()}
-    # out = torch.tensor(np.array(session.run(outname, inp)))[0]
 
     # Apply softmax to get percentage confidence of classes
     out = torch.nn.functional.softmax(out, dim=1)[0] * 100
@@ -201,12 +193,9 @@ def get_boxes(yolo_path, image):
 
     session.run_with_iobinding(io_binding)
     outs = torch.tensor(io_binding.copy_outputs_to_cpu()[0])
-    # out = torch.tensor(np.array(session.run(outname, inp)))[0]
-    # print(out.shape)
 
     # Apply NMS to results
     preds_nms = apply_nms([outs])[0]
-    #preds_nms = outs
 
     # Convert boxes from resized img to original img
     xyxy_boxes = preds_nms[:, [1, 2, 3, 4]]  # xmin, ymin, xmax, ymax

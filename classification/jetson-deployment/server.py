@@ -25,6 +25,16 @@ pred = manager.dict()
 
 
 def get_pred():
+    """Calls the detection and classification models on current.jpg
+    and stores the predictions in the global variable `pred` in the
+    following format:
+    {
+      'image': base64 encoded image,
+      '0': [state, timestamp, time since state < 3],
+      '1': [state, timestamp, time since state < 3],
+      ⋮
+    }
+    """
     tmp = deepcopy(pred)
     take_image()
     logging.debug('Starting image classification')
@@ -40,15 +50,6 @@ def get_pred():
     logging.debug(
         'Finished drawing bounding boxes. Saving to current_bbox.jpg ...')
     cv2.imwrite('current_bbox.jpg', bbox_img)
-
-    # Clear superfluous bboxes if less detected
-    # if len(preds) < len(pred):
-    #     logging.debug(
-    #         'Current round contains less bboxes than previous round: old: %s\nnew: %s',
-    #         json.dumps(preds.copy()), json.dumps(pred.copy()))
-    #     for key in pred:
-    #         if key not in preds:
-    #             pred.pop(key)
 
     pred.clear()
     for idx, row in preds.iterrows():

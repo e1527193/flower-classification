@@ -2,6 +2,14 @@ import cv2
 
 
 def draw_boxes(image, bboxes):
+    """Draw bounding boxes in xmin, ymin, xmax, ymax format onto
+    image.
+
+    :param image: opencv2 image object in BGR
+    :param List bboxes: bounding boxes in xmin, ymin, xmax, ymax
+    format
+    :returns: img with bounding boxes drawn
+    """
     img = image.copy()
     for idx, bbox in enumerate(bboxes):
         xmin, ymin, xmax, ymax = bbox
