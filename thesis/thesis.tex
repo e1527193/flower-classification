@@ -64,7 +64,7 @@
 \setadvisor{Ao.Univ.-Prof. Dr.}{Horst Eidenberger}{}{male}
 
 \setregnumber{01527193}
-\setdate{27}{12}{2023} % Set date with 3 arguments: {day}{month}{year}.
+\setdate{30}{12}{2023} % Set date with 3 arguments: {day}{month}{year}.
 \settitle{\thesistitle}{Plant Detection and State Classification with Machine Learning} % Sets English and German version of the title (both can be English or German).
 
 % Select the thesis type: bachelor / master / doctor / phd-school.
@@ -190,36 +190,90 @@ Challenge}
 
 \begin{kurzfassung}
   Wassermangel in Zimmerpflanzen kann ihr Wachstum negativ
-  beeinflussen. Derzeitige Lösungen zur Überwachung von Wasserstress
-  sind hauptsächlich für landwirtschaftliche Anwendungen
-  vorgesehen. Wir präsentieren den ersten Deep-Learning-basierten
-  Prototyp zur Klassifizierung des Wasserstresslevels gängiger
-  Zimmerpflanzen. Unser zweistufiger Ansatz besteht aus einem
-  Erkennungs- und einem Klassifizierungsschritt und wird anhand eines
-  eigens erstellten Datensatzes evaluiert. Die Parameter des Modells
-  werden mit gängigen Methoden der Hyperparameteroptimierung
-  ausgewählt. Der Prototyp wird auf einem embedded Computer
-  bereitgestellt, der eine autonome Pflanzenüberwachung
-  ermöglicht. Die Vorhersagen unseres Modells werden kontinuierlich
-  über eine API veröffentlicht, wodurch nachgelagerte
-  Bewässerungssysteme automatisch Zimmerpflanzen ohne menschliche
-  Intervention bewässern können. Unser optimiertes Modell erreicht
-  einen mAP-Wert von \num{0.3838}.
+  beeinflussen. Bestehende Lösungen zur Überwachung von Wasserstress
+  sind in erster Linie für landwirtschaftliche Kontexte gedacht, bei
+  denen nur eine kleine Auswahl an Pflanzen von Interesse ist. Bislang
+  gab es keine Forschung im Haushaltskontext, wo die Vielfalt der
+  Pflanzen wesentlich größer ist und es daher schwieriger ist,
+  Wasserstress zu erfassen. Außerdem beinhalten derzeitige Ansätze
+  entweder keinen eigenen Pflanzenerkennungsschritt oder es kommt
+  traditionelle Feature Extraction zur Anwendung. Wir entwickeln einen
+  Prototyp zur Erkennung und nachfolgender Klassifizierung des
+  Wasserstresses von Pflanzen, der ausschließlich auf Deep Learning
+  basiert.
+
+  Unser zweistufiger Ansatz besteht aus einem Erkennungs- und einem
+  Klassifizierungsschritt. In der Erkennungsphase werden die Pflanzen
+  identifiziert und aus dem Originalbild ausgeschnitten. Die
+  Ausschnitte werden an das Klassifizierungsmodell weitergeleitet, das
+  die Wahrscheinlichkeit für Wasserstress ausgibt. Wir verwenden
+  Transfer Learning und führen die Feinabstimmung der beiden Modelle
+  anhand zweier Datensätze durch. Jedes Modell wird mithilfe einer
+  Hyperparameter-Suche optimiert und zunächst einzeln und dann im
+  Aggregat auf einem eigens erstellten Datensatz evaluiert. Wir
+  stellen beide Modelle auf einem Nvidia Jetson Nano bereit, der in
+  der Lage ist, Pflanzen autonom über eine angeschlossene Kamera zu
+  klassifizieren. Die Ergebnisse der Pipeline werden kontinuierlich
+  über eine API veröffentlicht. Nachgeschaltete Bewässerungssysteme
+  können die Vorhersagen zum Wasserstress nutzen, um die Hauspflanzen
+  ohne menschliches Zutun zu bewässern.
+
+  Die beiden Modelle zusammengenommen erreichen einen mAP-Wert von
+  \num{0.3581} in der nicht optimierten Version. Beide Modelle sind in
+  der Lage, mit verschiedenen Lichtverhältnissen, verschiedenen
+  Blickwinkeln und einer Vielfalt an Pflanzen umzugehen. Die
+  optimierte Pipeline erreicht einen mAP-Wert von \num{0.3838}. Im
+  Vergleich zur nicht optimierten Version ist die Genauigkeit für
+  nicht gestresste Pflanzen höher, aber geringer für die gestresste
+  Klasse. Die Spezifität für die nicht gestresste Klasse bleibt im
+  Vergleich zur nicht optimierten Basislinie auf demselben Niveau, ist
+  aber um \num{12.1} Prozentpunkte höher für die gestresste
+  Klasse. Das gewichtete harmonische Mittel ($F_{1}$-score) für beide
+  Klassen konnte um \num{2.4} Prozentpunkte verbessert werden. Diese
+  Ergebnisse zeigen, dass unser zweistufiger Ansatz funktioniert und
+  ein vielversprechender erster Schritt zur Klassifizierung des
+  Zustands von Zimmerpflanzen ist.
 \end{kurzfassung}
 
 \begin{abstract}
   Water deficiency in household plants can adversely affect
   growth. Existing solutions to monitor water stress are primarily
-  intended for agricultural contexts. We present the first deep
-  learning based prototype to classify water stress of common
-  household plants. Our two-stage approach consists of a detection and
-  a classification step and is evaluated on a new dataset. The model
-  parameters are optimized with a hyperparameter search. The prototype
-  is deployed to an embedded device enabling autonomous plant
-  monitoring. The predictions of our model are published continuously
-  via an API, allowing downstream watering systems to automatically
-  water household plants without human intervention. Our optimized
-  model achieves a mAP of \num{0.3838} on unseen images.
+  intended for agricultural contexts where only a small selection of
+  plants are of interest. To date, there has been no research in
+  household settings where the variety of plants is considerably
+  higher and it is thus more difficult to obtain accurate measures of
+  water stress. Furthermore, current approaches either do not detect
+  plants in images first or use traditional feature extraction for
+  plant detection. We develop a prototype to detect plants and
+  classify them into water-stressed or not using deep learning based
+  methods exclusively.
+
+  Our two-stage approach consists of a detection and a classification
+  step. In the detection step, plants are identified and cut out from
+  the original image. The cutouts are passed to the classifier which
+  outputs a probability for water stress. We use transfer learning to
+  start from a robust base and fine-tune both models for their
+  respective tasks. Each model is optimized using hyperparameter
+  optimization and first evaluated individually and then in aggregate
+  on a custom dataset. We deploy both models to an Nvidia Jetson Nano
+  which is able to survey plants autonomously via an attached
+  camera. The results of the pipeline are published continuously via
+  an API. Downstream watering systems can use the water stress
+  predictions to water the plants without human intervention.
+
+  The two models in aggregate achieve a mAP of \num{0.3581} for the
+  non-optimized version. Both constituent models have robust feature
+  extraction capabilities and are able to cope with various lighting
+  conditions, different angles and a wide variety of household
+  plants. The optimized pipeline achieves a mAP of \num{0.3838} on
+  unseen images with higher precision for the non-stressed but lower
+  precision for the stressed class. Recall for the non-stressed class
+  remains at the same level compared to the non-optimized baseline but
+  is \num{12.1} percentage points higher for the stressed class. The
+  weighted $F_{1}$-score across both classes was improved by \num{2.4}
+  percentage points. These results show that our two-stage approach is
+  viable and a promising first step for plant state classification for
+  household plants.
 \end{abstract}
 
 % Select the language of the thesis, e.g., english or naustrian.
@@ -466,7 +520,7 @@ models. Chapter~\ref{chap:implementation} expands on how the datasets
 are used during training as well as how the prototype publishes its
 classification results. Chapter~\ref{chap:evaluation} shows the
 results of the testing phases as well as the performance of the
-aggregate model. Futhermore, the results are compared with the
+aggregate model. Furthermore, the results are compared with the
 expectations and it is discussed whether they are explainable in the
 context of the task at hand as well as benchmark results from other
 datasets (\gls{coco} \cite{lin2015}). Chapter~\ref{chap:conclusion}
@@ -496,12 +550,14 @@ The term machine learning was first used by \textcite{samuel1959} in
 1959 in the context of teaching a machine how to play the game
 Checkers. \textcite{mitchell1997a} defines learning in the context of
 programs as:
-\begin{quote}
+
+\begin{quote}{\cite[p.2]{mitchell1997a}}
   A computer program is said to \textbf{learn} from experience $E$
   with respect to some class of tasks $T$ and performance measure $P$,
   if its performance at tasks in $T$, as measured by $P$, improves
-  with experience $E$. \cite[p.2]{mitchell1997a}
+  with experience $E$.
 \end{quote}
+
 In other words, if the aim is to learn to win at a game, the
 performance measure $P$ is defined as the ability to win at that
 game. The tasks in $T$ are playing the game multiple times, and the
@@ -509,7 +565,7 @@ experience $E$ is gained by letting the program play the game against
 itself.
 
 Machine learning is thought to be a sub-field of \gls{ai}. \gls{ai} is
-a more general term for the scientific endeavour of creating things
+a more general term for the scientific endeavor of creating things
 which possess the kind of intelligence we humans have. Since those
 things will not have been created \emph{naturally}, their intelligence
 is termed \emph{artificial}. Within the field of \gls{ai} there have
@@ -628,7 +684,7 @@ The earliest attempts at describing learning machines were by
 \textcite{mcculloch1943} with the idea of the \emph{perceptron}. This
 idea was implemented in a more general sense by
 \textcite{rosenblatt1957,rosenblatt1962} as a physical machine. At its
-core, the perceptron is the simplest artifical neural network with
+core, the perceptron is the simplest artificial neural network with
 only one neuron in the center. The neuron takes all its inputs,
 aggregates them with a weighted sum and outputs 1 if the result is
 above some threshold $\theta$ and 0 if it is not (see
@@ -648,7 +704,7 @@ variables.
 
 Due to the inherent limitations of perceptrons to only be able to
 classify linearly separable data, \glspl{mlp} are the bedrock of
-modern artifical neural networks. By adding an input layer, a hidden
+modern artificial neural networks. By adding an input layer, a hidden
 layer, and an output layer as well as requiring the activation
 function of each neuron to be non-linear, a \gls{mlp} can classify
 also non-linear data. Every neuron in each layer is fully connected to
@@ -657,7 +713,7 @@ straightforward case of a feedforward
 network. Figure~\ref{fig:neural-network} shows the skeleton of a
 \gls{mlp}.
 
-There are two types of artifical neural networks: feedforward and
+There are two types of artificial neural networks: feedforward and
 recurrent networks. Their names refer to the way information flows
 through the network. In a feedforward network, the information enters
 the network and flows only uni-directionally to the output nodes. In a
@@ -700,7 +756,7 @@ The simplest activation function is the identity function. It is defined as
 
 \begin{equation}
   \label{eq:identity}
-  g(x) = x
+  g(x) = x.
 \end{equation}
 
 If all layers in an artificial neural network use the identity
@@ -750,14 +806,14 @@ logistic function in machine learning. It is defined as
 
 \begin{equation}
   \label{eq:sigmoid}
-  \sigma(x) = \frac{1}{1 + e^{-x}}
+  \sigma(x) = \frac{1}{1 + e^{-x}}.
 \end{equation}
 
 It has a characteristic S-shaped curve, mapping each input value to a
 number between $0$ and $1$, regardless of input size. This
 \emph{squashing} property is particularly desirable for binary
 classification problems because the outputs can be interpreted as
-probabilities. Additionally to the squashing propery, it is also a
+probabilities. Additionally to the squashing property, it is also a
 saturating function because large values map to $1$ and very small
 values to $0$. If a learning algorithm has to update the weights in
 the network, saturated neurons are very inefficient and difficult to
@@ -805,8 +861,8 @@ state, the model's capability of learning new patterns is
 diminished. To address this problem, there are two possibilities. One
 solution is to make sure that the learning rate is not set too high,
 which reduces the problem but does not fully remove it. Another
-solution is to use one of the several variants of the ReLU function
-such as leaky \gls{relu}, \gls{elu}, and \gls{silu}.
+solution is to use one of the several variants of the \gls{relu}
+function such as leaky \gls{relu}, \gls{elu}, and \gls{silu}.
 
 In recent years, the \gls{relu} function has become the most popular
 activation function for deep neural networks and is recommended as the
@@ -959,15 +1015,15 @@ summation of the pixels above and to the left of it. This
 representation allows them to quickly and efficiently calculate
 Haar-like features.
 
-The Haar-like features are passed to a modified AdaBoost
-algorithm \cite{freund1995} which only selects the (presumably) most
-important features. At the end there is a cascading stage of
-classifiers where regions are only considered further if they are
-promising. Every additional classifier adds complexity, but once a
-classifier rejects a sub-window, the processing stops and the
-algorithm moves on to the next window. Despite their final structure
-containing 32 classifiers, the sliding-window approach is fast and
-achieves comparable results to the state of the art in 2001.
+The Haar-like features are passed to a modified AdaBoost algorithm
+\cite{freund1995} which only selects the (presumably) most important
+features. At the end there is a cascading stage of classifiers where
+regions are only considered further if they are promising. Every
+additional classifier adds complexity, but once a classifier rejects a
+sub-window, the processing stops and the algorithm moves on to the
+next window. Despite their final structure containing \num{32}
+classifiers, the sliding-window approach is fast and achieves
+comparable results to the state of the art in 2001.
 
 \subsubsection{HOG Detector}
 \label{sssec:obj-hog}
@@ -987,12 +1043,13 @@ are then passed as a feature vector to a classifier.
 
 \textcite{dalal2005} successfully use the \gls{hog} with a linear
 \gls{svm} for classification to detect humans in images. They work
-with images of 64 by 128 pixels and make sure that the image contains
-a margin of 16 pixels around the person. Decreasing the border by
-either enlarging the person or reducing the overall image size results
-in worse performance. Unfortunately, their method is far from being
-able to process images in real time—a $320$ by $240$ image takes
-roughly a second to process.
+with images of \num{64} by \num{128} pixels and make sure that the
+image contains a margin of \num{16} pixels around the
+person. Decreasing the border by either enlarging the person or
+reducing the overall image size results in worse
+performance. Unfortunately, their method is far from being able to
+process images in real time—a $320$ by $240$ image takes roughly a
+second to process.
 
 \subsubsection{Deformable Part-Based Model}
 \label{sssec:obj-dpm}
@@ -1028,20 +1085,21 @@ corresponding \gls{cnn} layer.
 \label{ssec:theory-dl-based}
 
 After the publication of the \gls{dpm}, the field of object detection
-did not make significant advances regarding speed or accuracy. Only
-the (re-)introduction of \glspl{cnn} by \textcite{krizhevsky2012} with
-their AlexNet architecture and their subsequent win of the
-\gls{ilsvrc} 2012 gave the field a new influx of ideas. The
-availability of the 12 million labeled images in the ImageNet dataset
-\cite{deng2009} allowed a shift from focusing on better methods to
-being able to use more data to train models. Earlier models had
-difficulties with making use of the large dataset since training was
-unfeasible. AlexNet, however, provided an architecture which was able
-to be trained on two \glspl{gpu} within 6 days. For an in depth
-overview of AlexNet see section~\ref{sssec:theory-alexnet}. Object
-detection networks from 2014 onward either follow a \emph{one-stage}
-or \emph{two-stage} detection approach. The following sections go into
-detail about each model category.
+did not make significant advances regarding speed or accuracy until
+2012. Only the (re-)introduction of \glspl{cnn} by
+\textcite{krizhevsky2012} with their AlexNet architecture and their
+subsequent win of the \gls{ilsvrc} 2012 gave the field a new influx of
+ideas. The availability of the \num{12e6} labeled images in the
+ImageNet dataset \cite{deng2009} allowed a shift from focusing on
+better methods to being able to use more data to train models. Earlier
+models had difficulties with making use of the large dataset since
+training was unfeasible. AlexNet, however, provided an architecture
+which was able to be trained on two \glspl{gpu} within six days. For
+an in depth overview of AlexNet see
+section~\ref{sssec:theory-alexnet}. Object detection networks from
+2014 onward either follow a \emph{one-stage} or \emph{two-stage}
+detection approach. The following sections go into detail about each
+model category.
 
 \subsection{Two-Stage Detectors}
 \label{ssec:theory-two-stage}
@@ -1059,7 +1117,7 @@ often not as efficient as one-stage detectors.
 
 \textcite{girshick2014} were the first to propose using feature
 representations of \glspl{cnn} for object detection. Their approach
-consists of generating around $2000$ region proposals and passing
+consists of generating around \num{2000} region proposals and passing
 these on to a \gls{cnn} for feature extraction. The fixed-length
 feature vector is used as input for a linear \gls{svm} which
 classifies the region. They name their method R-\gls{cnn}, where the R
@@ -1067,17 +1125,17 @@ stands for region.
 
 R-\gls{cnn} uses selective search to generate region proposals
 \cite{uijlings2013}.The authors use selective search's \emph{fast
-mode} to generate the $2000$ proposals and warp (i.e. aspect ratios
-are not retained) each proposal into the image dimensions required by
-the \gls{cnn}. The \gls{cnn}, which matches the architecture of
-AlexNet \cite{krizhevsky2012}, generates a $4096$-dimensional feature
-vector and each feature vector is scored by a linear \gls{svm} for
-each class. Scored regions are selected/discarded by comparing each
-region to other regions within the same class and rejecting them if
-there exists another region with a higher score and greater \gls{iou}
-than a threshold. The linear \gls{svm} classifiers are trained to only
-label a region as positive if the overlap, as measured by \gls{iou},
-is above $0.3$.
+mode} to generate the \num{2000} proposals and warp (i.e. aspect
+ratios are not retained) each proposal into the image dimensions
+required by the \gls{cnn}. The \gls{cnn}, which matches the
+architecture of AlexNet \cite{krizhevsky2012}, generates a
+\num{4096}-dimensional feature vector and each feature vector is
+scored by a linear \gls{svm} for each class. Scored regions are
+selected/discarded by comparing each region to other regions within
+the same class and rejecting them if there exists another region with
+a higher score and greater \gls{iou} than a threshold. The linear
+\gls{svm} classifiers are trained to only label a region as positive
+if the overlap, as measured by \gls{iou}, is above $0.3$.
 
 While the approach of generating region proposals is not new, using a
 \gls{cnn} purely for feature extraction is. Unfortunately, R-\gls{cnn}
@@ -1123,7 +1181,7 @@ set at a \gls{map} of 59.2\%.
 Fast R-\gls{cnn} was proposed by \textcite{girshick2015a} to fix the
 three main problems R-\gls{cnn} and \gls{spp}-net have. The first
 problem is that the training for both models is
-multi-stage. R-\gls{cnn} finetunes the convolutional network which is
+multi-stage. R-\gls{cnn} fine-tunes the convolutional network which is
 responsible for feature extraction and then trains \glspl{svm} to
 classify the feature vectors. The third stage consists of training the
 bounding box regressors. The second problem is the training time which
@@ -1134,10 +1192,10 @@ the convolutional network) upwards of \qty{13}{\s\per image}.
 Fast R-\gls{cnn} deals with these problems by having an architecture
 which allows it to take in images and object proposals at once and
 process them simultaneously to arrive at the results. The outputs of
-the network are the class an object proposal belongs to and 4 scalar
-values representing the bounding box of the object. Unfortunately,
-this approach still requires a separate object proposal generator such
-as selective search \cite{uijlings2013}.
+the network are the class an object proposal belongs to and four
+scalar values representing the bounding box of the
+object. Unfortunately, this approach still requires a separate object
+proposal generator such as selective search \cite{uijlings2013}.
 
 \subsubsection{Faster R-\gls{cnn}}
 \label{sssec:theory-faster-rcnn}
@@ -1192,14 +1250,14 @@ with the layer beneath it via element-wise addition and convolved with
 a one by one convolutional layer to reduce channel dimensions and to
 smooth out potential artifacts introduced during the upsampling
 step. The results of that operation constitute the new \emph{top
-  layer} and the process continues with the layer below it until the
+layer} and the process continues with the layer below it until the
 finest resolution feature map is generated. In this way, the features
 of the different layers at different scales are fused to obtain a
 feature map with high semantic information but also high spatial
 information.
 
 \textcite{lin2017} report results on \gls{coco} with a \gls{map}@0.5
-of 59.1\% with a Faster R-\gls{cnn} structure and a ResNet-101
+of 59.1\% with a Faster R-\gls{cnn} structure and a \gls{resnet}-101
 backbone. Their submission does not include any specific improvements
 such as hard negative mining \cite{shrivastava2016} or data
 augmentation.
@@ -1302,7 +1360,7 @@ on examples which are harder to achieve a good confidence score on.
 \textcite{lin2017b} implement their focal loss with a simple one-stage
 detector called \emph{RetinaNet}. It makes use of previous advances in
 object detection and classification by including a \gls{fpn} on top of
-a ResNet \cite{he2016} as the backbone and using anchors for the
+a \gls{resnet} \cite{he2016} as the backbone and using anchors for the
 different levels in the feature pyramid. Attached to the backbone are
 two subnetworks which classify anchor boxes and regress them to the
 ground truth boxes. The results are that the RetinaNet-101-500 version
@@ -1416,23 +1474,23 @@ increases the amount of feature maps to $16$ which aims to increase
 the richness of the learned representations. Another pooling layer
 follows which reduces the size of each of the $16$ feature maps to
 five by five pixels. A dense block of three fully-connected layers of
-120, 84 and 10 neurons respectively serves as the actual classifier in
-the network. The last layer uses the euclidean \gls{rbf} to compute
-the class an image belongs to (0-9 digits).
+120, 84 and 10 neurons serves as the actual classifier in the
+network. The last layer uses the euclidean \gls{rbf} to compute the
+class an image belongs to (0-9 digits).
 
 The performance of LeNet-5 was measured on the \gls{mnist} database
-which consists of $70000$ labeled images of handwritten digits. The
-\gls{mse} on the test set is 0.95\%. This result is impressive
-considering that character recognition with a \gls{cnn} had not been
-done before. However, standard machine learning methods of the time,
-such as manual feature engineering and \glspl{svm}, achieved a similar
-error rate, even though they are much more memory-intensive. LeNet-5
-was conceived to take advantage of the (then) large \gls{mnist}
-database. Since there were not many datasets available at the time,
-especially with more samples than in the \gls{mnist} database,
-\glspl{cnn} were not widely used even after their viability had been
-demonstrated by \textcite{lecun1998}. Only in 2012
-\textcite{krizhevsky2012} reintroduced \glspl{cnn} (see
+which consists of \num{70000} labeled images of handwritten
+digits. The \gls{mse} on the test set is 0.95\%. This result is
+impressive considering that character recognition with a \gls{cnn} had
+not been done before. However, standard machine learning methods of
+the time, such as manual feature engineering and \glspl{svm}, achieved
+a similar error rate, even though they are much more
+memory-intensive. LeNet-5 was conceived to take advantage of the
+(then) large \gls{mnist} database. Since there were not many datasets
+available at the time, especially with more samples than in the
+\gls{mnist} database, \glspl{cnn} were not widely used even after
+their viability had been demonstrated by \textcite{lecun1998}. Only in
+2012 \textcite{krizhevsky2012} reintroduced \glspl{cnn} (see
 section~\ref{ssec:theory-dl-based}) and since then most
 state-of-the-art image classification methods have used them.
 
@@ -1479,7 +1537,7 @@ maximum values are then put back into each two by two area (depending
 on the kernel size). This process loses information because a
 max-pooling layer is not invertible. The subsequent \gls{relu}
 function can be easily inverted because negative values are squashed
-to zero and and positive values are retained. The final deconvolution
+to zero and positive values are retained. The final deconvolution
 operation concerns the convolutional layer itself. In order to
 \emph{reconstruct} the original spatial dimensions (before
 convolution), a transposed convolution is performed. This process
@@ -1520,7 +1578,7 @@ other and a \emph{stem} with convolutions at the beginning as well as
 two auxiliary classifiers which help retain the gradient during
 backpropagation. The auxiliary classifiers are only used during
 training. The authors submitted multiple model versions to the 2004
-\gls{ilsvrc} and their ensemble prediction model consisting of 7
+\gls{ilsvrc} and their ensemble prediction model consisting of seven
 GoogleNets achieved a top-5 error rate of 6.67\%, which resulted in
 first place.
 
@@ -1573,21 +1631,21 @@ section~\ref{sec:methods-classification}.
 \label{sssec:theory-densenet}
 
 The authors of DenseNet \cite{huang2017} go one step further than
-ResNets by connecting every convolutional layer to every other layer
-in the chain. Previously, each layer was connected in sequence with
-the one before and the one after it. Residual connections establish a
-link between the previous layer and the next one but still do not
-always propagate enough information forward. These \emph{shortcut
-connections} from earlier layers to later layers are thus only taking
-place in an episodic way for short sections in the chain. DenseNets
-are structured in a way such that every layer receives the feature map
-of every previous layer as input. In ResNets, information from
-previous layers is added on to the next layer via element-wise
-addition. DenseNets concatenate the features of the previous
-layers. The number of feature maps per layer has to be kept low so
-that the subsequent layers can still process their inputs. Otherwise,
-the last layer in each dense block would receive too many channels
-which increases computational complexity.
+\glspl{resnet} by connecting every convolutional layer to every other
+layer in the chain. Previously, each layer was connected in sequence
+with the one before and the one after it. Residual connections
+establish a link between the previous layer and the next one but still
+do not always propagate enough information forward. These
+\emph{shortcut connections} from earlier layers to later layers are
+thus only taking place in an episodic way for short sections in the
+chain. DenseNets are structured in a way such that every layer
+receives the feature map of every previous layer as input. In
+\glspl{resnet}, information from previous layers is added on to the
+next layer via element-wise addition. DenseNets concatenate the
+features of the previous layers. The number of feature maps per layer
+has to be kept low so that the subsequent layers can still process
+their inputs. Otherwise, the last layer in each dense block would
+receive too many channels which increases computational complexity.
 
 The authors construct their network from multiple dense blocks which
 are connected via a batch normalization layer, a one by one
@@ -1919,14 +1977,14 @@ was trained with a dataset containing images of maize, okra, and
 soybean at different stages of growth and under stress and no
 stress. The researchers did not include an object detection step
 before image classification and compiled a fairly small dataset of
-$1200$ images. Of the three models, GoogLeNet beat the other two with
-a sizable lead at a classification accuracy of >94\% for all three
-types of crop. The authors attribute its success to its inherently
-deeper structure and application of multiple convolutional layers at
-different stages. Unfortunately, all of the images were taken at the
-same $\ang{45}\pm\ang{5}$ angle and it stands to reason that the models
-would perform significantly worse on images taken under different
-conditions.
+\num{1200} images. Of the three models, GoogLeNet beat the other two
+with a sizable lead at a classification accuracy of >94\% for all
+three types of crop. The authors attribute its success to its
+inherently deeper structure and application of multiple convolutional
+layers at different stages. Unfortunately, all of the images were
+taken at the same $\ang{45}\pm\ang{5}$ angle and it stands to reason
+that the models would perform significantly worse on images taken
+under different conditions.
 
 \textcite{ramos-giraldo2020} detected water stress in soybean and corn
 crops with a pretrained model based on DenseNet-121 (see
@@ -1949,7 +2007,7 @@ classification scores on corn and soybean with a low-cost setup.
 \textcite{azimi2020} demonstrate the efficacy of deep learning models
 versus classical machine learning models on chickpea plants. The
 authors created their own dataset in a laboratory setting for stressed
-and non-stressed plants. They acquired $8000$ images at eight
+and non-stressed plants. They acquired \num{8000} images at eight
 different angles in total. For the classical machine learning models,
 they extracted feature vectors using \gls{sift} and \gls{hog}. The
 features are fed into three classical machine learning models:
@@ -1957,30 +2015,28 @@ features are fed into three classical machine learning models:
 algorithm. On the deep learning side, they used their own \gls{cnn}
 architecture and the pretrained ResNet-18 (see
 section~\ref{sssec:theory-resnet}) model. The accuracy scores for the
-classical models was in the range of $\qty{60}{\percent}$ to
-$\qty{73}{\percent}$ with the \gls{svm} outperforming the two
-others. The \gls{cnn} achieved higher scores at $\qty{72}{\percent}$
-to $\qty{78}{\percent}$ and ResNet-18 achieved the highest scores at
-$\qty{82}{\percent}$ to $\qty{86}{\percent}$. The results clearly show
-the superiority of deep learning over classical machine learning. A
-downside of their approach lies in the collection of the images. The
-background in all images was uniformly white and the plants were
-prominently placed in the center. It should, therefore, not be assumed
-that the same classification scores can be achieved on plants in the
-field with messy and noisy backgrounds as well as illumination changes
-and so forth.
+classical models was in the range of 60\% to 73\% with the \gls{svm}
+outperforming the two others. The \gls{cnn} achieved higher scores at
+72\% to 78\% and ResNet-18 achieved the highest scores at 82\% to
+86\%. The results clearly show the superiority of deep learning over
+classical machine learning. A downside of their approach lies in the
+collection of the images. The background in all images was uniformly
+white and the plants were prominently placed in the center. It should,
+therefore, not be assumed that the same classification scores can be
+achieved on plants in the field with messy and noisy backgrounds as
+well as illumination changes and so forth.
 
 \textcite{venal2019} combine a standard \gls{cnn} architecture with a
 \gls{svm} for classification. The \gls{cnn} acts as a feature
 extractor and instead of using the last fully-connected layers of an
 off-the-shelf \gls{cnn}, they replace them with a \gls{svm}. They use
 this classifier to determine which biotic or abiotic stresses soybeans
-suffer from. Their dataset consists of $65184$ $64$ by $64$ RGB
-images of which around $40000$ were used for training and $6000$ for
-testing. All images show a close-up of a soybean leaf. Their \gls{cnn}
-architecture makes use of three Inception modules (see
-section~\ref{sssec:theory-googlenet}) with \gls{se} blocks and
-\gls{bn} layers in-between. Their model achieves an average
+suffer from. Their dataset consists of \num{65184} $64$ by $64$ RGB
+images of which around \num{40000} were used for training and
+\num{6000} for testing. All images show a close-up of a soybean
+leaf. Their \gls{cnn} architecture makes use of three Inception
+modules (see section~\ref{sssec:theory-googlenet}) with \gls{se}
+blocks and \gls{bn} layers in-between. Their model achieves an average
 $\mathrm{F}_1$-score of 97\% and an average accuracy of 97.11\% on the
 test set. Overall, the hybrid structure of their model is promising,
 but it is not clear why only using the \gls{cnn} as a feature
@@ -2509,8 +2565,8 @@ phases, we will list a small selection of them.
 \item[HSV-saturation] Randomly change the saturation of the color
   channels.
 \item[HSV-value] Randomly change the value of the color channels.
-\item[Translation] Randomly \emph{translate}, that is, move the image
-  by a specified amount of pixels.
+\item[Translation] Randomly \emph{translate}, i.e., move the image by
+  a specified amount of pixels.
 \item[Scaling] Randomly scale the image up and down by a factor.
 \item[Rotation] Randomly rotate the image.
 \item[Inversion] Randomly flip the image along the $x$ or the
@@ -2622,7 +2678,7 @@ nor recall change materially during training. In fact, precision
 starts to decrease from the beginning, while recall experiences a
 barely noticeable increase. Taken together with the box and object
 loss from figure~\ref{fig:box-obj-loss}, we speculate that the
-pre-trained model already generalizes well to plant detection because
+pretrained model already generalizes well to plant detection because
 one of the categories in the \gls{coco} \cite{lin2015} dataset is
 \emph{potted plant}. Any further training solely impacts the
 confidence of detection but does not lead to higher detection
@@ -2840,14 +2896,14 @@ which is hyperparameter optimization \cite{bergstra2012}.
     \toprule
     Parameter &  Values \\
     \midrule
-    optimizer &	adam, sgd \\
-    batch size & 4, 8, 16, 32, 64 \\
-    learning rate & 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.1 \\
-    step size & 2, 3, 5, 7 \\
-    gamma & 0.1, 0.5 \\
-    beta one & 0.9, 0.99 \\
-    beta two & 0.5, 0.9, 0.99, 0.999 \\
-    eps & 0.00000001, 0.1, 1 \\
+    Optimizer &	Adam, \gls{sgd} \\
+    Batch Size & 4, 8, 16, 32, 64 \\
+    Learning Rate & 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.1 \\
+    Step Size & 2, 3, 5, 7 \\
+    Gamma & 0.1, 0.5 \\
+    Beta One & 0.9, 0.99 \\
+    Beta Two & 0.5, 0.9, 0.99, 0.999 \\
+    Eps & 0.00000001, 0.1, 1 \\
     \bottomrule
   \end{tabular}
   \caption{Hyperparameters and their possible values during
